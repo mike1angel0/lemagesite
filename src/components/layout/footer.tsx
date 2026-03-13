@@ -27,20 +27,20 @@ const connectLinks = [
 ] as const;
 
 const socialPlatforms = [
-  { label: "Instagram", href: "#" },
-  { label: "YouTube", href: "#" },
-  { label: "TikTok", href: "#" },
+  { label: "Instagram", href: "https://instagram.com/mihaigavrilescu" },
+  { label: "YouTube", href: "https://youtube.com/@mihaigavrilescu" },
+  { label: "TikTok", href: "https://tiktok.com/@mihaigavrilescu" },
 ] as const;
 
 const socialLinksBottom = [
-  { label: "Substack", href: "#" },
-  { label: "Medium", href: "#" },
-  { label: "Spotify", href: "#" },
-  { label: "GitHub", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "TikTok", href: "#" },
-  { label: "YouTube", href: "#" },
+  { label: "Substack", href: "https://mihaigavrilescu.substack.com" },
+  { label: "Medium", href: "https://medium.com/@mihaigavrilescu" },
+  { label: "Spotify", href: "https://open.spotify.com/artist/mihaigavrilescu" },
+  { label: "GitHub", href: "https://github.com/mihaigavrilescu" },
+  { label: "Instagram", href: "https://instagram.com/mihaigavrilescu" },
+  { label: "Facebook", href: "https://facebook.com/mihaigavrilescu" },
+  { label: "TikTok", href: "https://tiktok.com/@mihaigavrilescu" },
+  { label: "YouTube", href: "https://youtube.com/@mihaigavrilescu" },
 ] as const;
 
 interface FooterColumnProps {
@@ -116,10 +116,10 @@ export function Footer() {
             <p className="mt-4 font-sans text-xs text-text-muted leading-relaxed">
               {t("tagline")}
             </p>
-            <button className="mt-6 inline-flex items-center gap-2 font-sans text-[11px] font-medium text-text-secondary tracking-[2px] uppercase border border-accent-dim px-4 py-2 rounded hover:border-accent hover:text-text-primary transition-colors">
+            <Link href={`${localePath}/membership/payment`} className="mt-6 inline-flex items-center gap-2 font-sans text-[11px] font-medium text-text-secondary tracking-[2px] uppercase border border-accent-dim px-4 py-2 rounded hover:border-accent hover:text-text-primary transition-colors">
               <Heart size={14} />
               {t("supportWork")}
-            </button>
+            </Link>
           </div>
 
           {/* Link columns */}
