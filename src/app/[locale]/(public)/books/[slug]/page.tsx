@@ -155,8 +155,12 @@ export default function BookDetailPage() {
 
             {/* Excerpt action buttons */}
             <div className="flex gap-3 mt-6">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="#">Download PDF</Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => alert("Download coming soon")}
+              >
+                Download PDF
               </Button>
               <Button
                 variant="ghost"

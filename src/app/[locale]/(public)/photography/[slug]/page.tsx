@@ -1,18 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-interface PhotoDetailPageProps {
-  params: Promise<{ slug: string; locale: string }>;
-}
-
-export default async function PhotoDetailPage({
-  params,
-}: PhotoDetailPageProps) {
-  const { slug } = await params;
-  const t = await getTranslations("photography");
-  const tc = await getTranslations("common");
+export default function PhotoDetailPage() {
+  const t = useTranslations("photography");
+  const tc = useTranslations("common");
 
   return (
     <article>
@@ -97,10 +92,10 @@ export default async function PhotoDetailPage({
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => alert("Download coming soon")}>
               {tc("download")}
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => alert("Share coming soon")}>
               {tc("share")}
             </Button>
           </div>

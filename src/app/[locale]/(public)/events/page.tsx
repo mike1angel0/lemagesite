@@ -9,7 +9,7 @@ const upcomingEvents = [
     title: "Poetry & AI: A Live Reading + Conversation",
     location: "National Library, Bucharest  \u00B7  19:00 EET",
     slug: "/events/poetry-ai-live-reading",
-    rsvpUrl: "#",
+    rsvpUrl: "/contact",
   },
   {
     month: "APR",

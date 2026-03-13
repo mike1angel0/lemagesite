@@ -1,17 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Play } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { ShareButtons } from "@/components/ui/share-buttons";
 
-interface PoemDetailPageProps {
-  params: Promise<{ slug: string; locale: string }>;
-}
-
-export default async function PoemDetailPage({ params }: PoemDetailPageProps) {
-  const { slug } = await params;
-  const t = await getTranslations("poetry");
-  const tc = await getTranslations("common");
+export default function PoemDetailPage() {
+  const t = useTranslations("poetry");
+  const tc = useTranslations("common");
 
   return (
     <article>
@@ -43,6 +40,7 @@ export default async function PoemDetailPage({ params }: PoemDetailPageProps) {
         {/* Audio row */}
         <button
           type="button"
+          onClick={() => alert("Audio playback coming soon")}
           className="inline-flex items-center gap-3 border border-border rounded-full px-6 py-3 font-sans text-xs text-accent tracking-[0.5px] hover:border-accent transition-colors"
         >
           <Play className="size-4" />

@@ -106,7 +106,7 @@ export default async function EssaysPage() {
           Subscribe to receive new essays directly.
         </p>
 
-        <div className="flex gap-0">
+        <form className="flex gap-0">
           <Input
             type="email"
             placeholder="your@email.com"
@@ -115,7 +115,7 @@ export default async function EssaysPage() {
           <Button variant="filled" size="md">
             {t("newsletterSubscribe")}
           </Button>
-        </div>
+        </form>
 
         <p className="font-mono text-[10px] tracking-[1px] text-text-muted">
           {t("newsletterFootnote")}

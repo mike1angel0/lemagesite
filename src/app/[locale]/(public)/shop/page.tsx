@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -57,8 +59,8 @@ const products = [
   },
 ];
 
-export default async function ShopPage() {
-  const t = await getTranslations("shop");
+export default function ShopPage() {
+  const t = useTranslations("shop");
 
   return (
     <>
@@ -84,6 +86,7 @@ export default async function ShopPage() {
         {categories.map((cat) => (
           <span
             key={cat.label}
+            onClick={() => alert(`${cat.label} filter coming soon`)}
             className={`font-sans text-xs cursor-pointer transition-colors ${
               cat.active
                 ? "bg-accent text-text-on-accent font-medium rounded-full px-5 py-2"
@@ -128,11 +131,11 @@ export default async function ShopPage() {
               </span>
             </div>
             <div className="flex gap-3">
-              <Button variant="gold" size="md">
-                {t("addToCart")}
+              <Button variant="gold" size="md" asChild>
+                <Link href="/checkout">{t("addToCart")}</Link>
               </Button>
-              <Button variant="ghost" size="md">
-                View Details
+              <Button variant="ghost" size="md" asChild>
+                <Link href="/shop/nocturnal-echoes">View Details</Link>
               </Button>
             </div>
           </div>
