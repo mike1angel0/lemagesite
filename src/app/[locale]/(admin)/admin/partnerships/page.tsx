@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const stats = [
@@ -82,9 +83,9 @@ export default function AdminPartnershipsPage() {
             Manage curated partnerships, collaborations &amp; affiliate links
           </p>
         </div>
-        <button className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
+        <Link href="/admin/partnerships/new" className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
           Add Partner
-        </button>
+        </Link>
       </div>
 
       {/* ── Stat Cards ── */}
