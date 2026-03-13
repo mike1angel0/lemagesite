@@ -185,6 +185,7 @@
     "backToResearch": "Back to Research",
     "sectionLabel": "RESEARCH",
     "heroTitle": "Papers & Publications",
+    "heroDescription": "Academic papers, conference proceedings, and technical reports at the intersection of computational linguistics, neural architectures, and the poetics of machine intelligence.",
     "filterAll": "All",
     "filterNlp": "NLP",
     "filterAttention": "Attention",
