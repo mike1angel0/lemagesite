@@ -1,5 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/content/product-card";
@@ -25,9 +28,10 @@ const relatedProducts = [
   },
 ];
 
-export default async function ProductDetailPage() {
-  const t = await getTranslations("shop");
-  const tc = await getTranslations("common");
+export default function ProductDetailPage() {
+  const t = useTranslations("shop");
+  const tc = useTranslations("common");
+  const [quantity, setQuantity] = useState(1);
 
   return (
     <section>
@@ -75,13 +79,19 @@ export default async function ProductDetailPage() {
               Quantity
             </span>
             <div className="flex items-center gap-2">
-              <button className="w-8 h-8 border border-border text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors text-sm">
+              <button
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                className="w-8 h-8 border border-border text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors text-sm"
+              >
                 &minus;
               </button>
               <span className="font-sans text-sm text-text-primary w-6 text-center">
-                1
+                {quantity}
               </span>
-              <button className="w-8 h-8 border border-border text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors text-sm">
+              <button
+                onClick={() => setQuantity((q) => Math.min(16, q + 1))}
+                className="w-8 h-8 border border-border text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors text-sm"
+              >
                 +
               </button>
             </div>
@@ -91,8 +101,8 @@ export default async function ProductDetailPage() {
           </div>
 
           {/* Add to Cart */}
-          <Button variant="gold" size="lg" className="w-[280px]">
-            {tc("addToCart")}
+          <Button variant="gold" size="lg" className="w-[280px]" asChild>
+            <Link href="/checkout">{tc("addToCart")}</Link>
           </Button>
         </div>
       </div>

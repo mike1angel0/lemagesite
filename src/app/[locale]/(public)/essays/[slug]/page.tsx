@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { EssayCard } from "@/components/content/essay-card";
+import { ShareButtons } from "@/components/ui/share-buttons";
 
 const tocItems = [
   { label: "The Architecture of Want", id: "the-architecture-of-want" },
@@ -189,23 +190,18 @@ export default async function EssayDetailPage() {
           <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
             {tc("share").toUpperCase()}
           </span>
-          {[
-            { key: "x", label: tc("shareOnX") },
-            { key: "fb", label: tc("facebook") },
-            { key: "link", label: tc("copyLink") },
-          ].map((platform) => (
-            <button
-              key={platform.key}
-              className="font-sans text-xs text-text-secondary hover:text-text-primary transition-colors"
-            >
-              {platform.label}
-            </button>
-          ))}
+          <ShareButtons
+            labels={{
+              x: tc("shareOnX"),
+              facebook: tc("facebook"),
+              copyLink: tc("copyLink"),
+            }}
+          />
         </div>
 
         {/* -- Partner Callout -- */}
         <div className="flex justify-center py-6">
-          <div className="flex items-center gap-3 bg-bg-card border border-border rounded-lg px-6 py-4">
+          <Link href="/membership" className="flex items-center gap-3 bg-bg-card border border-border rounded-lg px-6 py-4 hover:border-gold/50 transition-colors">
             <span className="text-gold">&#9998;</span>
             <div className="flex flex-col gap-0.5">
               <p className="font-mono text-[10px] text-gold tracking-[2px] uppercase">
@@ -215,7 +211,7 @@ export default async function EssayDetailPage() {
                 Get early access to all essays + exclusive drafts and notes
               </p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* -- Related Essays -- */}

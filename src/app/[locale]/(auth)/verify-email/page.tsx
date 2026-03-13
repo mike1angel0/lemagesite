@@ -1,8 +1,10 @@
-import { MailCheck } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+"use client";
 
-export default async function VerifyEmailPage() {
-  const t = await getTranslations("auth");
+import { MailCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
+
+export default function VerifyEmailPage() {
+  const t = useTranslations("auth");
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-5">
@@ -30,6 +32,7 @@ export default async function VerifyEmailPage() {
           </span>
           <button
             type="button"
+            onClick={() => alert("Verification email resent")}
             className="font-sans text-[13px] text-accent hover:text-accent-glow transition-colors"
           >
             {t("resendVerification")}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Play } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
+import { ShareButtons } from "@/components/ui/share-buttons";
 
 interface PoemDetailPageProps {
   params: Promise<{ slug: string; locale: string }>;
@@ -102,13 +103,14 @@ export default async function PoemDetailPage({ params }: PoemDetailPageProps) {
         </p>
         <div className="flex gap-3">
           {["€2", "€5", "€10"].map((amount) => (
-            <button
+            <Link
               key={amount}
+              href="/membership/payment"
               className="inline-flex items-center gap-1.5 border border-border rounded-full px-4 py-2 font-mono text-[11px] text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors"
             >
               <span>☕</span>
               {amount}
-            </button>
+            </Link>
           ))}
         </div>
       </div>
@@ -119,15 +121,7 @@ export default async function PoemDetailPage({ params }: PoemDetailPageProps) {
           <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
             Share
           </span>
-          <span className="font-sans text-xs text-text-secondary hover:text-text-primary cursor-pointer">
-            X
-          </span>
-          <span className="font-sans text-xs text-text-secondary hover:text-text-primary cursor-pointer">
-            Facebook
-          </span>
-          <span className="font-sans text-xs text-text-secondary hover:text-text-primary cursor-pointer">
-            Copy Link
-          </span>
+          <ShareButtons />
         </div>
         <div className="flex items-center gap-6">
           <Link
@@ -147,7 +141,7 @@ export default async function PoemDetailPage({ params }: PoemDetailPageProps) {
 
       {/* -- Partner Callout -- */}
       <div className="flex justify-center px-[200px] py-6">
-        <div className="flex items-center gap-3 bg-bg-card border border-border rounded-lg px-6 py-4">
+        <Link href="/membership" className="flex items-center gap-3 bg-bg-card border border-border rounded-lg px-6 py-4 hover:border-gold/50 transition-colors">
           <span className="text-gold">🔖</span>
           <div>
             <p className="font-mono text-[10px] text-gold tracking-[2px] uppercase">
@@ -157,7 +151,7 @@ export default async function PoemDetailPage({ params }: PoemDetailPageProps) {
               Get early access to all poems + exclusive audio readings
             </p>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* -- Related poems -- */}

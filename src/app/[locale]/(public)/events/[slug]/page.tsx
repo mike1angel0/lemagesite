@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ShareButtons } from "@/components/ui/share-buttons";
 
 const programme = [
   { time: "19:00", label: "Doors Open — Gallery Installation" },
@@ -108,8 +109,8 @@ export default async function EventDetailPage() {
               </div>
             </div>
 
-            <Button variant="gold" size="lg" className="w-full mt-6">
-              Reserve Your Spot
+            <Button variant="gold" size="lg" className="w-full mt-6" asChild>
+              <Link href="/contact">Reserve Your Spot</Link>
             </Button>
           </Card>
 
@@ -118,14 +119,7 @@ export default async function EventDetailPage() {
               Share This Event
             </span>
             <div className="flex items-center gap-4 mt-3">
-              {["X", "Facebook", "Copy Link"].map((label) => (
-                <button
-                  key={label}
-                  className="font-sans text-xs text-text-secondary hover:text-text-primary transition-colors"
-                >
-                  {label}
-                </button>
-              ))}
+              <ShareButtons />
             </div>
           </Card>
         </aside>

@@ -1,12 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export default async function LoginPage() {
-  const t = await getTranslations("auth");
-  const tc = await getTranslations("common");
+export default function LoginPage() {
+  const t = useTranslations("auth");
+  const tc = useTranslations("common");
 
   return (
     <>
@@ -66,6 +68,7 @@ export default async function LoginPage() {
         {/* Google sign-in */}
         <button
           type="button"
+          onClick={() => alert("Google sign-in coming soon")}
           className="w-full h-11 flex items-center justify-center gap-2 border border-border rounded text-text-secondary font-sans text-[13px] hover:border-accent-dim hover:text-text-primary transition-colors"
         >
           <Globe className="size-4" />
