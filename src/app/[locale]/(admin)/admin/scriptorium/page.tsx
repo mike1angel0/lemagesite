@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 
 const stats = [
@@ -82,7 +84,10 @@ export default function AdminScriptoriumPage() {
             Manage products, ebooks &amp; print shop
           </p>
         </div>
-        <button className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
+        <button
+          onClick={() => alert("Add product coming soon")}
+          className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity"
+        >
           Add Product
         </button>
       </div>

@@ -1,10 +1,12 @@
+"use client";
+
 export default function AdminSettingsPage() {
   return (
     <>
       {/* ── Top Bar ── */}
       <div className="flex justify-between items-center py-6 px-8 border-b border-border">
         <h1 className="font-serif text-2xl text-text-primary">Settings</h1>
-        <button className="bg-accent text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
+        <button onClick={() => alert("Settings saved")} className="bg-accent text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
           Save Changes
         </button>
       </div>
@@ -175,7 +177,7 @@ export default function AdminSettingsPage() {
               Permanently delete this site and all its content. This action
               cannot be undone.
             </p>
-            <button className="bg-red-900/60 text-red-200 font-sans text-sm rounded-md px-4 py-2 hover:bg-red-900/80 transition-colors">
+            <button onClick={() => alert("Are you sure?")} className="bg-red-900/60 text-red-200 font-sans text-sm rounded-md px-4 py-2 hover:bg-red-900/80 transition-colors">
               Delete Site
             </button>
           </div>

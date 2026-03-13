@@ -25,6 +25,10 @@ export default function AdminEditorNewPage() {
   const [category, setCategory] = useState("Poetry");
   const [tier, setTier] = useState("Free");
   const [tags, setTags] = useState("");
+  const [abstract, setAbstract] = useState("");
+  const [doi, setDoi] = useState("");
+  const [year, setYear] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
   const [status, setStatus] = useState<Status>("draft");
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
 
@@ -86,7 +90,10 @@ export default function AdminEditorNewPage() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button className="border border-border rounded-md px-4 py-2 font-sans text-sm text-text-primary hover:bg-bg-elevated transition-colors">
+          <button
+            onClick={() => alert("Preview coming soon")}
+            className="border border-border rounded-md px-4 py-2 font-sans text-sm text-text-primary hover:bg-bg-elevated transition-colors"
+          >
             Preview
           </button>
           <button
@@ -124,6 +131,7 @@ export default function AdminEditorNewPage() {
               <button
                 key={label}
                 title={label}
+                onClick={() => alert("Formatting coming soon")}
                 className="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
               >
                 <Icon size={16} />
@@ -189,6 +197,61 @@ export default function AdminEditorNewPage() {
               className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
             />
           </div>
+
+          {/* Research-specific fields */}
+          {category === "Research" && (
+            <>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                  Abstract
+                </label>
+                <textarea
+                  placeholder="Paper abstract..."
+                  value={abstract}
+                  onChange={(e) => setAbstract(e.target.value)}
+                  className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted resize-y min-h-[100px]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Year
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="2026"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    DOI
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="10.xxxx/xxxxx"
+                    value={doi}
+                    onChange={(e) => setDoi(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                  PDF URL
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  value={pdfUrl}
+                  onChange={(e) => setPdfUrl(e.target.value)}
+                  className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                />
+              </div>
+            </>
+          )}
 
           {/* Featured Image */}
           <div>

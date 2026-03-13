@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Activity,
   CheckCircle,
@@ -63,7 +65,7 @@ const auditItems = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Page (Server Component)                                            */
+/*  Page (Client Component)                                            */
 /* ------------------------------------------------------------------ */
 
 export default function AdminSEOPage() {
@@ -74,7 +76,10 @@ export default function AdminSEOPage() {
         <h1 className="font-sans text-[20px] font-medium text-text-primary">
           SEO
         </h1>
-        <button className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg">
+        <button
+          onClick={() => alert("SEO audit coming soon")}
+          className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg"
+        >
           <Activity className="h-3.5 w-3.5" />
           Run SEO Audit
         </button>

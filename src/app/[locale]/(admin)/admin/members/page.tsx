@@ -1,3 +1,5 @@
+"use client";
+
 import { Search, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -105,7 +107,7 @@ export default function AdminMembersPage() {
               Search members...
             </span>
           </div>
-          <button className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg">
+          <button onClick={() => alert("Add member coming soon")} className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg">
             <Plus className="h-3.5 w-3.5" />
             Add Member
           </button>
@@ -135,7 +137,7 @@ export default function AdminMembersPage() {
           <h2 className="font-sans text-[14px] font-medium text-text-primary">
             All Members
           </h2>
-          <button className="font-sans text-[12px] text-accent-dim hover:text-accent transition-colors">
+          <button onClick={() => alert("Export coming soon")} className="font-sans text-[12px] text-accent-dim hover:text-accent transition-colors">
             Export CSV
           </button>
         </div>

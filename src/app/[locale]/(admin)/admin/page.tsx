@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
@@ -201,7 +203,7 @@ export default function AdminDashboardPage() {
               </div>
             ))}
 
-            <button className="mt-2 w-full rounded-md border border-border py-1.5 text-center font-sans text-[12px] text-text-muted">
+            <button onClick={() => alert("Add cost coming soon")} className="mt-2 w-full rounded-md border border-border py-1.5 text-center font-sans text-[12px] text-text-muted">
               + Add Cost
             </button>
 
@@ -367,7 +369,7 @@ export default function AdminDashboardPage() {
                 </p>
               </div>
             </div>
-            <button className="w-full rounded-md border border-border py-1.5 text-center font-sans text-[12px] text-text-muted">
+            <button onClick={() => alert("Substack publishing coming soon")} className="w-full rounded-md border border-border py-1.5 text-center font-sans text-[12px] text-text-muted">
               Publish to Substack
             </button>
           </div>

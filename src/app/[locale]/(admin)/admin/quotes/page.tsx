@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 
 const stats = [
@@ -65,7 +67,7 @@ export default function AdminQuotesPage() {
             Curate quotes, moods, and ambient visuals across the site
           </p>
         </div>
-        <button className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
+        <button onClick={() => alert("Add quote coming soon")} className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
           Add Quote
         </button>
       </div>
@@ -144,6 +146,7 @@ export default function AdminQuotesPage() {
                   </td>
                   <td className="px-4 py-3.5">
                     <div
+                      onClick={() => alert("Toggle quote status coming soon")}
                       className={cn(
                         "w-9 h-5 rounded-full relative cursor-pointer transition-colors",
                         row.active ? "bg-[#6BBF7B]" : "bg-bg-elevated",
@@ -195,6 +198,7 @@ export default function AdminQuotesPage() {
                     {setting.label}
                   </span>
                   <div
+                    onClick={() => alert("Toggle setting coming soon")}
                     className={cn(
                       "w-9 h-5 rounded-full relative cursor-pointer transition-colors",
                       setting.enabled ? "bg-[#6BBF7B]" : "bg-bg-elevated",
@@ -223,7 +227,7 @@ export default function AdminQuotesPage() {
                 <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">
                   Frequency
                 </label>
-                <div className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer">
+                <div onClick={() => alert("Frequency selector coming soon")} className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer">
                   <span className="font-sans text-sm text-text-primary">
                     Every AM
                   </span>
@@ -238,7 +242,7 @@ export default function AdminQuotesPage() {
                 <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">
                   Quote Priority
                 </label>
-                <div className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer">
+                <div onClick={() => alert("Quote priority selector coming soon")} className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer">
                   <span className="font-sans text-sm text-text-primary">
                     Random
                   </span>
@@ -253,7 +257,7 @@ export default function AdminQuotesPage() {
                 <span className="font-sans text-[13px] text-text-primary">
                   Auto-Rotate
                 </span>
-                <div className="w-9 h-5 rounded-full relative cursor-pointer transition-colors bg-[#6BBF7B]">
+                <div onClick={() => alert("Toggle auto-rotate coming soon")} className="w-9 h-5 rounded-full relative cursor-pointer transition-colors bg-[#6BBF7B]">
                   <div className="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px]" />
                 </div>
               </div>

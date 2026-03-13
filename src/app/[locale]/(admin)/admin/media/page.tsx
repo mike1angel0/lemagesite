@@ -1,3 +1,5 @@
+"use client";
+
 import { Plus, Filter, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +21,7 @@ const mediaFiles = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Page (Server Component)                                            */
+/*  Page (Client Component)                                            */
 /* ------------------------------------------------------------------ */
 
 export default function AdminMediaPage() {
@@ -31,11 +33,17 @@ export default function AdminMediaPage() {
           Media Library
         </h1>
         <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg">
+          <button
+            onClick={() => alert("Upload coming soon")}
+            className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg"
+          >
             <Plus className="h-3.5 w-3.5" />
             New Upload
           </button>
-          <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 font-sans text-[12px] text-text-secondary hover:bg-bg-elevated transition-colors">
+          <button
+            onClick={() => alert("Filter coming soon")}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 font-sans text-[12px] text-text-secondary hover:bg-bg-elevated transition-colors"
+          >
             <Filter className="h-3.5 w-3.5" />
             Filter
           </button>
@@ -47,6 +55,7 @@ export default function AdminMediaPage() {
         {filterTabs.map((tab, i) => (
           <button
             key={tab}
+            onClick={() => alert("Filter coming soon")}
             className={cn(
               "rounded-md px-3.5 py-1.5 font-sans text-[12px] transition-colors",
               i === 0

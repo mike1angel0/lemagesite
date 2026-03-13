@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Search, SlidersHorizontal, Pencil, Trash2 } from "lucide-react";
 
@@ -76,7 +78,7 @@ export default function AdminContentPage() {
             <Search size={14} className="text-text-muted" />
             <span className="font-sans text-sm text-text-muted">Search content...</span>
           </div>
-          <button className="flex items-center gap-2 bg-bg-card border border-border rounded-md px-3.5 py-2">
+          <button onClick={() => alert("Filter coming soon")} className="flex items-center gap-2 bg-bg-card border border-border rounded-md px-3.5 py-2">
             <SlidersHorizontal size={14} className="text-text-muted" />
             <span className="font-sans text-sm text-text-muted">Filter</span>
           </button>
@@ -161,7 +163,7 @@ export default function AdminContentPage() {
                       <Pencil size={12} />
                       Edit
                     </Link>
-                    <button className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-accent transition-colors">
+                    <button onClick={() => alert("Delete coming soon")} className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-accent transition-colors">
                       <Trash2 size={12} />
                       Delete
                     </button>
@@ -178,16 +180,16 @@ export default function AdminContentPage() {
             Showing 1&ndash;6 of 156 items
           </span>
           <div className="flex gap-1.5">
-            <button className="font-sans text-xs text-text-primary px-3 py-1.5 border border-accent-dim rounded bg-bg-elevated">
+            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-primary px-3 py-1.5 border border-accent-dim rounded bg-bg-elevated">
               1
             </button>
-            <button className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
+            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
               2
             </button>
-            <button className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
+            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
               3
             </button>
-            <button className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
+            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
               &gt;
             </button>
           </div>

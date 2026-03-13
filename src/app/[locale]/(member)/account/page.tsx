@@ -1,14 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MemberBadge } from "@/components/ui/member-badge";
 import { cn } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export default async function AccountPage() {
-  const t = await getTranslations("account");
-  const tc = await getTranslations("common");
+export default function AccountPage() {
+  const t = useTranslations("account");
+  const tc = useTranslations("common");
 
   const navItems = [
     { label: t("profile"), href: "#profile", active: true },
@@ -93,7 +95,7 @@ export default async function AccountPage() {
               />
             </div>
             <div className="mt-6">
-              <Button variant="filled">{tc("saveChanges")}</Button>
+              <Button variant="filled" onClick={() => alert("Changes saved")}>{tc("saveChanges")}</Button>
             </div>
           </Card>
 
@@ -121,8 +123,8 @@ export default async function AccountPage() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <Button variant="filled">{tc("manageSubscription")}</Button>
-              <Button variant="ghost">{tc("cancel")}</Button>
+              <Button variant="filled" onClick={() => alert("Subscription management coming soon")}>{tc("manageSubscription")}</Button>
+              <Button variant="ghost" onClick={() => alert("Cancel subscription coming soon")}>{tc("cancel")}</Button>
             </div>
           </Card>
         </div>

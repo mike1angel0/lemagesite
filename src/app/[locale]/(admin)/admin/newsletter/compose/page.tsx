@@ -106,7 +106,10 @@ export default function ComposeNewsletterPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="border border-border rounded-md px-4 py-2 font-sans text-sm text-text-secondary hover:text-text-primary hover:border-text-muted transition-colors">
+          <button
+            onClick={() => alert("Preview coming soon")}
+            className="border border-border rounded-md px-4 py-2 font-sans text-sm text-text-secondary hover:text-text-primary hover:border-text-muted transition-colors"
+          >
             Preview
           </button>
           <button
@@ -169,6 +172,7 @@ export default function ComposeNewsletterPage() {
                 <button
                   key={btn.label}
                   title={btn.label}
+                  onClick={() => alert("Formatting coming soon")}
                   className="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
                 >
                   <btn.icon size={16} />

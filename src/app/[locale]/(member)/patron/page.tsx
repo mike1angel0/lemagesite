@@ -1,11 +1,13 @@
+"use client";
+
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Headphones, Clock } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export default async function PatronPage() {
-  const t = await getTranslations("patron");
-  const tc = await getTranslations("common");
+export default function PatronPage() {
+  const t = useTranslations("patron");
+  const tc = useTranslations("common");
 
   const stats = [
     { label: t("exclusivePieces").toUpperCase(), value: "47" },
@@ -49,7 +51,7 @@ export default async function PatronPage() {
         <h1 className="font-serif text-3xl text-warm-ivory">
           {t("welcomeBack")}
         </h1>
-        <Button variant="ghost">{tc("manageSubscription")}</Button>
+        <Button variant="ghost" onClick={() => alert("Subscription management coming soon")}>{tc("manageSubscription")}</Button>
       </div>
 
       {/* -- Stat Cards -- */}
