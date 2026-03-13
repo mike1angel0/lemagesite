@@ -244,7 +244,18 @@
     "donationDescription": "You can still support this work with a one-time donation. Every contribution helps keep the Observatory open.",
     "customAmount": "Custom Amount",
     "quoteText": "The only way to do great work is to love what you do.",
-    "quoteAuthor": "Steve Jobs"
+    "quoteAuthor": "Steve Jobs",
+    "patronTier": "Patron Tier",
+    "patronDescription": "Full access to all poetry, essays, research papers, music, and photography. Plus early access to new releases and a 10% discount at The Scriptorium.",
+    "whatsIncluded": "WHAT'S INCLUDED",
+    "patronMonthly": "Patron — Monthly",
+    "month": "month",
+    "monthly": "Monthly",
+    "yearlySave": "Yearly (save 20%)",
+    "emailField": "Email",
+    "cardField": "Card number",
+    "subscribeButton": "SUBSCRIBE NOW",
+    "securedNote": "Secured by Stripe · Cancel anytime"
   },
   "about": {
     "title": "About",
@@ -348,7 +359,7 @@
     "termsSection2Title": "2. Membership Terms",
     "termsSection2Body": "Membership subscriptions are billed monthly through Stripe. You may cancel your subscription at any time through your account settings. Cancellation takes effect at the end of the current billing period. Refunds are not provided for partial months. Access to gated content is contingent upon an active subscription at the appropriate tier.",
     "termsSection3Title": "3. Shop & Purchases",
-    "termsSection3Body": "All purchases made through The Scriptorium (shop) are final unless the item arrives damaged or defective. Digital products are non-refundable once delivered. Physical products ship within 5-7 business days. Shipping within the EU is free for orders over \u20ac25. International shipping rates apply for orders outside the EU.",
+    "termsSection3Body": "All purchases made through The Scriptorium (shop) are final unless the item arrives damaged or defective. Digital products are non-refundable once delivered. Physical products ship within 5-7 business days. Shipping within the EU is free for orders over €25. International shipping rates apply for orders outside the EU.",
     "termsSection4Title": "4. Newsletter",
     "termsSection4Body": "By subscribing to our newsletter, you consent to receiving periodic emails about new content, events, and updates from The Observatory. You may unsubscribe at any time using the link provided in each email. We do not share your email address with third parties.",
     "termsSection5Title": "5. Code of Conduct",

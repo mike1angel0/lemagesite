@@ -123,6 +123,7 @@ export default function AdminScriptoriumPage() {
               {productTabs.map((tab) => (
                 <span
                   key={tab}
+                  onClick={() => alert(`${tab} filter coming soon`)}
                   className={cn(
                     "font-sans text-xs cursor-pointer pb-4 transition-colors",
                     tab === activeTab

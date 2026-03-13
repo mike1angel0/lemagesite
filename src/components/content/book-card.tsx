@@ -15,6 +15,19 @@ interface BookCardProps {
   className?: string;
 }
 
+function getButtonHref(label: string, slug: string): string {
+  switch (label) {
+    case "Buy Print":
+      return "/shop";
+    case "Read Excerpt":
+      return slug;
+    case "Member Excerpt":
+      return "/membership";
+    default:
+      return slug;
+  }
+}
+
 export function BookCard({
   title,
   coverImage,
@@ -56,12 +69,12 @@ export function BookCard({
         <div className="flex gap-3 mt-1">
           {buttons.map((label, i) =>
             i === 0 ? (
-              <Button key={label} variant="filled" size="sm">
-                {label}
+              <Button key={label} variant="filled" size="sm" asChild>
+                <Link href={getButtonHref(label, slug)}>{label}</Link>
               </Button>
             ) : (
-              <Button key={label} variant="ghost" size="sm">
-                {label}
+              <Button key={label} variant="ghost" size="sm" asChild>
+                <Link href={getButtonHref(label, slug)}>{label}</Link>
               </Button>
             ),
           )}

@@ -80,7 +80,7 @@ export default function AdminMediaPage() {
         {mediaFiles.map((file) => (
           <div
             key={file.name}
-            className="rounded-lg border border-border overflow-hidden hover:border-accent-dim transition-colors cursor-pointer"
+            onClick={() => alert("Open media coming soon")} className="rounded-lg border border-border overflow-hidden hover:border-accent-dim transition-colors cursor-pointer"
           >
             <div className="h-[140px] bg-bg-elevated flex items-center justify-center rounded-t">
               <ImageIcon className="h-8 w-8 text-text-muted" />

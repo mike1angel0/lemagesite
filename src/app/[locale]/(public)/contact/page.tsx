@@ -4,14 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const socialLinks = [
-  "Substack",
-  "Medium",
-  "Spotify",
-  "GitHub",
-  "Instagram",
-  "Facebook",
-  "TikTok",
-  "YouTube",
+  { label: "Substack", href: "https://mihaigavrilescu.substack.com" },
+  { label: "Medium", href: "https://medium.com/@mihaigavrilescu" },
+  { label: "Spotify", href: "https://open.spotify.com/artist/mihaigavrilescu" },
+  { label: "GitHub", href: "https://github.com/mihaigavrilescu" },
+  { label: "Instagram", href: "https://instagram.com/mihaigavrilescu" },
+  { label: "Facebook", href: "https://facebook.com/mihaigavrilescu" },
+  { label: "TikTok", href: "https://tiktok.com/@mihaigavrilescu" },
+  { label: "YouTube", href: "https://youtube.com/@mihaigavrilescu" },
 ];
 
 export default async function ContactPage() {
@@ -44,11 +44,13 @@ export default async function ContactPage() {
           <div className="flex flex-col gap-3">
             {socialLinks.map((platform) => (
               <a
-                key={platform}
-                href="#"
+                key={platform.label}
+                href={platform.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-sans text-[13px] text-text-secondary hover:text-text-primary transition-colors"
               >
-                {platform} &rarr;
+                {platform.label} &rarr;
               </a>
             ))}
           </div>

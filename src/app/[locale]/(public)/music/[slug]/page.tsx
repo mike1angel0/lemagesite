@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 const tracks = [
@@ -13,9 +15,9 @@ const tracks = [
   { number: "08", title: "Nocturne (Closing)", duration: "4:19", active: false },
 ];
 
-export default async function AlbumDetailPage() {
-  const t = await getTranslations("music");
-  const tc = await getTranslations("common");
+export default function AlbumDetailPage() {
+  const t = useTranslations("music");
+  const tc = useTranslations("common");
 
   return (
     <section>
@@ -45,10 +47,18 @@ export default async function AlbumDetailPage() {
           </p>
 
           <div className="flex items-center gap-3">
-            <Button variant="gold" size="md">
+            <Button
+              variant="gold"
+              size="md"
+              onClick={() => alert("Audio playback coming soon")}
+            >
               Play Album
             </Button>
-            <Button variant="ghost" size="md">
+            <Button
+              variant="ghost"
+              size="md"
+              onClick={() => alert("Share link copied to clipboard")}
+            >
               Share
             </Button>
           </div>

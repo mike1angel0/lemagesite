@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -28,9 +30,9 @@ const relatedPapers = [
   },
 ];
 
-export default async function ResearchDetailPage() {
-  const t = await getTranslations("research");
-  const tc = await getTranslations("common");
+export default function ResearchDetailPage() {
+  const t = useTranslations("research");
+  const tc = useTranslations("common");
 
   return (
     <section>
@@ -73,10 +75,18 @@ export default async function ResearchDetailPage() {
 
         {/* Buttons */}
         <div className="flex items-center gap-3 pt-2">
-          <Button variant="gold" size="md">
+          <Button
+            variant="gold"
+            size="md"
+            onClick={() => alert("Download coming soon")}
+          >
             {tc("downloadPdf")}
           </Button>
-          <Button variant="ghost" size="md">
+          <Button
+            variant="ghost"
+            size="md"
+            onClick={() => alert("Citation copied")}
+          >
             {tc("cite")}
           </Button>
         </div>

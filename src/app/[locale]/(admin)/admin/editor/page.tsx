@@ -258,7 +258,7 @@ export default function AdminEditorNewPage() {
             <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
               Featured Image
             </label>
-            <div className="w-full h-[100px] border border-dashed border-border rounded flex items-center justify-center cursor-pointer hover:border-accent-dim transition-colors">
+            <div onClick={() => alert("Upload coming soon")} className="w-full h-[100px] border border-dashed border-border rounded flex items-center justify-center cursor-pointer hover:border-accent-dim transition-colors">
               <span className="font-sans text-xs text-text-muted">
                 Click to upload image
               </span>
@@ -270,7 +270,7 @@ export default function AdminEditorNewPage() {
             <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
               Audio / Media
             </label>
-            <div className="w-full h-[70px] border border-dashed border-border rounded flex items-center justify-center cursor-pointer hover:border-accent-dim transition-colors">
+            <div onClick={() => alert("Upload coming soon")} className="w-full h-[70px] border border-dashed border-border rounded flex items-center justify-center cursor-pointer hover:border-accent-dim transition-colors">
               <span className="font-sans text-xs text-text-muted">
                 Click to upload media
               </span>

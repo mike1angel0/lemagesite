@@ -26,11 +26,21 @@ export default async function PhotoDetailPage({
           {t("backToGallery")}
         </Link>
         <div className="flex items-center gap-3">
-          <span className="font-sans text-xs text-text-muted">← Previous</span>
+          <Link
+            href="/photography"
+            className="font-sans text-xs text-text-muted hover:text-accent transition-colors"
+          >
+            ← Previous
+          </Link>
           <span className="font-mono text-[11px] text-text-secondary tracking-[1px]">
             3 / 24
           </span>
-          <span className="font-sans text-xs text-accent">Next →</span>
+          <Link
+            href="/photography"
+            className="font-sans text-xs text-accent hover:text-accent-dim transition-colors"
+          >
+            Next →
+          </Link>
         </div>
       </div>
 

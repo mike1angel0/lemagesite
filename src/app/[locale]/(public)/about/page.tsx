@@ -167,16 +167,12 @@ export default async function AboutPage() {
         </p>
 
         <div className="flex gap-4">
-          <Link href="/membership">
-            <Button variant="filled" size="lg">
-              Become a Patron
-            </Button>
-          </Link>
-          <Link href="/membership/payment">
-            <Button variant="ghost" size="lg">
-              One-time Donation
-            </Button>
-          </Link>
+          <Button variant="filled" size="lg" asChild>
+            <Link href="/membership">Become a Patron</Link>
+          </Button>
+          <Button variant="ghost" size="lg" asChild>
+            <Link href="/membership/payment">One-time Donation</Link>
+          </Button>
         </div>
       </section>
     </>

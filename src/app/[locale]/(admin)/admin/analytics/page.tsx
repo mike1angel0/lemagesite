@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ChevronDown,
   Download,
@@ -101,11 +103,11 @@ export default function AdminAnalyticsPage() {
           Analytics
         </h1>
         <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 font-sans text-[12px] text-text-secondary hover:bg-bg-elevated transition-colors">
+          <button onClick={() => alert("Date range selector coming soon")} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 font-sans text-[12px] text-text-secondary hover:bg-bg-elevated transition-colors">
             Last 30 days
             <ChevronDown className="h-3.5 w-3.5" />
           </button>
-          <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 font-sans text-[12px] text-text-secondary hover:bg-bg-elevated transition-colors">
+          <button onClick={() => alert("Export coming soon")} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 font-sans text-[12px] text-text-secondary hover:bg-bg-elevated transition-colors">
             <Download className="h-3.5 w-3.5" />
             Export
           </button>

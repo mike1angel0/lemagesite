@@ -1,8 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
 const inclusions = [
   "All gated poetry, essays & research",
@@ -11,15 +14,16 @@ const inclusions = [
   "10% discount at The Scriptorium",
 ];
 
-export default async function MembershipPaymentPage() {
-  const t = await getTranslations("membership");
+export default function MembershipPaymentPage() {
+  const t = useTranslations("membership");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   return (
     <section className="px-5 md:px-10 xl:px-20 py-16">
       <div className="flex flex-col md:flex-row gap-16">
         {/* -- Left: Plan Details -- */}
         <div className="flex-1 flex flex-col gap-6">
-          <SectionLabel label={t("label").toUpperCase()} />
+          <SectionLabel label={t("sectionLabel")} />
 
           <h1 className="font-serif text-3xl md:text-[38px] font-light text-warm-ivory leading-tight">
             {t("patronTier")}
@@ -54,7 +58,7 @@ export default async function MembershipPaymentPage() {
               {t("patronMonthly")}
             </span>
             <span className="font-mono text-base text-starlight">
-              &euro;9 / {t("month")}
+              &euro;{billingCycle === "monthly" ? "9" : "7"} / {t("month")}
             </span>
           </div>
 
@@ -62,20 +66,36 @@ export default async function MembershipPaymentPage() {
           <div className="flex gap-3 mt-6">
             <button
               type="button"
-              className="flex-1 h-9 bg-accent text-text-on-accent font-sans text-xs font-medium rounded flex items-center justify-center"
+              onClick={() => setBillingCycle("monthly")}
+              className={`flex-1 h-9 font-sans text-xs font-medium rounded flex items-center justify-center transition-colors ${
+                billingCycle === "monthly"
+                  ? "bg-accent text-text-on-accent"
+                  : "border border-border text-text-secondary hover:border-accent-dim"
+              }`}
             >
               {t("monthly")}
             </button>
             <button
               type="button"
-              className="flex-1 h-9 border border-border text-text-secondary font-sans text-xs rounded flex items-center justify-center hover:border-accent-dim transition-colors"
+              onClick={() => setBillingCycle("yearly")}
+              className={`flex-1 h-9 font-sans text-xs rounded flex items-center justify-center transition-colors ${
+                billingCycle === "yearly"
+                  ? "bg-accent text-text-on-accent font-medium"
+                  : "border border-border text-text-secondary hover:border-accent-dim"
+              }`}
             >
               {t("yearlySave")}
             </button>
           </div>
 
           {/* Form fields */}
-          <form className="flex flex-col gap-5 mt-6">
+          <form
+            className="flex flex-col gap-5 mt-6"
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert("Payment processing coming soon");
+            }}
+          >
             <div className="flex flex-col gap-1.5">
               <label className="font-sans text-xs text-text-secondary">
                 {t("emailField")}

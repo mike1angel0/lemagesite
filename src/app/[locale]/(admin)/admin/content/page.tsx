@@ -91,7 +91,7 @@ export default function AdminContentPage() {
           {tabs.map((tab) => (
             <span
               key={tab}
-              className={`font-sans text-sm cursor-pointer py-3 transition-colors ${
+              onClick={() => alert(`${tab} filter coming soon`)} className={`font-sans text-sm cursor-pointer py-3 transition-colors ${
                 tab === activeTab
                   ? "border-b-2 border-accent text-text-primary font-medium"
                   : "text-text-muted hover:text-text-secondary"

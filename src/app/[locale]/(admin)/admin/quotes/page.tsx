@@ -177,7 +177,7 @@ export default function AdminQuotesPage() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-bg-elevated rounded h-20 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => alert("Open photo coming soon")} className="bg-bg-elevated rounded h-20 cursor-pointer hover:opacity-80 transition-opacity"
                 />
               ))}
             </div>

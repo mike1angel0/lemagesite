@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -42,9 +44,9 @@ const relatedBooks = [
   },
 ];
 
-export default async function BookDetailPage() {
-  const t = await getTranslations("books");
-  const tc = await getTranslations("common");
+export default function BookDetailPage() {
+  const t = useTranslations("books");
+  const tc = useTranslations("common");
 
   return (
     <section className="px-5 md:px-10 xl:px-20 py-12">
@@ -97,11 +99,11 @@ export default async function BookDetailPage() {
 
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
-            <Button variant="filled" size="lg">
-              {tc("buyPrint")}
+            <Button variant="filled" size="lg" asChild>
+              <Link href="/shop/nocturnal-echoes">{tc("buyPrint")}</Link>
             </Button>
-            <Button variant="ghost" size="lg">
-              {tc("readExcerpt")}
+            <Button variant="ghost" size="lg" asChild>
+              <Link href="#excerpt">{tc("readExcerpt")}</Link>
             </Button>
           </div>
         </div>
@@ -129,7 +131,7 @@ export default async function BookDetailPage() {
           </div>
 
           {/* Excerpt */}
-          <div className="border-t border-border pt-8">
+          <div id="excerpt" className="border-t border-border pt-8">
             <h3 className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim mb-5">
               EXCERPT
             </h3>
@@ -149,6 +151,27 @@ export default async function BookDetailPage() {
                 the ache of a word half-translated,<br />
                 the hum of a machine learning to forget.
               </p>
+            </div>
+
+            {/* Excerpt action buttons */}
+            <div className="flex gap-3 mt-6">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="#">Download PDF</Link>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => alert("Citation copied")}
+              >
+                Cite
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => alert("Share coming soon")}
+              >
+                Share
+              </Button>
             </div>
           </div>
         </div>

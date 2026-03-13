@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -119,6 +121,7 @@ export default function AdminPartnershipsPage() {
               {partnerTabs.map((tab) => (
                 <span
                   key={tab}
+                  onClick={() => alert(`${tab} filter coming soon`)}
                   className={cn(
                     "font-sans text-xs cursor-pointer pb-4 transition-colors",
                     tab === activeTab
@@ -200,6 +203,7 @@ export default function AdminPartnershipsPage() {
                     {rule.label}
                   </span>
                   <div
+                    onClick={() => alert("Toggle placement rule coming soon")}
                     className={cn(
                       "w-9 h-5 rounded-full relative cursor-pointer transition-colors",
                       rule.enabled ? "bg-[#6BBF7B]" : "bg-bg-elevated",

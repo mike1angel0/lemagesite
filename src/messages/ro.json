@@ -243,7 +243,18 @@
     "donationDescription": "Poți susține în continuare această creație cu o donație unică. Fiecare contribuție ajută Observatorul să rămână deschis.",
     "customAmount": "Sumă personalizată",
     "quoteText": "Singura cale de a face lucruri mărețe este să iubești ceea ce faci.",
-    "quoteAuthor": "Steve Jobs"
+    "quoteAuthor": "Steve Jobs",
+    "patronTier": "Nivel Patron",
+    "patronDescription": "Acces complet la toată poezia, eseurile, lucrările de cercetare, muzica și fotografia. Plus acces anticipat la lansări noi și 10% reducere la Scriptorium.",
+    "whatsIncluded": "CE ESTE INCLUS",
+    "patronMonthly": "Patron — Lunar",
+    "month": "lună",
+    "monthly": "Lunar",
+    "yearlySave": "Anual (economisești 20%)",
+    "emailField": "Email",
+    "cardField": "Numărul cardului",
+    "subscribeButton": "ABONEAZĂ-TE ACUM",
+    "securedNote": "Securizat de Stripe · Anulează oricând"
   },
   "about": {
     "title": "Despre",
