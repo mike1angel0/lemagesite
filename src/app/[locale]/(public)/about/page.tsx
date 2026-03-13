@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -166,12 +167,16 @@ export default async function AboutPage() {
         </p>
 
         <div className="flex gap-4">
-          <Button variant="filled" size="lg">
-            Become a Patron
-          </Button>
-          <Button variant="ghost" size="lg">
-            One-time Donation
-          </Button>
+          <Link href="/membership">
+            <Button variant="filled" size="lg">
+              Become a Patron
+            </Button>
+          </Link>
+          <Link href="/membership/payment">
+            <Button variant="ghost" size="lg">
+              One-time Donation
+            </Button>
+          </Link>
         </div>
       </section>
     </>
