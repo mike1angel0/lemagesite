@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { Link as IntlLink } from "@/i18n/navigation";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,8 +26,11 @@ interface NavMobileProps {
 
 export function NavMobile({ isOpen, onClose, locale }: NavMobileProps) {
   const t = useTranslations("nav");
+  const pathname = usePathname();
 
   const localePath = locale === "ro" ? "" : `/${locale}`;
+  const pathnameWithoutLocale = pathname.replace(/^\/(en|ro)/, "") || "/";
+  const targetLocale = locale === "ro" ? "en" : "ro";
 
   return (
     <div
@@ -68,13 +73,14 @@ export function NavMobile({ isOpen, onClose, locale }: NavMobileProps) {
 
           {/* Language toggle */}
           <div className="mt-8 mb-4">
-            <Link
-              href={locale === "ro" ? `/en` : `/`}
+            <IntlLink
+              href={pathnameWithoutLocale}
+              locale={targetLocale}
               onClick={onClose}
               className="font-mono text-xs text-text-muted hover:text-text-secondary transition-colors tracking-wider"
             >
               {t("langToggle")}
-            </Link>
+            </IntlLink>
           </div>
 
           {/* CTA */}

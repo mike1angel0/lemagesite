@@ -55,8 +55,8 @@ test.describe("Locale switcher", () => {
     const nav = page.locator("header nav");
     await expect(nav.getByRole("link", { name: "Poezie" })).toBeVisible();
 
-    // Click the language toggle link
-    const langToggle = nav.getByRole("link", { name: "EN / RO" });
+    // Click the language toggle link (shows "EN" when in Romanian locale)
+    const langToggle = nav.getByRole("link", { name: "EN", exact: true });
     await langToggle.click();
 
     // Should now be on English version
@@ -75,8 +75,8 @@ test.describe("Locale switcher", () => {
     const nav = page.locator("header nav");
     await expect(nav.getByRole("link", { name: "Poetry" })).toBeVisible();
 
-    // Click language toggle
-    const langToggle = nav.getByRole("link", { name: "EN / RO" });
+    // Click language toggle (shows "RO" when in English locale)
+    const langToggle = nav.getByRole("link", { name: "RO" });
     await langToggle.click();
 
     // Should navigate to Romanian version (no locale prefix)

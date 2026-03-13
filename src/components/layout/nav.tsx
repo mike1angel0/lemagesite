@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
+import { Link as IntlLink } from "@/i18n/navigation";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Menu } from "lucide-react";
@@ -28,10 +29,8 @@ export function Nav() {
 
   const localePath = locale === "ro" ? "" : `/${locale}`;
 
-  // Build the language toggle href: strip locale prefix, then prepend the other locale
   const pathnameWithoutLocale = pathname.replace(/^\/(en|ro)/, "") || "/";
-  const langToggleHref =
-    locale === "ro" ? `/en${pathnameWithoutLocale}` : pathnameWithoutLocale;
+  const targetLocale = locale === "ro" ? "en" : "ro";
 
   return (
     <>
@@ -69,12 +68,13 @@ export function Nav() {
 
           {/* Right: Language toggle + CTA (desktop) */}
           <div className="hidden md:flex items-center gap-5">
-            <Link
-              href={langToggleHref}
+            <IntlLink
+              href={pathnameWithoutLocale}
+              locale={targetLocale}
               className="font-mono text-[10px] text-text-muted hover:text-text-secondary transition-colors tracking-wider"
             >
-              {locale === "ro" ? "EN / RO" : "EN / RO"}
-            </Link>
+              {t("langToggle")}
+            </IntlLink>
             <Link
               href={`${localePath}/membership`}
               className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
