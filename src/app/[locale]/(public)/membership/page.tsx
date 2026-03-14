@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { SectionLabel } from "@/components/ui/section-label";
 import { QuoteInterlude } from "@/components/content/quote-interlude";
 
@@ -11,6 +12,7 @@ type TierDef = {
   descKey: string;
   featureKeys: string[];
   ctaKey: string;
+  ctaHref: string;
   ctaStyle: "ghost" | "filled" | "accent-ghost";
   highlighted: boolean;
   badgeKey: string | null;
@@ -32,6 +34,7 @@ const tierDefs: TierDef[] = [
       "\u2713  Newsletter",
     ],
     ctaKey: "BROWSE FREE",
+    ctaHref: "/poetry",
     ctaStyle: "ghost",
     highlighted: false,
     badgeKey: null,
@@ -51,6 +54,7 @@ const tierDefs: TierDef[] = [
       "\u2713  Selected photography series",
     ],
     ctaKey: "BECOME SUPPORTER",
+    ctaHref: "/membership/payment?tier=supporter",
     ctaStyle: "filled",
     highlighted: false,
     badgeKey: null,
@@ -71,6 +75,7 @@ const tierDefs: TierDef[] = [
       "\u2713  Early access to new work",
     ],
     ctaKey: "BECOME PATRON",
+    ctaHref: "/membership/payment?tier=patron",
     ctaStyle: "filled",
     highlighted: true,
     badgeKey: "RECOMMENDED",
@@ -91,6 +96,7 @@ const tierDefs: TierDef[] = [
       "\u2713  Early book access",
     ],
     ctaKey: "JOIN INNER CIRCLE",
+    ctaHref: "/membership/payment?tier=inner-circle",
     ctaStyle: "accent-ghost",
     highlighted: false,
     badgeKey: null,
@@ -176,8 +182,9 @@ export default async function MembershipPage() {
               </ul>
 
               {/* CTA */}
-              <div
-                className={`w-full flex justify-center py-3 font-sans text-[11px] font-medium tracking-[2px] uppercase ${
+              <Link
+                href={tier.ctaHref}
+                className={`w-full flex justify-center py-3 font-sans text-[11px] font-medium tracking-[2px] uppercase transition-opacity hover:opacity-80 ${
                   tier.ctaStyle === "filled"
                     ? "bg-accent text-text-on-accent"
                     : tier.ctaStyle === "accent-ghost"
@@ -186,7 +193,7 @@ export default async function MembershipPage() {
                 }`}
               >
                 {tier.ctaKey}
-              </div>
+              </Link>
             </div>
           ))}
         </div>
@@ -208,11 +215,14 @@ export default async function MembershipPage() {
           Support the observatory with a single contribution.
           {"\n"}Even the smallest star illuminates something.
         </p>
-        <div className="border border-accent-dim px-7 py-3">
+        <Link
+          href="/membership/payment?tier=donation"
+          className="border border-accent-dim px-7 py-3 transition-opacity hover:opacity-80"
+        >
           <span className="font-sans text-[11px] font-medium tracking-[2px] uppercase text-accent">
             DONATE &rarr;
           </span>
-        </div>
+        </Link>
       </section>
     </>
   );

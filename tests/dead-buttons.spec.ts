@@ -161,8 +161,10 @@ for (const route of routes) {
       }
 
       // Check <div>/<span> elements styled to look like buttons but with no handler
+      // This includes cursor-pointer elements AND elements styled as CTAs
+      // (uppercase tracking, bg-accent, border with button-like padding)
       const styledButtons = document.querySelectorAll(
-        '[class*="cursor-pointer"]:not(button):not(a)',
+        'div:not(button):not(a), span:not(button):not(a)',
       );
       for (const el of styledButtons) {
         if (
@@ -175,6 +177,25 @@ for (const route of routes) {
         // Skip if inside an <a> or <button>
         if (el.closest("a") || el.closest("button")) continue;
 
+        const cls = el.className || "";
+        const hasCursorPointer = cls.includes("cursor-pointer");
+
+        // Detect CTA-styled elements: uppercase text + tracking + button-like padding/bg
+        // Exclude small tag/badge labels (text-[9px], text-[10px], py-1) — those are informational
+        const isSmallLabel =
+          cls.includes("text-[9px]") ||
+          cls.includes("text-[10px]") ||
+          (cls.includes("py-1") && !cls.includes("py-1.") && !cls.includes("py-10"));
+        const isCtaStyled =
+          !isSmallLabel &&
+          cls.includes("uppercase") &&
+          cls.includes("tracking-") &&
+          (cls.includes("bg-accent") ||
+            cls.includes("border-accent")) &&
+          (cls.includes("py-") || cls.includes("px-"));
+
+        if (!hasCursorPointer && !isCtaStyled) continue;
+
         // Check for React click handlers
         const reactPropsKey = Object.keys(el).find((key) =>
           key.startsWith("__reactProps"),
@@ -184,9 +205,13 @@ for (const route of routes) {
           if (props && props.onClick) continue;
         }
 
+        // Skip elements with no visible text (decorative)
+        const text = el.textContent?.trim().substring(0, 60) || "";
+        if (!text) continue;
+
         const tag = el.tagName.toLowerCase();
-        const text = el.textContent?.trim().substring(0, 60) || "(empty)";
-        results.push("<" + tag + "> cursor-pointer \"" + text + "\"");
+        const reason = hasCursorPointer ? "cursor-pointer" : "CTA-styled";
+        results.push("<" + tag + "> " + reason + " \"" + text + "\"");
       }
 
       return results;
