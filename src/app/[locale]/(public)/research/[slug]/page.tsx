@@ -133,6 +133,98 @@ export default function ResearchDetailPage() {
               metaphors but as structural principles for their poetic practice.
             </p>
           </div>
+
+          {/* Section 2 */}
+          <div>
+            <h2
+              id="related-work"
+              className="font-serif text-2xl md:text-[28px] text-text-primary mb-4"
+            >
+              2. Related Work
+            </h2>
+            <p className="font-sans text-base text-text-primary leading-[1.8]">
+              Previous scholarship has touched upon astronomical imagery in
+              Romanian poetry only tangentially. Călinescu&apos;s seminal history
+              mentions Blaga&apos;s &ldquo;cosmic metaphors&rdquo; but does not
+              explore their astronomical specificity. More recently, Pop (2018)
+              examined celestial imagery in Barbu&apos;s mathematical poetry,
+              though without connecting it to contemporaneous astronomical
+              discoveries.
+            </p>
+          </div>
+
+          {/* Section 3 */}
+          <div>
+            <h2
+              id="methodology"
+              className="font-serif text-2xl md:text-[28px] text-text-primary mb-4"
+            >
+              3. Methodology
+            </h2>
+            <p className="font-sans text-base text-text-primary leading-[1.8]">
+              Our methodology combines close reading with archival research into
+              the poets&apos; personal libraries and correspondence. We
+              catalogued all astronomical references across the complete works of
+              Blaga, Barbu, and Arghezi, then cross-referenced these with
+              astronomical publications available in Romania during the interwar
+              period.
+            </p>
+          </div>
+
+          {/* Section 4 */}
+          <div>
+            <h2
+              id="results"
+              className="font-serif text-2xl md:text-[28px] text-text-primary mb-4"
+            >
+              4. Results
+            </h2>
+            <p className="font-sans text-base text-text-primary leading-[1.8]">
+              We identified 247 distinct astronomical references across the
+              three poets&apos; works. Blaga&apos;s usage was predominantly
+              cosmological, employing images of nebulae and stellar formation to
+              explore consciousness. Barbu&apos;s references were more
+              geometric, drawing on orbital mechanics and celestial coordinates.
+              Arghezi&apos;s astronomical imagery, by contrast, was deeply
+              personal and often nocturnal.
+            </p>
+          </div>
+
+          {/* Section 5 */}
+          <div>
+            <h2
+              id="discussion"
+              className="font-serif text-2xl md:text-[28px] text-text-primary mb-4"
+            >
+              5. Discussion
+            </h2>
+            <p className="font-sans text-base text-text-primary leading-[1.8]">
+              These findings suggest that Romanian modernist poets were not
+              merely decorating their verse with celestial imagery, but actively
+              engaging with astronomical concepts as frameworks for poetic
+              innovation. The observatory — both literal and metaphorical —
+              served as a site where scientific observation and poetic vision
+              converged.
+            </p>
+          </div>
+
+          {/* Section 6 */}
+          <div>
+            <h2
+              id="conclusion"
+              className="font-serif text-2xl md:text-[28px] text-text-primary mb-4"
+            >
+              6. Conclusion
+            </h2>
+            <p className="font-sans text-base text-text-primary leading-[1.8]">
+              The astronomy of metaphor in Romanian modernist verse reveals a
+              sophisticated dialogue between scientific and poetic epistemologies.
+              By reading these poets through the lens of their astronomical
+              sources, we gain new insight into how they understood the
+              relationship between observation, language, and the limits of human
+              knowledge.
+            </p>
+          </div>
         </div>
 
         {/* Sidebar */}

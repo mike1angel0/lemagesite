@@ -94,7 +94,10 @@
     "cancel": "Anulează",
     "saveChanges": "Salvează modificările",
     "manageSubscription": "Gestionează abonamentul",
-    "logIn": "Autentifică-te"
+    "logIn": "Autentifică-te",
+    "download": "Descarcă",
+    "series": "Serie",
+    "print": "Tipar"
   },
   "home": {
     "heroLabel": "BINE AI VENIT, CĂLĂTORULE",
@@ -178,7 +181,8 @@
     "availableAt": "DISPONIBIL LA",
     "signedEditions": "Ediții semnate",
     "publisherDirect": "Direct de la editură",
-    "freeShipping": "Livrare gratuită"
+    "freeShipping": "Livrare gratuită",
+    "heroDescription": "Colecții de poezie, eseuri și ediții limitate din Observator."
   },
   "research": {
     "title": "Cercetare",
@@ -245,8 +249,12 @@
     "customAmount": "Sumă personalizată",
     "quoteText": "Singura cale de a face lucruri mărețe este să iubești ceea ce faci.",
     "quoteAuthor": "Steve Jobs",
+    "supporterTier": "Nivel Susținător",
+    "supporterDescription": "Acces la toate poemele, eseurile și seriile de fotografie selectate. Alătură-te comunității de susținători ai Observatorului.",
     "patronTier": "Nivel Patron",
     "patronDescription": "Acces complet la toată poezia, eseurile, lucrările de cercetare, muzica și fotografia. Plus acces anticipat la lansări noi și 10% reducere la Scriptorium.",
+    "innerCircleTier": "Cercul Interior",
+    "innerCircleDescription": "Cea mai intimă experiență. Tot ce include Patron, plus ciorne în lucru, sesiuni private trimestriale și acces anticipat la cărți cu numele tău în credite.",
     "whatsIncluded": "CE ESTE INCLUS",
     "patronMonthly": "Patron — Lunar",
     "month": "lună",
@@ -411,6 +419,10 @@
     "passwordLabel": "Parolă",
     "nameLabel": "Nume",
     "confirmPasswordLabel": "Confirmă parola",
+    "loginSubtitle": "Introdu datele tale pentru a accesa Observatorul",
+    "loginTermsNotice": "Prin autentificare, ești de acord cu Termenii și Politica de Confidențialitate",
+    "signupSubtitle": "Creează-ți contul la Observator",
+    "signupTermsNotice": "Prin crearea contului, ești de acord cu Termenii și Politica de Confidențialitate",
     "verifyTitle": "Verifică-ți emailul",
     "verifyDescription": "Am trimis un link de verificare la adresa ta de email. Te rugăm să verifici inbox-ul și să dai click pe link pentru a-ți confirma contul.",
     "verifyExpiry": "Link-ul expiră în 24 de ore.",

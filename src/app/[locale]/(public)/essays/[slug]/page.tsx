@@ -5,11 +5,10 @@ import { EssayCard } from "@/components/content/essay-card";
 import { ShareButtons } from "@/components/ui/share-buttons";
 
 const tocItems = [
-  { label: "The Architecture of Want", id: "the-architecture-of-want" },
-  { label: "Desire as Absence", id: "desire-as-absence" },
-  { label: "Machine Yearning", id: "machine-yearning" },
-  { label: "The Body Remembers", id: "the-body-remembers" },
-  { label: "Conclusion: What Cannot Be Computed", id: "conclusion" },
+  { label: "Introduction", id: "introduction" },
+  { label: "The Shape of Absence", id: "the-shape-of-absence" },
+  { label: "Neural Grief", id: "neural-grief" },
+  { label: "Conclusion", id: "conclusion" },
 ];
 
 const relatedEssays = [

@@ -94,7 +94,10 @@
     "cancel": "Cancel",
     "saveChanges": "Save Changes",
     "manageSubscription": "Manage Subscription",
-    "logIn": "Log In"
+    "logIn": "Log In",
+    "download": "Download",
+    "series": "Series",
+    "print": "Print"
   },
   "home": {
     "heroLabel": "WELCOME, WANDERER",
@@ -178,7 +181,8 @@
     "availableAt": "AVAILABLE AT",
     "signedEditions": "Signed Editions",
     "publisherDirect": "Publisher Direct",
-    "freeShipping": "Free Shipping"
+    "freeShipping": "Free Shipping",
+    "heroDescription": "Poetry collections, essays, and limited-edition prints from the Observatory."
   },
   "research": {
     "title": "Research",
@@ -246,8 +250,12 @@
     "customAmount": "Custom Amount",
     "quoteText": "The only way to do great work is to love what you do.",
     "quoteAuthor": "Steve Jobs",
+    "supporterTier": "Supporter Tier",
+    "supporterDescription": "Access full poems, essays, and selected photography series. Join the community of Observatory supporters.",
     "patronTier": "Patron Tier",
     "patronDescription": "Full access to all poetry, essays, research papers, music, and photography. Plus early access to new releases and a 10% discount at The Scriptorium.",
+    "innerCircleTier": "Inner Circle",
+    "innerCircleDescription": "The most intimate experience. Everything in Patron, plus work-in-progress drafts, quarterly private sessions, and early book access with your name in the credits.",
     "whatsIncluded": "WHAT'S INCLUDED",
     "patronMonthly": "Patron — Monthly",
     "month": "month",
@@ -412,6 +420,10 @@
     "passwordLabel": "Password",
     "nameLabel": "Name",
     "confirmPasswordLabel": "Confirm Password",
+    "loginSubtitle": "Enter your credentials to access the Observatory",
+    "loginTermsNotice": "By signing in, you agree to our Terms and Privacy Policy",
+    "signupSubtitle": "Create your Observatory account",
+    "signupTermsNotice": "By creating an account, you agree to our Terms and Privacy Policy",
     "verifyTitle": "Verify your email",
     "verifyDescription": "We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.",
     "verifyExpiry": "The link will expire in 24 hours.",

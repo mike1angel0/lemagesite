@@ -29,6 +29,15 @@ export default function AdminEditorNewPage() {
   const [doi, setDoi] = useState("");
   const [year, setYear] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [seriesName, setSeriesName] = useState("");
+  const [camera, setCamera] = useState("");
+  const [location, setLocation] = useState("");
+  const [readTime, setReadTime] = useState("");
+  const [essayCategory, setEssayCategory] = useState("");
+  const [album, setAlbum] = useState("");
+  const [duration, setDuration] = useState("");
+  const [audioUrl, setAudioUrl] = useState("");
   const [status, setStatus] = useState<Status>("draft");
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
 
@@ -72,7 +81,7 @@ export default function AdminEditorNewPage() {
             <ArrowLeft size={18} />
           </Link>
           <h1 className="font-sans text-[18px] font-semibold text-text-primary">
-            New Poem
+            New {category}
           </h1>
           <span className="bg-[#2A1A0D] text-gold rounded px-2 py-0.5 font-mono text-[10px] tracking-[1px] inline-flex items-center gap-1">
             {status === "saving" ? (
@@ -249,6 +258,138 @@ export default function AdminEditorNewPage() {
                   onChange={(e) => setPdfUrl(e.target.value)}
                   className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
                 />
+              </div>
+            </>
+          )}
+
+          {/* Photography-specific fields */}
+          {category === "Photography" && (
+            <>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                  Photo URL
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://res.cloudinary.com/..."
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                />
+              </div>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                  Series
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Fog Studies"
+                  value={seriesName}
+                  onChange={(e) => setSeriesName(e.target.value)}
+                  className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Camera
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Sony A7III"
+                    value={camera}
+                    onChange={(e) => setCamera(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Bucharest"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Essay-specific fields */}
+          {category === "Essay" && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Read Time
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 12 min"
+                    value={readTime}
+                    onChange={(e) => setReadTime(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. AI & Philosophy"
+                    value={essayCategory}
+                    onChange={(e) => setEssayCategory(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Music-specific fields */}
+          {category === "Music" && (
+            <>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                  Album
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Nocturnal Echoes"
+                  value={album}
+                  onChange={(e) => setAlbum(e.target.value)}
+                  className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Duration
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 4:32"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">
+                    Audio URL
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={audioUrl}
+                    onChange={(e) => setAudioUrl(e.target.value)}
+                    className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+                  />
+                </div>
               </div>
             </>
           )}

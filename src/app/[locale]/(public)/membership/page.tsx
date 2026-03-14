@@ -45,7 +45,7 @@ const tierDefs: TierDef[] = [
     labelKey: "SUPPORTER",
     labelColor: "text-accent-dim",
     nameKey: "supporter",
-    price: "\u20AC5",
+    price: "\u20AC4",
     period: "/month",
     descKey: "The deeper view.",
     featureKeys: [
@@ -65,7 +65,7 @@ const tierDefs: TierDef[] = [
     labelKey: "PATRON",
     labelColor: "text-accent",
     nameKey: "patron",
-    price: "\u20AC15",
+    price: "\u20AC10",
     period: "/month",
     descKey: "Full observatory access.",
     featureKeys: [
@@ -86,7 +86,7 @@ const tierDefs: TierDef[] = [
     labelKey: "INNER CIRCLE",
     labelColor: "text-accent-dim",
     nameKey: "innerCircle",
-    price: "\u20AC50",
+    price: "\u20AC200",
     period: "/month",
     descKey: "The private quarters.",
     featureKeys: [
