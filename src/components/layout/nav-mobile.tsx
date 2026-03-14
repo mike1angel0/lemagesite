@@ -89,7 +89,7 @@ export function NavMobile({ isOpen, onClose, locale }: NavMobileProps) {
             onClick={onClose}
             className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
           >
-            {t("enterObservatory")}
+            {t("enterSelenarium")}
           </Link>
         </nav>
       </div>

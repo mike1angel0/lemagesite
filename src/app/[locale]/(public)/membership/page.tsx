@@ -27,7 +27,7 @@ const tierDefs: TierDef[] = [
     nameKey: "free",
     price: "Free",
     period: "",
-    descKey: "The public observatory.",
+    descKey: "The public selenarium.",
     featureKeys: [
       "\u2713  Selected poems",
       "\u2713  Research abstracts",
@@ -67,7 +67,7 @@ const tierDefs: TierDef[] = [
     nameKey: "patron",
     price: "\u20AC10",
     period: "/month",
-    descKey: "Full observatory access.",
+    descKey: "Full selenarium access.",
     featureKeys: [
       "\u2713  Everything in Supporter",
       "\u2713  Full research papers",
@@ -120,7 +120,7 @@ export default async function MembershipPage() {
 
         <p className="font-sans text-sm text-text-secondary text-center leading-[1.6] max-w-[560px] whitespace-pre-line">
           From published work to private drafts. From abstracts to full research.
-          {"\n"}Every tier unlocks a deeper layer of the observatory.
+          {"\n"}Every tier unlocks a deeper layer of the Selenarium.
           {"\n\n"}&ldquo;One sees clearly only with the heart.&rdquo;
         </p>
       </section>
@@ -212,7 +212,7 @@ export default async function MembershipPage() {
           Or make a one-time donation
         </h2>
         <p className="font-sans text-[13px] text-text-secondary text-center leading-[1.6] max-w-[400px]">
-          Support the observatory with a single contribution.
+          Support the Selenarium with a single contribution.
           {"\n"}Even the smallest star illuminates something.
         </p>
         <Link

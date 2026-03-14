@@ -16,7 +16,7 @@ const mockResults = [
     icon: "music",
     title: "Nocturnal Echoes (Album)",
     description:
-      "A collection of ambient compositions inspired by the sounds of the observatory at night. 8 tracks, 42 minutes.",
+      "A collection of ambient compositions inspired by the sounds of the Selenarium at night. 8 tracks, 42 minutes.",
     href: "/music/nocturnal-echoes",
   },
   {

@@ -42,7 +42,7 @@ export default function AlbumDetailPage() {
 
           <p className="font-sans text-[15px] text-text-secondary leading-[1.6]">
             A collection of ambient compositions inspired by the sounds of the
-            observatory at night — telescope motors, distant radio signals, and
+            selenarium at night — telescope motors, distant radio signals, and
             the silence between stars.
           </p>
 
@@ -121,7 +121,7 @@ export default function AlbumDetailPage() {
         </span>
         <p className="font-sans text-[13px] text-text-secondary leading-[1.6] text-center max-w-[600px]">
           Composed, performed, and produced by Mihai Gavrilescu. Recorded at the
-          Cosmic Observatory, 2024. Mixed and mastered at Studio Nocturn,
+          Cosmic Selenarium, 2024. Mixed and mastered at Studio Nocturn,
           Bucharest. Track 7 contains a hidden message when played backwards
           (just kidding — or am I?).
         </p>

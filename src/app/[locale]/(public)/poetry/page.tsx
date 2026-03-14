@@ -43,13 +43,13 @@ const poems = [
     slug: "/poetry/attention-is-all-you-need-to-grieve",
   },
   {
-    title: "Observatory Notes, December",
+    title: "Selenarium Notes, December",
     collection: "SILENCE & SPACE",
     language: "EN / RO",
     excerpt:
       "Tonight the telescope points inward. The stars are just reminders...",
     hasAudio: false,
-    slug: "/poetry/observatory-notes-december",
+    slug: "/poetry/selenarium-notes-december",
   },
 ];
 

@@ -41,14 +41,14 @@ const products = [
     status: "Active",
   },
   {
-    name: "Observatory Tea",
+    name: "Selenarium Tea",
     price: "\u20AC32",
     sold: 41,
     revenue: "\u20AC1,312",
     status: "Active",
   },
   {
-    name: "Ceramic Observatory Mug",
+    name: "Ceramic Selenarium Mug",
     price: "\u20AC30",
     sold: 28,
     revenue: "\u20AC840",

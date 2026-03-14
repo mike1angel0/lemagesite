@@ -123,7 +123,7 @@ export default function PoemDetailPage() {
         </div>
         <div className="flex items-center gap-6">
           <Link
-            href="/poetry/observatory-notes-december"
+            href="/poetry/selenarium-notes-december"
             className="font-sans text-xs text-accent-dim hover:text-accent tracking-[0.5px] transition-colors"
           >
             ← Previous Poem
@@ -143,7 +143,7 @@ export default function PoemDetailPage() {
           <span className="text-gold">🔖</span>
           <div>
             <p className="font-mono text-[10px] text-gold tracking-[2px] uppercase">
-              Observatory Partner
+              Selenarium Partner
             </p>
             <p className="font-sans text-xs text-text-secondary">
               Get early access to all poems + exclusive audio readings
@@ -168,9 +168,9 @@ export default function PoemDetailPage() {
               slug: "/poetry/scrisoare-catre-nimeni",
             },
             {
-              title: "Observatory Notes, December",
+              title: "Selenarium Notes, December",
               collection: "Silence & Space",
-              slug: "/poetry/observatory-notes-december",
+              slug: "/poetry/selenarium-notes-december",
             },
           ].map((poem) => (
             <Link key={poem.slug} href={poem.slug}>

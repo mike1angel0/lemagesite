@@ -11,7 +11,7 @@ const tocChapters = [
   "I. The Cartographers of Silence",
   "II. Neural Lullaby",
   "III. Scrisoare catre nimeni",
-  "IV. Observatory Notes, December",
+  "IV. Selenarium Notes, December",
   "V. Attention Is All You Need (To Grieve)",
   "VI. Fog Study No. 3",
   "VII. Night Transmission",

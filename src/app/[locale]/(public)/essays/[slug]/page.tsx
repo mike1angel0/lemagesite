@@ -204,7 +204,7 @@ export default async function EssayDetailPage() {
             <span className="text-gold">&#9998;</span>
             <div className="flex flex-col gap-0.5">
               <p className="font-mono text-[10px] text-gold tracking-[2px] uppercase">
-                Observatory Partner
+                Selenarium Partner
               </p>
               <p className="font-sans text-xs text-text-secondary">
                 Get early access to all essays + exclusive drafts and notes

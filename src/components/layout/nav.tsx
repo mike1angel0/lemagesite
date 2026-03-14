@@ -40,7 +40,7 @@ export function Nav() {
           <Link href={`${localePath}/`} className="shrink-0">
             <Image
               src="/logo.png"
-              alt="The Observatory"
+              alt="Selenarium"
               width={160}
               height={76}
               className="h-[100px] w-auto"
@@ -79,7 +79,7 @@ export function Nav() {
               href={`${localePath}/membership`}
               className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
             >
-              {t("enterObservatory")}
+              {t("enterSelenarium")}
             </Link>
           </div>
 

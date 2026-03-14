@@ -19,7 +19,7 @@ const collaborators = [
   {
     name: "DILEMA VECHE",
     tag: "Magazine",
-    desc: "Monthly poetry column since 2023. Selected poems are first published in Dilema Veche before appearing on the Observatory.",
+    desc: "Monthly poetry column since 2023. Selected poems are first published in Dilema Veche before appearing on the Selenarium.",
     link: "Read the column \u2192",
   },
   {
@@ -63,7 +63,7 @@ export default async function AboutPage() {
               My work explores the intersection of artificial and human intelligence. Through poetry, I map the spaces where language breaks down. Through research, I study how machines approximate meaning. Through photography, I document what remains when both fail.
             </p>
             <p>
-              This observatory is the convergence point — a place where art and science exist not in tension, but in dialogue. A grown-up asteroid B612, if you will.
+              This selenarium is the convergence point — a place where art and science exist not in tension, but in dialogue. A grown-up asteroid B612, if you will.
             </p>
           </div>
 
@@ -152,16 +152,16 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ── Support the Observatory ── */}
+      {/* ── Support the Selenarium ── */}
       <section className="border-t border-border bg-bg-card px-5 md:px-10 xl:px-20 py-[60px] flex flex-col items-center gap-5">
-        <SectionLabel label="SUPPORT THE OBSERVATORY" className="justify-center" />
+        <SectionLabel label="SUPPORT SELENARIUM" className="justify-center" />
 
         <h2 className="font-serif text-[28px] font-light text-text-primary text-center">
           If this work resonates with you
         </h2>
 
         <p className="font-sans text-sm text-text-secondary text-center leading-[1.6] max-w-[520px]">
-          Your support keeps this observatory running — funding independent research,
+          Your support keeps this selenarium running — funding independent research,
           {"\n"}new recordings, photography expeditions, and open-access poetry.
           {"\n\n"}Every lamp needs someone to light it.
         </p>

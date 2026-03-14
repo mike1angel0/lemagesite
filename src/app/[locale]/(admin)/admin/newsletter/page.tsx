@@ -42,7 +42,7 @@ const newsletters = [
     clicks: "—",
   },
   {
-    subject: "Observatory Tea Collection Launch",
+    subject: "Selenarium Tea Collection Launch",
     status: "Draft",
     date: "—",
     openRate: "—",

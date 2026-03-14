@@ -32,7 +32,7 @@ const routes: { name: string; path: string; expectedStatus?: number }[] = [
   { name: "Book Detail", path: "/books/nocturnal-echoes" },
   { name: "Music Detail", path: "/music/nocturnal-echoes" },
   { name: "Research Detail", path: "/research/nocturnal-poetics" },
-  { name: "Event Detail", path: "/events/observatory-night" },
+  { name: "Event Detail", path: "/events/selenarium-night" },
   { name: "Shop Detail", path: "/shop/nocturnal-echoes" },
 
   // Auth

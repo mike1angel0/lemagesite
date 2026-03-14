@@ -77,12 +77,12 @@ async function main() {
       },
     }),
     prisma.poem.upsert({
-      where: { slug: "observatory-notes-december" },
+      where: { slug: "selenarium-notes-december" },
       update: {},
       create: {
-        title: "Observatory Notes, December",
+        title: "Selenarium Notes, December",
         titleRo: "Insemnari din Observator, Decembrie",
-        slug: "observatory-notes-december",
+        slug: "selenarium-notes-december",
         body: "Tonight the telescope finds nothing\nbut the space between stars,\nwhich is to say: everything.\nI write this down in a notebook\nno one will read, and that\nis the purest form of publishing.",
         bodyRo: "In noaptea aceasta telescopul nu gaseste nimic\nin afara spatiului dintre stele.",
         collection: "Cartographies of Breath",
@@ -226,7 +226,7 @@ async function main() {
     { title: "Neural Lullaby", duration: "7:01", order: 4, accessTier: "SUPPORTER" as const },
     { title: "The Space Between Stars", duration: "6:22", order: 5, accessTier: "PATRON" as const },
     { title: "Dor (Interlude)", duration: "3:48", order: 6, accessTier: "FREE" as const },
-    { title: "Observatory Notes, December", duration: "7:29", order: 7, accessTier: "INNER_CIRCLE" as const },
+    { title: "Selenarium Notes, December", duration: "7:29", order: 7, accessTier: "INNER_CIRCLE" as const },
   ];
 
   for (const track of trackData) {
@@ -458,11 +458,11 @@ async function main() {
       },
     }),
     prisma.product.upsert({
-      where: { slug: "observatory-print-01" },
+      where: { slug: "selenarium-print-01" },
       update: {},
       create: {
-        title: "Observatory Print No. 1",
-        slug: "observatory-print-01",
+        title: "Selenarium Print No. 1",
+        slug: "selenarium-print-01",
         description: "Fine art giclée print on Hahnemühle paper. 30x40cm. Edition of 25.",
         price: 45.0,
         category: "PRINTS",

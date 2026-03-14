@@ -33,7 +33,7 @@ export default function AccountPage() {
             Mihai Gavrilescu
           </h1>
           <p className="font-sans text-sm text-text-secondary mt-1">
-            mihai@observatory.ink
+            mihai@selenarium.ink
           </p>
           <div className="mt-2">
             <MemberBadge tier="Patron" />
@@ -72,7 +72,7 @@ export default function AccountPage() {
                 id="profile-email"
                 label="Email"
                 type="email"
-                defaultValue="mihai@observatory.ink"
+                defaultValue="mihai@selenarium.ink"
               />
               <div className="flex flex-col">
                 <label

@@ -6,12 +6,12 @@ import { Check } from "lucide-react";
 type SaveStatus = "idle" | "saving" | "saved";
 
 export default function AdminSettingsPage() {
-  const [siteName, setSiteName] = useState("The Observatory");
+  const [siteName, setSiteName] = useState("Selenarium");
   const [language, setLanguage] = useState("en-ro");
   const [timezone, setTimezone] = useState("Europe/Bucharest");
-  const [instagram, setInstagram] = useState("@observatory");
+  const [instagram, setInstagram] = useState("@selenarium");
   const [medium, setMedium] = useState("@MihaiGavrilescu");
-  const [youtube, setYoutube] = useState("@observatory");
+  const [youtube, setYoutube] = useState("@selenarium");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
 
   async function handleSave() {
@@ -219,7 +219,7 @@ export default function AdminSettingsPage() {
                 <div>
                   <p className="font-sans text-sm text-text-primary">PayPal</p>
                   <p className="font-mono text-[10px] text-text-muted mt-0.5">
-                    payments@observatory.ro
+                    payments@selenarium.ro
                   </p>
                 </div>
                 <span className="font-mono text-[10px] tracking-[1px] px-2.5 py-1 rounded-full bg-[#6BBF7B]/10 text-[#6BBF7B]">

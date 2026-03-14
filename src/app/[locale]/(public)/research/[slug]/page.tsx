@@ -25,8 +25,8 @@ const relatedPapers = [
     slug: "/research/mathematical-structures",
   },
   {
-    title: "The Observatory as Literary Trope",
-    slug: "/research/observatory-literary-trope",
+    title: "Selenarium as Literary Trope",
+    slug: "/research/selenarium-literary-trope",
   },
 ];
 
@@ -202,7 +202,7 @@ export default function ResearchDetailPage() {
               These findings suggest that Romanian modernist poets were not
               merely decorating their verse with celestial imagery, but actively
               engaging with astronomical concepts as frameworks for poetic
-              innovation. The observatory — both literal and metaphorical —
+              innovation. The Selenarium — both literal and metaphorical —
               served as a site where scientific observation and poetic vision
               converged.
             </p>

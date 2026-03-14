@@ -16,7 +16,7 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col justify-center px-8 md:px-16 max-w-lg mx-auto">
         {/* Logo */}
         <span className="font-serif text-lg tracking-widest text-warm-ivory mb-12">
-          THE OBSERVATORY
+          SELENARIUM
         </span>
 
         {/* Title */}
@@ -84,7 +84,7 @@ export default function LoginPage() {
             href="/signup"
             className="font-sans text-xs font-medium text-accent hover:text-accent-glow transition-colors"
           >
-            {t("joinObservatory")}
+            {t("joinSelenarium")}
           </Link>
         </p>
 

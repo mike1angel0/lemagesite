@@ -91,7 +91,7 @@ export default async function BooksPage() {
             </h3>
             <p className="font-sans text-[13px] text-text-secondary leading-relaxed max-w-[420px]">
               Order from these trusted bookstores for signed editions,
-              free shipping, and exclusive observatory bookmarks.
+              free shipping, and exclusive selenarium bookmarks.
             </p>
           </div>
 

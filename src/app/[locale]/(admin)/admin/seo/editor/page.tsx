@@ -31,112 +31,112 @@ type PageSEO = {
 const defaultSEO: Record<string, PageSEO> = {
   home: {
     seoTitle:
-      "The Observatory — Poetry, Photography & Sound | Mihai Gavrilescu",
+      "Selenarium — Poetry, Photography & Sound | Mihai Gavrilescu",
     metaDescription:
-      "A digital observatory for contemporary poetry, photography, music and cinema by Mihai Gavrilescu. Explore curated collections, essays, and multimedia experiences.",
+      "A digital selenarium for contemporary poetry, photography, music and cinema by Mihai Gavrilescu. Explore curated collections, essays, and multimedia experiences.",
     ogTitle:
-      "The Observatory — Poetry, Photography & Sound",
+      "Selenarium — Poetry, Photography & Sound",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art",
+    canonicalUrl: "https://theselenarium.art",
     robots: "index, follow",
     schemaType: "WebSite",
     score: 92,
   },
   poetry: {
-    seoTitle: "Poetry Collection — The Observatory",
+    seoTitle: "Poetry Collection — Selenarium",
     metaDescription:
       "Contemporary poetry exploring silence, memory, and the geometry of longing. Original works by Mihai Gavrilescu.",
-    ogTitle: "Poetry — The Observatory",
+    ogTitle: "Poetry — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/poetry",
+    canonicalUrl: "https://theselenarium.art/poetry",
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 88,
   },
   photography: {
-    seoTitle: "Photography — The Observatory",
+    seoTitle: "Photography — Selenarium",
     metaDescription:
       "Fine art photography series including Fog Studies, Winter Light, and Urban Solitude. Medium format film and digital works.",
-    ogTitle: "Photography — The Observatory",
+    ogTitle: "Photography — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/photography",
+    canonicalUrl: "https://theselenarium.art/photography",
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 85,
   },
   music: {
-    seoTitle: "Music & Sound — The Observatory",
+    seoTitle: "Music & Sound — Selenarium",
     metaDescription:
       "Ambient soundscapes, field recordings, and experimental music compositions.",
-    ogTitle: "Music — The Observatory",
+    ogTitle: "Music — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/music",
+    canonicalUrl: "https://theselenarium.art/music",
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 78,
   },
   books: {
-    seoTitle: "Library — Books & Reading — The Observatory",
+    seoTitle: "Library — Books & Reading — Selenarium",
     metaDescription:
       "Curated reading lists, book reviews, and literary recommendations.",
-    ogTitle: "Library — The Observatory",
+    ogTitle: "Library — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/books",
+    canonicalUrl: "https://theselenarium.art/books",
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 72,
   },
   research: {
-    seoTitle: "Research — The Observatory",
+    seoTitle: "Research — Selenarium",
     metaDescription:
       "Research notes, investigations, and explorations in art, language, and perception.",
-    ogTitle: "Research — The Observatory",
+    ogTitle: "Research — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/research",
+    canonicalUrl: "https://theselenarium.art/research",
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 68,
   },
   essays: {
-    seoTitle: "Essays — Journal — The Observatory",
+    seoTitle: "Essays — Journal — Selenarium",
     metaDescription:
       "Long-form essays on silence, observation, and the creative process.",
-    ogTitle: "Journal — The Observatory",
+    ogTitle: "Journal — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/essays",
+    canonicalUrl: "https://theselenarium.art/essays",
     robots: "index, follow",
     schemaType: "Blog",
     score: 90,
   },
   about: {
-    seoTitle: "About — Mihai Gavrilescu — The Observatory",
+    seoTitle: "About — Mihai Gavrilescu — Selenarium",
     metaDescription:
       "Biography and artistic statement. Poet, photographer, and sound artist based in Romania.",
     ogTitle: "About Mihai Gavrilescu",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/about",
+    canonicalUrl: "https://theselenarium.art/about",
     robots: "index, follow",
     schemaType: "ProfilePage",
     score: 82,
   },
   membership: {
-    seoTitle: "Membership — The Observatory",
+    seoTitle: "Membership — Selenarium",
     metaDescription:
-      "Join The Observatory community. Access exclusive poetry, photography, and behind-the-scenes content.",
-    ogTitle: "Become a Member — The Observatory",
+      "Join Selenarium community. Access exclusive poetry, photography, and behind-the-scenes content.",
+    ogTitle: "Become a Member — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/membership",
+    canonicalUrl: "https://theselenarium.art/membership",
     robots: "index, follow",
     schemaType: "WebPage",
     score: 86,
   },
   contact: {
-    seoTitle: "Contact — The Observatory",
+    seoTitle: "Contact — Selenarium",
     metaDescription:
       "Get in touch for collaborations, press inquiries, or just to say hello.",
-    ogTitle: "Contact — The Observatory",
+    ogTitle: "Contact — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theobservatory.art/contact",
+    canonicalUrl: "https://theselenarium.art/contact",
     robots: "index, follow",
     schemaType: "ContactPage",
     score: 74,
@@ -319,7 +319,7 @@ export default function SEOEditorPage() {
                 {current.seoTitle || "Page Title"}
               </p>
               <p className="font-mono text-[11px] text-[#6BBF7B] truncate">
-                {current.canonicalUrl || "https://theobservatory.art"}
+                {current.canonicalUrl || "https://theselenarium.art"}
               </p>
               <p className="font-sans text-xs text-text-muted line-clamp-2">
                 {current.metaDescription || "Page description will appear here."}
@@ -353,7 +353,7 @@ export default function SEOEditorPage() {
                 type="text"
                 value={current.ogImage}
                 onChange={(e) => updateField("ogImage", e.target.value)}
-                placeholder="https://theobservatory.art/og/home.jpg"
+                placeholder="https://theselenarium.art/og/home.jpg"
                 className="w-full border border-border bg-transparent rounded py-2.5 px-3 font-sans text-sm text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
               />
               {!current.ogImage && (

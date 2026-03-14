@@ -40,7 +40,7 @@ test.describe("Desktop navigation", () => {
 
   test("membership CTA button exists", async ({ page }) => {
     const nav = page.locator("header nav");
-    const cta = nav.getByRole("link", { name: /enter.*observatory/i });
+    const cta = nav.getByRole("link", { name: /enter.*selenarium/i });
     await expect(cta).toBeVisible();
   });
 });
@@ -138,10 +138,10 @@ test.describe("Footer navigation", () => {
 });
 
 test.describe("Cross-page link navigation", () => {
-  test("login page has join observatory link to signup", async ({ page }) => {
+  test("login page has join selenarium link to signup", async ({ page }) => {
     await page.goto(`${BASE}/login`);
     const signupLink = page.getByRole("link", {
-      name: /join.*observatory/i,
+      name: /join.*selenarium/i,
     });
     await expect(signupLink).toBeVisible();
     await signupLink.click();

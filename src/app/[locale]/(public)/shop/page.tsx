@@ -32,14 +32,14 @@ const products = [
   {
     tag: "APPAREL",
     tagColor: "text-gold",
-    title: "Observatory Tee \u2014 Midnight",
+    title: "Selenarium Tee \u2014 Midnight",
     price: "\u20AC32",
-    slug: "/shop/observatory-tee",
+    slug: "/shop/selenarium-tee",
   },
   {
     tag: "OBJECT",
     tagColor: "text-[#34D399]",
-    title: "Ceramic Observatory Mug",
+    title: "Ceramic Selenarium Mug",
     price: "\u20AC18",
     slug: "/shop/ceramic-mug",
   },
@@ -73,7 +73,7 @@ export default function ShopPage() {
         </h1>
 
         <p className="font-sans text-sm text-text-secondary text-center leading-[1.6] max-w-[520px]">
-          Books, prints, and artifacts from the Observatory.
+          Books, prints, and artifacts from the Selenarium.
           {"\n"}Each object handmade or carefully selected to accompany your inner life.
           {"\n\n"}The sort of things a fox might treasure.
         </p>

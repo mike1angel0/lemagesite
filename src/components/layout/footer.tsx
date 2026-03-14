@@ -107,7 +107,7 @@ export function Footer() {
             <Link href={`${localePath}/`}>
               <Image
                 src="/logo.png"
-                alt="The Observatory"
+                alt="Selenarium"
                 width={160}
                 height={76}
                 className="h-[100px] w-auto"

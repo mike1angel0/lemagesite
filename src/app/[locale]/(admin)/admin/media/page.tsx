@@ -14,7 +14,7 @@ const mediaFiles = [
   { name: "portrait-winter-light.jpg", size: "3.1 MB" },
   { name: "book-cover-cartography.jpg", size: "1.8 MB" },
   { name: "lecture-notes-memories.jpg", size: "4.2 MB" },
-  { name: "night-observatory.jpg", size: "2.9 MB" },
+  { name: "night-selenarium.jpg", size: "2.9 MB" },
   { name: "ceramic-collection.jpg", size: "1.5 MB" },
   { name: "essay-draft-meditation.jpg", size: "0.8 MB" },
   { name: "music-art-nocturne.jpg", size: "3.6 MB" },

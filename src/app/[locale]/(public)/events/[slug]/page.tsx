@@ -43,7 +43,7 @@ export default async function EventDetailPage() {
             of Contemporary Art, where poetry, ambient music, and projected
             photography converge. The evening features live readings accompanied
             by original ambient compositions, while large-scale photography
-            projections transform the gallery into a cosmic observatory.
+            projections transform the gallery into a cosmic selenarium.
           </p>
 
           {/* Programme */}

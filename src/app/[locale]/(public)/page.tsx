@@ -213,7 +213,7 @@ export default async function HomePage() {
               Poet, photographer, singer-songwriter, and researcher. Once a magician by trade, now a conjurer of words. I live between languages &mdash; Romanian and English &mdash; and between worlds: the precision of neural architectures and the silence of verse.
             </p>
             <p className="font-sans text-[15px] text-text-secondary leading-[1.8] max-w-[520px]">
-              This observatory is where those worlds meet. Come, look through the telescope.
+              This selenarium is where those worlds meet. Come, look through the telescope.
             </p>
 
             {/* Sparkle divider */}
@@ -275,7 +275,7 @@ export default async function HomePage() {
           <SectionLabel label={t("partnersLabel")} className="justify-center" />
 
           <p className="font-sans text-sm text-text-secondary text-center max-w-[520px] leading-relaxed">
-            The Observatory is sustained through creative partnerships
+            Selenarium is sustained through creative partnerships
             with publishers, galleries, and cultural institutions we believe in.
           </p>
 

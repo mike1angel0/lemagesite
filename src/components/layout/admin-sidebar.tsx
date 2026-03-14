@@ -60,7 +60,7 @@ export function AdminSidebar() {
         <Link href={`${localePrefix}/admin`}>
           <Image
             src="/logo.png"
-            alt="The Observatory"
+            alt="Selenarium"
             width={160}
             height={76}
             className="h-[80px] w-auto"

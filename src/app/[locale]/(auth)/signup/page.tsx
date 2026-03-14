@@ -16,12 +16,12 @@ export default function SignupPage() {
       <div className="flex-1 flex flex-col justify-center px-8 md:px-16 max-w-lg mx-auto">
         {/* Logo */}
         <span className="font-serif text-lg tracking-widest text-warm-ivory mb-12">
-          THE OBSERVATORY
+          SELENARIUM
         </span>
 
         {/* Title */}
         <h1 className="font-serif text-2xl md:text-[36px] font-light text-text-primary text-center">
-          {t("joinObservatory")}
+          {t("joinSelenarium")}
         </h1>
 
         {/* Subtitle */}

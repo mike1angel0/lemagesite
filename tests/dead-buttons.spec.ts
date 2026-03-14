@@ -41,7 +41,7 @@ const routes = [
   "/books/nocturnal-echoes",
   "/music/nocturnal-echoes",
   "/research/nocturnal-poetics",
-  "/events/observatory-night",
+  "/events/selenarium-night",
   "/shop/nocturnal-echoes",
 
   // Auth

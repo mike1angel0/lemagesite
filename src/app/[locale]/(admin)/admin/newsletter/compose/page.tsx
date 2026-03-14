@@ -49,7 +49,7 @@ Three new poems have emerged from the silence of February. They are attempts to 
 as if it were a country we could visit,
 passport stamped with the ink of longing."*
 
-Read the full series on the Observatory.
+Read the full series on the Selenarium.
 
 ---
 
@@ -141,7 +141,7 @@ export default function ComposeNewsletterPage() {
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="Observatory Dispatch #26 — Cartography of Silence"
+              placeholder="Selenarium Dispatch #26 — Cartography of Silence"
               className="w-full border border-border bg-transparent rounded py-2.5 px-3 font-sans text-sm text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
             />
           </div>

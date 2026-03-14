@@ -15,10 +15,10 @@ const relatedProducts = [
     slug: "/shop/winter-light-triptych",
   },
   {
-    title: "Observatory Tee",
-    image: "/images/shop/observatory-tee.jpg",
+    title: "Selenarium Tee",
+    image: "/images/shop/selenarium-tee.jpg",
     price: 29.0,
-    slug: "/shop/observatory-tee",
+    slug: "/shop/selenarium-tee",
   },
   {
     title: "Cartographers of Silence",
