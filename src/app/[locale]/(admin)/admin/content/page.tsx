@@ -1,10 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Search, SlidersHorizontal, Pencil, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const tabs = ["All", "Poems", "Photos", "Essays", "Music", "Books"];
-const activeTab = "All";
+const tabs = ["All", "Poems", "Photos", "Essays", "Music", "Books", "Research"];
+
+const tabToType: Record<string, string> = {
+  Poems: "Poem",
+  Photos: "Photo",
+  Essays: "Essay",
+  Music: "Music",
+  Books: "Book",
+  Research: "Research",
+};
+
+type ContentRow = {
+  title: string;
+  type: string;
+  status: string;
+  access: string;
+  date: string;
+};
 
 const typeBadgeColors: Record<string, string> = {
   Poem: "bg-[#182240] text-starlight",
@@ -20,7 +38,7 @@ const statusBadgeColors: Record<string, string> = {
   Draft: "bg-[#2A1A0D] text-gold",
 };
 
-const contentRows = [
+const initialContentRows: ContentRow[] = [
   {
     title: "Cartography of Silence",
     type: "Poem",
@@ -66,6 +84,25 @@ const contentRows = [
 ];
 
 export default function AdminContentPage() {
+  const [activeTab, setActiveTab] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [rows, setRows] = useState<ContentRow[]>(initialContentRows);
+
+  const filtered = rows.filter((row) => {
+    const matchesTab =
+      activeTab === "All" || row.type === tabToType[activeTab];
+    const matchesSearch =
+      !searchQuery ||
+      row.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.type.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
+
+  function handleDelete(index: number) {
+    const targetRow = filtered[index];
+    setRows(rows.filter((r) => r !== targetRow));
+  }
+
   return (
     <>
       {/* ── Top Bar ── */}
@@ -76,9 +113,18 @@ export default function AdminContentPage() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-bg-card border border-border rounded-md px-3.5 py-2">
             <Search size={14} className="text-text-muted" />
-            <span className="font-sans text-sm text-text-muted">Search content...</span>
+            <input
+              type="text"
+              placeholder="Search content..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent font-sans text-sm text-text-primary placeholder:text-text-muted focus:outline-none w-40"
+            />
           </div>
-          <button onClick={() => alert("Filter coming soon")} className="flex items-center gap-2 bg-bg-card border border-border rounded-md px-3.5 py-2">
+          <button
+            onClick={() => alert("Filter coming soon")}
+            className="flex items-center gap-2 bg-bg-card border border-border rounded-md px-3.5 py-2"
+          >
             <SlidersHorizontal size={14} className="text-text-muted" />
             <span className="font-sans text-sm text-text-muted">Filter</span>
           </button>
@@ -89,16 +135,19 @@ export default function AdminContentPage() {
       <div className="border-b border-border mx-8">
         <div className="flex items-center gap-6">
           {tabs.map((tab) => (
-            <span
+            <button
               key={tab}
-              onClick={() => alert(`${tab} filter coming soon`)} className={`font-sans text-sm cursor-pointer py-3 transition-colors ${
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "font-sans text-sm py-3 transition-colors",
                 tab === activeTab
                   ? "border-b-2 border-accent text-text-primary font-medium"
-                  : "text-text-muted hover:text-text-secondary"
-              }`}
+                  : "text-text-muted hover:text-text-secondary",
+              )}
             >
               {tab}
-            </span>
+            </button>
           ))}
         </div>
       </div>
@@ -129,21 +178,27 @@ export default function AdminContentPage() {
             </tr>
           </thead>
           <tbody>
-            {contentRows.map((row) => (
-              <tr key={row.title} className="border-b border-border">
+            {filtered.map((row, index) => (
+              <tr key={`${row.title}-${index}`} className="border-b border-border">
                 <td className="font-sans text-[13px] text-text-primary px-4 py-3.5">
                   {row.title}
                 </td>
                 <td className="px-4 py-3.5">
                   <span
-                    className={`font-mono text-[10px] tracking-[1px] rounded-sm px-2 py-0.5 ${typeBadgeColors[row.type]}`}
+                    className={cn(
+                      "font-mono text-[10px] tracking-[1px] rounded-sm px-2 py-0.5",
+                      typeBadgeColors[row.type],
+                    )}
                   >
                     {row.type}
                   </span>
                 </td>
                 <td className="px-4 py-3.5">
                   <span
-                    className={`font-mono text-[10px] tracking-[1px] rounded-sm px-2 py-0.5 ${statusBadgeColors[row.status]}`}
+                    className={cn(
+                      "font-mono text-[10px] tracking-[1px] rounded-sm px-2 py-0.5",
+                      statusBadgeColors[row.status],
+                    )}
                   >
                     {row.status}
                   </span>
@@ -163,7 +218,10 @@ export default function AdminContentPage() {
                       <Pencil size={12} />
                       Edit
                     </Link>
-                    <button onClick={() => alert("Delete coming soon")} className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-accent transition-colors">
+                    <button
+                      onClick={() => handleDelete(index)}
+                      className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-accent transition-colors"
+                    >
                       <Trash2 size={12} />
                       Delete
                     </button>
@@ -177,22 +235,8 @@ export default function AdminContentPage() {
         {/* ── Pagination ── */}
         <div className="flex justify-between items-center py-4">
           <span className="font-sans text-sm text-text-muted">
-            Showing 1&ndash;6 of 156 items
+            Showing 1&ndash;{filtered.length} of {filtered.length} items
           </span>
-          <div className="flex gap-1.5">
-            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-primary px-3 py-1.5 border border-accent-dim rounded bg-bg-elevated">
-              1
-            </button>
-            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
-              2
-            </button>
-            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
-              3
-            </button>
-            <button onClick={() => alert("Pagination coming soon")} className="font-sans text-xs text-text-muted px-3 py-1.5 border border-border rounded hover:bg-bg-elevated transition-colors">
-              &gt;
-            </button>
-          </div>
         </div>
       </div>
     </>

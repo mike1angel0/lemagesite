@@ -1,14 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
 
-const stats = [
-  { label: "TOTAL QUOTES", value: "12" },
-  { label: "ACTIVE PLACEMENTS", value: "4" },
-  { label: "PHOTOS IN MOOD", value: "18" },
-];
+type Quote = {
+  text: string;
+  source: string;
+  pages: string[];
+  active: boolean;
+};
 
-const quotes = [
+const initialQuotes: Quote[] = [
   {
     text: "We carry in us the gardens we have known.",
     source: "Rainer Maria Rilke",
@@ -47,6 +50,8 @@ const quotes = [
   },
 ];
 
+const pageOptions = ["Home", "Login", "Poetry", "Photography", "Music", "Research", "Essays", "About"];
+
 const movementSettings = [
   { label: "Login Page", enabled: true },
   { label: "Home Page", enabled: true },
@@ -55,6 +60,42 @@ const movementSettings = [
 ];
 
 export default function AdminQuotesPage() {
+  const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
+  const [showForm, setShowForm] = useState(false);
+  const [newText, setNewText] = useState("");
+  const [newSource, setNewSource] = useState("");
+  const [newPages, setNewPages] = useState<string[]>([]);
+
+  const activeCount = quotes.filter((q) => q.active).length;
+
+  function handleAddQuote() {
+    if (!newText.trim() || !newSource.trim()) return;
+    setQuotes([
+      ...quotes,
+      { text: newText.trim(), source: newSource.trim(), pages: newPages, active: true },
+    ]);
+    setNewText("");
+    setNewSource("");
+    setNewPages([]);
+    setShowForm(false);
+  }
+
+  function toggleQuote(index: number) {
+    setQuotes(quotes.map((q, i) => (i === index ? { ...q, active: !q.active } : q)));
+  }
+
+  function togglePage(page: string) {
+    setNewPages((prev) =>
+      prev.includes(page) ? prev.filter((p) => p !== page) : [...prev, page],
+    );
+  }
+
+  const stats = [
+    { label: "TOTAL QUOTES", value: String(quotes.length) },
+    { label: "ACTIVE PLACEMENTS", value: String(activeCount) },
+    { label: "PHOTOS IN MOOD", value: "18" },
+  ];
+
   return (
     <>
       {/* ── Top Bar ── */}
@@ -67,10 +108,94 @@ export default function AdminQuotesPage() {
             Curate quotes, moods, and ambient visuals across the site
           </p>
         </div>
-        <button onClick={() => alert("Add quote coming soon")} className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity">
+        <button
+          onClick={() => setShowForm(true)}
+          className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity"
+        >
           Add Quote
         </button>
       </div>
+
+      {/* ── Add Quote Form ── */}
+      {showForm && (
+        <div className="mx-8 mt-6 bg-bg-card border border-border rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-serif text-lg text-text-primary">New Quote</h3>
+            <button
+              onClick={() => setShowForm(false)}
+              className="text-text-muted hover:text-text-primary transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Quote Text
+              </label>
+              <textarea
+                placeholder="Enter the quote..."
+                value={newText}
+                onChange={(e) => setNewText(e.target.value)}
+                className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-serif text-sm italic focus:outline-none focus:border-accent-dim placeholder:text-text-muted resize-y min-h-[80px]"
+              />
+            </div>
+
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Source / Author
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Rainer Maria Rilke"
+                value={newSource}
+                onChange={(e) => setNewSource(e.target.value)}
+                className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+              />
+            </div>
+
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Display on Pages
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {pageOptions.map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => togglePage(page)}
+                    className={cn(
+                      "font-mono text-[10px] tracking-[1px] px-3 py-1 rounded transition-colors",
+                      newPages.includes(page)
+                        ? "bg-accent text-text-on-accent"
+                        : "bg-bg-elevated text-text-muted hover:text-text-primary",
+                    )}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-2">
+              <button
+                onClick={() => setShowForm(false)}
+                className="border border-border rounded-md px-4 py-2 font-sans text-sm text-text-secondary hover:text-text-primary transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddQuote}
+                disabled={!newText.trim() || !newSource.trim()}
+                className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                Save Quote
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Stat Cards ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-8 mt-6">
@@ -94,10 +219,10 @@ export default function AdminQuotesPage() {
             FEATURED
           </p>
           <p className="font-serif text-base italic text-text-primary mt-2 leading-relaxed">
-            &ldquo;We carry in us the gardens we have known.&rdquo;
+            &ldquo;{quotes[0]?.text}&rdquo;
           </p>
           <p className="font-sans text-[11px] text-text-muted mt-1">
-            &mdash; Rainer Maria Rilke
+            &mdash; {quotes[0]?.source}
           </p>
         </div>
       </div>
@@ -124,8 +249,8 @@ export default function AdminQuotesPage() {
               </tr>
             </thead>
             <tbody>
-              {quotes.map((row) => (
-                <tr key={row.text} className="border-b border-border">
+              {quotes.map((row, index) => (
+                <tr key={`${row.text}-${index}`} className="border-b border-border">
                   <td className="font-sans text-[13px] text-text-primary px-4 py-3.5 max-w-[320px]">
                     <span className="line-clamp-2 italic">{row.text}</span>
                   </td>
@@ -145,10 +270,11 @@ export default function AdminQuotesPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3.5">
-                    <div
-                      onClick={() => alert("Toggle quote status coming soon")}
+                    <button
+                      type="button"
+                      onClick={() => toggleQuote(index)}
                       className={cn(
-                        "w-9 h-5 rounded-full relative cursor-pointer transition-colors",
+                        "w-9 h-5 rounded-full relative transition-colors",
                         row.active ? "bg-[#6BBF7B]" : "bg-bg-elevated",
                       )}
                     >
@@ -158,7 +284,7 @@ export default function AdminQuotesPage() {
                           row.active ? "right-[3px]" : "left-[3px]",
                         )}
                       />
-                    </div>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -177,7 +303,8 @@ export default function AdminQuotesPage() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  onClick={() => alert("Open photo coming soon")} className="bg-bg-elevated rounded h-20 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => alert("Open photo coming soon")}
+                  className="bg-bg-elevated rounded h-20 cursor-pointer hover:opacity-80 transition-opacity"
                 />
               ))}
             </div>
@@ -222,12 +349,14 @@ export default function AdminQuotesPage() {
               Rotation Settings
             </h3>
             <div className="space-y-4">
-              {/* Frequency */}
               <div>
                 <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">
                   Frequency
                 </label>
-                <div onClick={() => alert("Frequency selector coming soon")} className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer">
+                <div
+                  onClick={() => alert("Frequency selector coming soon")}
+                  className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer"
+                >
                   <span className="font-sans text-sm text-text-primary">
                     Every AM
                   </span>
@@ -237,12 +366,14 @@ export default function AdminQuotesPage() {
                 </div>
               </div>
 
-              {/* Quote Priority */}
               <div>
                 <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">
                   Quote Priority
                 </label>
-                <div onClick={() => alert("Quote priority selector coming soon")} className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer">
+                <div
+                  onClick={() => alert("Quote priority selector coming soon")}
+                  className="bg-bg-elevated border border-border rounded-md px-3 py-2 flex items-center justify-between cursor-pointer"
+                >
                   <span className="font-sans text-sm text-text-primary">
                     Random
                   </span>
@@ -252,12 +383,14 @@ export default function AdminQuotesPage() {
                 </div>
               </div>
 
-              {/* Auto-Rotate Toggle */}
               <div className="flex items-center justify-between">
                 <span className="font-sans text-[13px] text-text-primary">
                   Auto-Rotate
                 </span>
-                <div onClick={() => alert("Toggle auto-rotate coming soon")} className="w-9 h-5 rounded-full relative cursor-pointer transition-colors bg-[#6BBF7B]">
+                <div
+                  onClick={() => alert("Toggle auto-rotate coming soon")}
+                  className="w-9 h-5 rounded-full relative cursor-pointer transition-colors bg-[#6BBF7B]"
+                >
                   <div className="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px]" />
                 </div>
               </div>

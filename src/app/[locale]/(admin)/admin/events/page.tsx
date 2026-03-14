@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Plus,
   Filter,
@@ -7,16 +8,27 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
-/*  Static data                                                        */
+/*  Types & static data                                                */
 /* ------------------------------------------------------------------ */
+
+type EventRow = {
+  title: string;
+  type: string;
+  status: string;
+  capacity: string;
+  date: string;
+};
 
 const filterTabs = ["All", "Upcoming", "Past", "Recurring", "Draft"];
 
 const columns = ["TITLE", "TYPE", "STATUS", "CAPACITY", "DATE", "ACTIONS"];
+
+const eventTypes = ["Workshop", "Reading", "Launch", "Exhibition", "Lecture", "Salon"];
 
 const typeBadgeColors: Record<string, string> = {
   Workshop: "bg-accent/10 text-accent",
@@ -34,7 +46,7 @@ const statusBadgeColors: Record<string, string> = {
   Cancelled: "bg-[#BF6B6B]/10 text-[#BF6B6B]",
 };
 
-const eventRows = [
+const initialEvents: EventRow[] = [
   {
     title: "Poetry Reading: Fog Studies",
     type: "Workshop",
@@ -80,10 +92,48 @@ const eventRows = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Page (Client Component)                                            */
+/*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
 export default function AdminEventsPage() {
+  const [events, setEvents] = useState<EventRow[]>(initialEvents);
+  const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState("All");
+
+  // Form state
+  const [newTitle, setNewTitle] = useState("");
+  const [newType, setNewType] = useState("Workshop");
+  const [newDate, setNewDate] = useState("");
+  const [newCapacity, setNewCapacity] = useState("");
+
+  function handleAddEvent() {
+    if (!newTitle.trim() || !newDate) return;
+    const formatted = new Date(newDate).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    setEvents([
+      ...events,
+      {
+        title: newTitle.trim(),
+        type: newType,
+        status: "Draft",
+        capacity: newCapacity ? `0 / ${newCapacity}` : "\u2014",
+        date: formatted,
+      },
+    ]);
+    setNewTitle("");
+    setNewType("Workshop");
+    setNewDate("");
+    setNewCapacity("");
+    setShowForm(false);
+  }
+
+  function handleDelete(index: number) {
+    setEvents(events.filter((_, i) => i !== index));
+  }
+
   return (
     <>
       {/* ── Top Bar ── */}
@@ -93,7 +143,7 @@ export default function AdminEventsPage() {
         </h1>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => alert("New event coming soon")}
+            onClick={() => setShowForm(true)}
             className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 font-sans text-[12px] font-medium text-bg"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -109,15 +159,101 @@ export default function AdminEventsPage() {
         </div>
       </div>
 
+      {/* ── New Event Form ── */}
+      {showForm && (
+        <div className="mx-8 mt-6 bg-bg-card border border-border rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-serif text-lg text-text-primary">New Event</h3>
+            <button
+              onClick={() => setShowForm(false)}
+              className="text-text-muted hover:text-text-primary transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Event Title
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Poetry Reading: Fog Studies"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+              />
+            </div>
+
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Type
+              </label>
+              <select
+                value={newType}
+                onChange={(e) => setNewType(e.target.value)}
+                className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim"
+              >
+                {eventTypes.map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Date
+              </label>
+              <input
+                type="date"
+                value={newDate}
+                onChange={(e) => setNewDate(e.target.value)}
+                className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim"
+              />
+            </div>
+
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-1.5 block">
+                Capacity
+              </label>
+              <input
+                type="number"
+                placeholder="e.g. 30"
+                value={newCapacity}
+                onChange={(e) => setNewCapacity(e.target.value)}
+                className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-5">
+            <button
+              onClick={() => setShowForm(false)}
+              className="border border-border rounded-md px-4 py-2 font-sans text-sm text-text-secondary hover:text-text-primary transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddEvent}
+              disabled={!newTitle.trim() || !newDate}
+              className="bg-gold text-bg font-sans text-sm rounded-md px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              Create Event
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Filter Tabs ── */}
       <div className="flex items-center gap-1 px-8 mt-6">
-        {filterTabs.map((tab, i) => (
+        {filterTabs.map((tab) => (
           <button
             key={tab}
-            onClick={() => alert("Filter coming soon")}
+            onClick={() => setActiveTab(tab)}
             className={cn(
               "rounded-md px-3.5 py-1.5 font-sans text-[12px] transition-colors",
-              i === 0
+              activeTab === tab
                 ? "bg-bg-elevated text-text-primary"
                 : "text-text-muted hover:text-text-secondary",
             )}
@@ -144,9 +280,9 @@ export default function AdminEventsPage() {
               </tr>
             </thead>
             <tbody>
-              {eventRows.map((row) => (
+              {events.map((row, index) => (
                 <tr
-                  key={row.title}
+                  key={`${row.title}-${index}`}
                   className="border-b border-border last:border-b-0"
                 >
                   <td className="font-sans text-[13px] text-text-primary px-4 py-3.5">
@@ -156,7 +292,7 @@ export default function AdminEventsPage() {
                     <span
                       className={cn(
                         "font-mono text-[10px] tracking-[1px] px-2.5 py-1 rounded-full",
-                        typeBadgeColors[row.type],
+                        typeBadgeColors[row.type] || "bg-bg-elevated text-text-muted",
                       )}
                     >
                       {row.type}
@@ -166,7 +302,7 @@ export default function AdminEventsPage() {
                     <span
                       className={cn(
                         "font-mono text-[10px] tracking-[1px] px-2.5 py-1 rounded-full",
-                        statusBadgeColors[row.status],
+                        statusBadgeColors[row.status] || "bg-bg-elevated text-text-muted",
                       )}
                     >
                       {row.status}
@@ -187,7 +323,7 @@ export default function AdminEventsPage() {
                         <Pencil className="h-3.5 w-3.5 text-text-muted" />
                       </button>
                       <button
-                        onClick={() => alert("Delete coming soon")}
+                        onClick={() => handleDelete(index)}
                         className="rounded p-1 hover:bg-bg-elevated transition-colors"
                       >
                         <Trash2 className="h-3.5 w-3.5 text-text-muted" />
@@ -203,43 +339,16 @@ export default function AdminEventsPage() {
         {/* ── Pagination ── */}
         <div className="flex items-center justify-between mt-4 pb-8">
           <span className="font-sans text-[12px] text-text-muted">
-            Showing 1-6 of 24 events
+            Showing 1-{events.length} of {events.length} events
           </span>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => alert("Pagination coming soon")}
-              className="inline-flex items-center justify-center rounded-md border border-border h-8 w-8 hover:bg-bg-elevated transition-colors"
-            >
+            <button className="inline-flex items-center justify-center rounded-md border border-border h-8 w-8 hover:bg-bg-elevated transition-colors">
               <ChevronLeft className="h-3.5 w-3.5 text-text-muted" />
             </button>
-            <button
-              onClick={() => alert("Pagination coming soon")}
-              className="inline-flex items-center justify-center rounded-md bg-bg-elevated h-8 w-8 font-sans text-[12px] text-text-primary"
-            >
+            <button className="inline-flex items-center justify-center rounded-md bg-bg-elevated h-8 w-8 font-sans text-[12px] text-text-primary">
               1
             </button>
-            <button
-              onClick={() => alert("Pagination coming soon")}
-              className="inline-flex items-center justify-center rounded-md h-8 w-8 font-sans text-[12px] text-text-muted hover:bg-bg-elevated transition-colors"
-            >
-              2
-            </button>
-            <button
-              onClick={() => alert("Pagination coming soon")}
-              className="inline-flex items-center justify-center rounded-md h-8 w-8 font-sans text-[12px] text-text-muted hover:bg-bg-elevated transition-colors"
-            >
-              3
-            </button>
-            <button
-              onClick={() => alert("Pagination coming soon")}
-              className="inline-flex items-center justify-center rounded-md h-8 w-8 font-sans text-[12px] text-text-muted hover:bg-bg-elevated transition-colors"
-            >
-              4
-            </button>
-            <button
-              onClick={() => alert("Pagination coming soon")}
-              className="inline-flex items-center justify-center rounded-md border border-border h-8 w-8 hover:bg-bg-elevated transition-colors"
-            >
+            <button className="inline-flex items-center justify-center rounded-md border border-border h-8 w-8 hover:bg-bg-elevated transition-colors">
               <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
             </button>
           </div>

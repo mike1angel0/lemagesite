@@ -694,3 +694,20 @@ The design is at 1440px desktop width. Recommended breakpoints:
 - **Newsletter:** Substack integration + internal subscriber list
 - **Partner:** name, logo, type, url
 - **Quote:** text, attribution, location (used in interludes)
+
+---
+
+## Future Work
+
+### Dynamic Quote Rotation
+Currently, quotes on public pages (Home, Membership, Poetry, Books) are hardcoded. The admin Quotes & Moments page manages quotes in local state only.
+
+**Goal:** Quotes should rotate dynamically per page, driven by the admin panel.
+
+**Implementation plan:**
+1. **Prisma model:** `Quote` — `id`, `text`, `source`, `pages` (string[]), `active` (boolean), `createdAt`, `updatedAt`
+2. **API routes:** CRUD endpoints at `/api/quotes` for admin management (create, list, update, delete, toggle active)
+3. **Fetch logic:** Server-side function `getQuotesForPage(page: string)` that returns active quotes assigned to that page
+4. **Rotation component:** Replace hardcoded `<blockquote>` sections and `<QuoteInterlude>` usages with a `<RotatingQuote page="home" />` component that randomly selects from available quotes on each page load
+5. **Admin integration:** Wire the admin Quotes page to the API instead of local React state
+6. **Rotation settings:** Implement frequency (daily/per-visit), priority (random/sequential), and auto-rotate toggle from admin sidebar
