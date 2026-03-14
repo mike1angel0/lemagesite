@@ -410,7 +410,12 @@
     "emailLabel": "Email",
     "passwordLabel": "Parolă",
     "nameLabel": "Nume",
-    "confirmPasswordLabel": "Confirmă parola"
+    "confirmPasswordLabel": "Confirmă parola",
+    "verifyTitle": "Verifică-ți emailul",
+    "verifyDescription": "Am trimis un link de verificare la adresa ta de email. Te rugăm să verifici inbox-ul și să dai click pe link pentru a-ți confirma contul.",
+    "verifyExpiry": "Link-ul expiră în 24 de ore.",
+    "didntReceive": "Nu ai primit emailul?",
+    "resendVerification": "Retrimite link-ul de verificare"
   },
   "admin": {
     "dashboard": "Panou de control",

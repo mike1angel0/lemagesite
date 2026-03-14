@@ -411,7 +411,12 @@
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "nameLabel": "Name",
-    "confirmPasswordLabel": "Confirm Password"
+    "confirmPasswordLabel": "Confirm Password",
+    "verifyTitle": "Verify your email",
+    "verifyDescription": "We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.",
+    "verifyExpiry": "The link will expire in 24 hours.",
+    "didntReceive": "Didn't receive the email?",
+    "resendVerification": "Resend verification link"
   },
   "admin": {
     "dashboard": "Dashboard",

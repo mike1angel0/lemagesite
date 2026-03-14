@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 const PORT = process.env.CI ? 3000 : 3001;
 const BASE_URL = `http://localhost:${PORT}`;
@@ -15,6 +15,18 @@ export default defineConfig({
     {
       name: "chromium",
       use: { browserName: "chromium" },
+    },
+    {
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 7"] },
+    },
+    {
+      name: "mobile-safari",
+      use: { ...devices["iPhone 14"] },
+    },
+    {
+      name: "tablet",
+      use: { ...devices["iPad (gen 7)"] },
     },
   ],
   webServer: {
