@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { AdminSettingsClient } from "./admin-settings-client";
+import { AdminAboutClient } from "./admin-about-client";
 
-export default async function AdminSettingsPage() {
+export default async function AdminAboutPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
@@ -13,22 +13,15 @@ export default async function AdminSettingsPage() {
   const settings = await prisma.siteSetting.findMany({
     where: {
       key: {
-        in: ["siteName", "language", "timezone", "instagram", "medium", "youtube"],
+        startsWith: "about_",
       },
     },
   });
 
-  const settingsMap: Record<string, string> = {};
+  const data: Record<string, string> = {};
   for (const s of settings) {
-    settingsMap[s.key] = s.value;
+    data[s.key] = s.value;
   }
 
-  const stripeConnected = !!process.env.STRIPE_SECRET_KEY;
-
-  return (
-    <AdminSettingsClient
-      initialSettings={settingsMap}
-      stripeConnected={stripeConnected}
-    />
-  );
+  return <AdminAboutClient initialData={data} />;
 }

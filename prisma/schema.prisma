@@ -79,14 +79,20 @@ model User {
   image            String?
   bio              String?
   localePreference String?
-  role             Role        @default(USER)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  passwordHash     String?
+  role                 Role        @default(USER)
+  emailNotifications   Boolean     @default(true)
+  newsletterSubscribed Boolean     @default(true)
+  contentPreferences   String[]    @default([])
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 
   accounts   Account[]
   sessions   Session[]
   membership Membership?
   orders     Order[]
+  savedItems SavedItem[]
+  messages   Message[]
 }
 
 model Account {
@@ -344,6 +350,18 @@ model OrderItem {
 // Other
 // ──────────────────────────────────────────────
 
+model SavedItem {
+  id          String      @id @default(cuid())
+  userId      String
+  contentType ContentType
+  contentId   String
+  savedAt     DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentType, contentId])
+}
+
 model Quote {
   id          String   @id @default(cuid())
   text        String   @db.Text
@@ -359,4 +377,72 @@ model Partner {
   type      String?
   url       String?
   createdAt DateTime @default(now())
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  userId      String
+  subject     String
+  body        String    @db.Text
+  isFromAdmin Boolean   @default(false)
+  parentId    String?
+  read        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  Message?  @relation("MessageThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Message[] @relation("MessageThread")
+}
+
+// ──────────────────────────────────────────────
+// Newsletter
+// ──────────────────────────────────────────────
+
+enum NewsletterStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+}
+
+model Newsletter {
+  id            String           @id @default(cuid())
+  subject       String
+  previewText   String?
+  body          String           @db.Text
+  status        NewsletterStatus @default(DRAFT)
+  scheduledAt   DateTime?
+  sentAt        DateTime?
+  openRate      Float?
+  clickRate     Float?
+  linkedContent Json?
+  audience      String?          @default("all")
+  minimumTier   String?          @default("FREE")
+  fromName      String?
+  replyTo       String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+// ──────────────────────────────────────────────
+// Site Settings (key-value store)
+// ──────────────────────────────────────────────
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+}
+
+// ──────────────────────────────────────────────
+// Media Library
+// ──────────────────────────────────────────────
+
+model MediaFile {
+  id           String   @id @default(cuid())
+  name         String
+  url          String
+  type         String
+  size         Int
+  cloudinaryId String?
+  createdAt    DateTime @default(now())
 }

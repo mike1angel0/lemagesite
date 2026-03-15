@@ -6,7 +6,7 @@ import { usePathname, useParams } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
-  Upload,
+  User,
   Users,
   TrendingUp,
   Mail,
@@ -19,13 +19,16 @@ import {
   ShoppingCart,
   Image as ImageIcon,
   Search,
+  Palette,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const sidebarItems = [
   { key: "dashboard", href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { key: "content", href: "/admin/content", icon: FileText, label: "Content" },
-  { key: "upload", href: "/admin/upload", icon: Upload, label: "Upload" },
+  { key: "about", href: "/admin/about", icon: User, label: "About" },
+  { key: "messages", href: "/admin/messages", icon: MessageSquare, label: "Messages" },
   { key: "members", href: "/admin/members", icon: Users, label: "Members" },
   { key: "analytics", href: "/admin/analytics", icon: TrendingUp, label: "Analytics" },
   { key: "newsletter", href: "/admin/newsletter", icon: Mail, label: "Newsletter" },
@@ -35,6 +38,7 @@ const sidebarItems = [
   { key: "events", href: "/admin/events", icon: Calendar, label: "Events" },
   { key: "orders", href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { key: "media", href: "/admin/media", icon: ImageIcon, label: "Media Library" },
+  { key: "designs", href: "/admin/designs", icon: Palette, label: "Designs" },
   { key: "seo", href: "/admin/seo", icon: Search, label: "SEO" },
   { key: "settings", href: "/admin/settings", icon: Settings, label: "Settings" },
 ] as const;

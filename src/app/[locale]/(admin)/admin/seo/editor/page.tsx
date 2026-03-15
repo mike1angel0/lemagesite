@@ -31,9 +31,9 @@ type PageSEO = {
 const defaultSEO: Record<string, PageSEO> = {
   home: {
     seoTitle:
-      "Selenarium — Poetry, Photography & Sound | Mihai Gavrilescu",
+      "Selenarium — Poetry, Photography & Sound | lemagepoet (Mihai Gavrilescu)",
     metaDescription:
-      "A digital selenarium for contemporary poetry, photography, music and cinema by Mihai Gavrilescu. Explore curated collections, essays, and multimedia experiences.",
+      "A digital selenarium for contemporary poetry, photography, music and cinema by lemagepoet (Mihai Gavrilescu). Explore curated collections, essays, and multimedia experiences.",
     ogTitle:
       "Selenarium — Poetry, Photography & Sound",
     ogImage: "",
@@ -45,7 +45,7 @@ const defaultSEO: Record<string, PageSEO> = {
   poetry: {
     seoTitle: "Poetry Collection — Selenarium",
     metaDescription:
-      "Contemporary poetry exploring silence, memory, and the geometry of longing. Original works by Mihai Gavrilescu.",
+      "Contemporary poetry exploring silence, memory, and the geometry of longing. Original works by lemagepoet.",
     ogTitle: "Poetry — Selenarium",
     ogImage: "",
     canonicalUrl: "https://theselenarium.art/poetry",
@@ -109,10 +109,10 @@ const defaultSEO: Record<string, PageSEO> = {
     score: 90,
   },
   about: {
-    seoTitle: "About — Mihai Gavrilescu — Selenarium",
+    seoTitle: "About — lemagepoet (Mihai Gavrilescu) — Selenarium",
     metaDescription:
       "Biography and artistic statement. Poet, photographer, and sound artist based in Romania.",
-    ogTitle: "About Mihai Gavrilescu",
+    ogTitle: "About lemagepoet",
     ogImage: "",
     canonicalUrl: "https://theselenarium.art/about",
     robots: "index, follow",
