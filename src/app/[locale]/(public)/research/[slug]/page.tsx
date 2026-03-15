@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { ResearchImageGenerator } from "@/components/ui/research-image-generator";
+import { SaveButton } from "@/components/ui/save-button";
 
 const tocItems = [
   { label: "Abstract", id: "abstract" },
@@ -278,6 +281,24 @@ export default function ResearchDetailPage() {
             </div>
           </Card>
         </aside>
+      </div>
+
+      {/* -- Action bar -- */}
+      <div className="flex justify-between items-center px-20 py-10 border-t border-border">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
+              Share
+            </span>
+            <ShareButtons />
+          </div>
+          <ResearchImageGenerator
+            title="Nocturnal Poetics: The Astronomy of Metaphor in Romanian Modernist Verse"
+            abstract="This paper examines the intersection of astronomical imagery and poetic metaphor in Romanian modernist poetry (1920-1945), with particular focus on the work of Lucian Blaga, Ion Barbu, and Tudor Arghezi. Through close readings and archival research, we demonstrate how these poets drew upon contemporary astronomical discoveries to construct new frameworks for understanding consciousness, time, and the limits of language."
+            year="2024"
+          />
+          <SaveButton contentType="RESEARCH" contentId="placeholder-research-id" saved={false} />
+        </div>
       </div>
     </section>
   );

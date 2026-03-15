@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -78,8 +79,10 @@ export default async function EssaysPage() {
             href={essay.slug}
             className="flex gap-10 py-10 border-t border-border"
           >
-            {/* Image placeholder */}
-            <div className="hidden md:block w-[280px] h-[200px] shrink-0 border border-border bg-bg-surface" />
+            {/* Essay thumbnail */}
+            <div className="hidden md:block w-[280px] h-[200px] shrink-0 border border-border relative overflow-hidden">
+              <Image src="/design-exports/lzEPd.png" alt="" fill className="object-cover" />
+            </div>
 
             {/* Content */}
             <div className="flex flex-1 flex-col justify-center gap-3">

@@ -1,16 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { PhotographyFilterTabs } from "./photography-filter-tabs";
 
 const photos = [
-  { title: "Morning Ritual, Carpathians", series: "Fog Studies", slug: "morning-ritual-carpathians" },
-  { title: "Empty Platform, Gara de Nord", series: "Urban Silence", slug: "empty-platform-gara-de-nord" },
-  { title: "Self-Portrait with Algorithms", series: "Portraits", slug: "self-portrait-with-algorithms" },
-  { title: "The Weight of Snow", series: "Romania", slug: "the-weight-of-snow" },
-  { title: "Vienna, 4 AM", series: "Urban Silence", slug: "vienna-4-am" },
-  { title: "Breath Study No. 7", series: "Fog Studies", slug: "breath-study-no-7" },
-  { title: "The Last Light, Maramures", series: "Romania", slug: "the-last-light-maramures" },
+  { title: "Morning Ritual, Carpathians", series: "Fog Studies", slug: "morning-ritual-carpathians", image: "/design-exports/9VXDc.png" },
+  { title: "Empty Platform, Gara de Nord", series: "Urban Silence", slug: "empty-platform-gara-de-nord", image: "/design-exports/Id78B.png" },
+  { title: "Self-Portrait with Algorithms", series: "Portraits", slug: "self-portrait-with-algorithms", image: "/design-exports/qks6p.png" },
+  { title: "The Weight of Snow", series: "Romania", slug: "the-weight-of-snow", image: "/design-exports/5gKT7.png" },
+  { title: "Vienna, 4 AM", series: "Urban Silence", slug: "vienna-4-am", image: "/design-exports/pX7Gr.png" },
+  { title: "Breath Study No. 7", series: "Fog Studies", slug: "breath-study-no-7", image: "/design-exports/6MHe3.png" },
+  { title: "The Last Light, Maramures", series: "Romania", slug: "the-last-light-maramures", image: "/design-exports/fCze7.png" },
 ];
 
 function PhotoCard({
@@ -22,7 +23,7 @@ function PhotoCard({
 }) {
   return (
     <Link href={`/photography/${photo.slug}`} className={className}>
-      <div className="absolute inset-0 bg-bg-surface" />
+      <Image src={photo.image} alt={photo.title} fill className="object-cover" />
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-bg/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <span className="font-serif text-lg text-warm-ivory">
           {photo.title}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -61,8 +62,10 @@ export default function BookDetailPage() {
 
       {/* -- Hero -- */}
       <div className="flex flex-col md:flex-row gap-12 md:gap-16 mt-8">
-        {/* Cover Image Placeholder */}
-        <div className="w-full md:w-[420px] h-[600px] bg-bg-surface rounded shrink-0" />
+        {/* Cover Image */}
+        <div className="w-full md:w-[420px] h-[600px] rounded shrink-0 relative overflow-hidden">
+          <Image src="/design-exports/86GGN.png" alt="Book cover" fill className="object-cover" />
+        </div>
 
         {/* Info Column */}
         <div className="flex-1">
@@ -75,7 +78,7 @@ export default function BookDetailPage() {
           </h1>
 
           <p className="font-sans text-sm text-text-secondary mt-2">
-            by Mihai Gavrilescu
+            by lemagepoet
           </p>
 
           <p className="font-sans text-sm text-text-secondary mt-6 max-w-lg leading-[1.7]">

@@ -6,6 +6,7 @@ import { Link as IntlLink } from "@/i18n/navigation";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession, signOut } from "next-auth/react";
 
 const navLinks = [
   { href: "/poetry", labelKey: "poetry" },
@@ -27,10 +28,13 @@ interface NavMobileProps {
 export function NavMobile({ isOpen, onClose, locale }: NavMobileProps) {
   const t = useTranslations("nav");
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const localePath = locale === "ro" ? "" : `/${locale}`;
   const pathnameWithoutLocale = pathname.replace(/^\/(en|ro)/, "") || "/";
   const targetLocale = locale === "ro" ? "en" : "ro";
+
+  const isLoggedIn = !!session?.user;
 
   return (
     <div
@@ -83,14 +87,35 @@ export function NavMobile({ isOpen, onClose, locale }: NavMobileProps) {
             </IntlLink>
           </div>
 
-          {/* CTA */}
-          <Link
-            href={`${localePath}/membership`}
-            onClick={onClose}
-            className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
-          >
-            {t("enterSelenarium")}
-          </Link>
+          {/* Auth-aware CTA */}
+          {isLoggedIn ? (
+            <div className="flex flex-col items-center gap-3">
+              <Link
+                href={`${localePath}/account`}
+                onClick={onClose}
+                className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
+              >
+                {t("myAccount")}
+              </Link>
+              <button
+                onClick={() => {
+                  onClose();
+                  signOut({ callbackUrl: "/" });
+                }}
+                className="font-sans text-[10px] font-medium text-text-muted tracking-[2px] uppercase hover:text-text-secondary transition-colors"
+              >
+                {t("signOut")}
+              </button>
+            </div>
+          ) : (
+            <Link
+              href={`${localePath}/membership`}
+              onClick={onClose}
+              className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
+            >
+              {t("enterSelenarium")}
+            </Link>
+          )}
         </nav>
       </div>
     </div>

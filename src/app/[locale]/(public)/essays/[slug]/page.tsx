@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { EssayCard } from "@/components/content/essay-card";
 import { ShareButtons } from "@/components/ui/share-buttons";
+import { EssayActionBar } from "./essay-action-bar";
 
 const tocItems = [
   { label: "Introduction", id: "introduction" },
@@ -184,13 +185,15 @@ export default async function EssayDetailPage() {
           )}
         </div>
 
-        {/* -- Share Row -- */}
-        <div className="flex items-center gap-4 mt-6">
-          <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-            {tc("share").toUpperCase()}
-          </span>
-          <ShareButtons
-            labels={{
+        {/* -- Share & Image Row -- */}
+        <div className="mt-6">
+          <EssayActionBar
+            title="On the Architecture of Longing: Why Machines Will Never Know Desire"
+            excerpt="What does it mean for a machine to grieve? This is not a question about sentience or consciousness — at least, not directly. It is a question about architecture. About how systems are built to process absence, and what that tells us about our own machinery of loss."
+            category="AI & Philosophy"
+            readTime="12 min read"
+            shareLabel={tc("share").toUpperCase()}
+            shareLabels={{
               x: tc("shareOnX"),
               facebook: tc("facebook"),
               copyLink: tc("copyLink"),

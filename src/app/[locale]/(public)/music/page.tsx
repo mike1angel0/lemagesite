@@ -1,16 +1,7 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
-import { Button } from "@/components/ui/button";
-
-const tracks = [
-  { number: "01", title: "The Weight of Light", duration: "4:12" },
-  { number: "02", title: "Cartographer", duration: "3:47" },
-  { number: "03", title: "Neural Lullaby", duration: "5:03" },
-  { number: "04", title: "Selenarium, December", duration: "3:28" },
-  { number: "05", title: "Letters to No One", duration: "4:55" },
-  { number: "06", title: "Fog Variations", duration: "6:01" },
-  { number: "07", title: "The Last Magician", duration: "4:33" },
-];
+import { MusicTracklist } from "./music-tracklist";
 
 export default async function MusicPage() {
   const t = await getTranslations("music");
@@ -33,8 +24,10 @@ export default async function MusicPage() {
     <section className="px-5 md:px-10 xl:px-20 pb-20">
       {/* ── Album Section ── */}
       <div className="flex flex-col md:flex-row gap-12 md:gap-[60px]">
-        {/* Album Art Placeholder */}
-        <div className="w-full md:w-[380px] h-[380px] bg-bg-surface border border-border rounded shrink-0" />
+        {/* Album Art */}
+        <div className="w-full md:w-[380px] h-[380px] border border-border rounded shrink-0 relative overflow-hidden">
+          <Image src="/design-exports/BbRIG.png" alt="Album art" fill className="object-cover" />
+        </div>
 
         {/* Album Info */}
         <div className="flex-1">
@@ -50,24 +43,9 @@ export default async function MusicPage() {
             {t("albumDescription")}
           </p>
 
-          {/* Tracklist */}
+          {/* Tracklist & Player */}
           <div className="mt-8">
-            {tracks.map((track) => (
-              <div
-                key={track.number}
-                className="flex justify-between items-center py-3 border-t border-border"
-              >
-                <span className="font-mono text-[11px] text-text-muted w-8">
-                  {track.number}
-                </span>
-                <span className="font-sans text-[13px] text-text-primary flex-1">
-                  {track.title}
-                </span>
-                <span className="font-mono text-[11px] text-text-muted">
-                  {track.duration}
-                </span>
-              </div>
-            ))}
+            <MusicTracklist />
           </div>
 
           {/* Stream Links */}
@@ -84,14 +62,6 @@ export default async function MusicPage() {
             </span>
           </div>
         </div>
-      </div>
-
-      {/* ── Embedded Player Placeholder ── */}
-      <div className="h-[120px] bg-bg-card border border-border mt-16 flex flex-col items-center justify-center gap-4 p-8">
-        <svg className="size-6 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        <span className="font-mono text-[11px] text-text-muted tracking-[1px]">
-          {t("embeddedPlayer")}
-        </span>
       </div>
     </section>
     </>

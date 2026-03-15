@@ -27,20 +27,20 @@ const connectLinks = [
 ] as const;
 
 const socialPlatforms = [
-  { label: "Instagram", href: "https://instagram.com/mihaigavrilescu" },
-  { label: "YouTube", href: "https://youtube.com/@mihaigavrilescu" },
-  { label: "TikTok", href: "https://tiktok.com/@mihaigavrilescu" },
+  { label: "Instagram", href: "https://instagram.com/lemagepoet" },
+  { label: "YouTube", href: "https://youtube.com/@lemagepoet" },
+  { label: "TikTok", href: "https://tiktok.com/@lemagepoet" },
 ] as const;
 
 const socialLinksBottom = [
-  { label: "Substack", href: "https://mihaigavrilescu.substack.com" },
-  { label: "Medium", href: "https://medium.com/@mihaigavrilescu" },
-  { label: "Spotify", href: "https://open.spotify.com/artist/mihaigavrilescu" },
-  { label: "GitHub", href: "https://github.com/mihaigavrilescu" },
-  { label: "Instagram", href: "https://instagram.com/mihaigavrilescu" },
-  { label: "Facebook", href: "https://facebook.com/mihaigavrilescu" },
-  { label: "TikTok", href: "https://tiktok.com/@mihaigavrilescu" },
-  { label: "YouTube", href: "https://youtube.com/@mihaigavrilescu" },
+  { label: "Substack", href: "https://lemagepoet.substack.com" },
+  { label: "Medium", href: "https://medium.com/@lemagepoet" },
+  { label: "Spotify", href: "https://open.spotify.com/artist/lemagepoet" },
+  { label: "GitHub", href: "https://github.com/lemagepoet" },
+  { label: "Instagram", href: "https://instagram.com/lemagepoet" },
+  { label: "Facebook", href: "https://facebook.com/lemagepoet" },
+  { label: "TikTok", href: "https://tiktok.com/@lemagepoet" },
+  { label: "YouTube", href: "https://youtube.com/@lemagepoet" },
 ] as const;
 
 interface FooterColumnProps {

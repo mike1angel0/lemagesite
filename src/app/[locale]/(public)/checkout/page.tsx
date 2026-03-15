@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,12 +9,14 @@ const cartItems = [
     variant: "Hardcover",
     price: 35.0,
     quantity: 1,
+    image: "/design-exports/YYqNy.png",
   },
   {
     title: "Fog Study No. 3 \u2014 Fine Art Print",
     variant: "A3, Giclée",
     price: 45.0,
     quantity: 1,
+    image: "/design-exports/cNCJX.png",
   },
 ];
 
@@ -46,8 +49,10 @@ export default async function CheckoutPage() {
                 key={item.title}
                 className="flex items-center gap-4 py-6 border-t border-border"
               >
-                {/* Thumbnail Placeholder */}
-                <div className="w-16 h-16 bg-bg-surface rounded shrink-0" />
+                {/* Thumbnail */}
+                <div className="w-16 h-16 rounded shrink-0 relative overflow-hidden">
+                  <Image src={item.image} alt={item.title} fill className="object-cover" />
+                </div>
 
                 {/* Info */}
                 <div className="flex-1">

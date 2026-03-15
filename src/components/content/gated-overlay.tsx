@@ -6,9 +6,7 @@ import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface GatedOverlayProps {
-  /** Content type, e.g. "poem", "essay", "research paper", "book chapter", "photograph" */
   contentType?: string;
-  /** Required tier to unlock, e.g. "Patron", "Supporter" */
   tier?: string;
   className?: string;
 }
@@ -36,7 +34,7 @@ export function GatedOverlay({ contentType = "content", tier = "Patron", classNa
 
       <div className="flex items-center gap-4 mt-2">
         <Link
-          href="/membership/payment"
+          href={`/membership/payment?tier=${tier.toLowerCase().replace(" ", "-")}`}
           className="inline-flex items-center justify-center font-sans text-sm font-medium bg-accent text-text-on-accent rounded px-8 py-3.5 hover:bg-accent-glow transition-colors"
         >
           {t("becomePatron", { tier })}

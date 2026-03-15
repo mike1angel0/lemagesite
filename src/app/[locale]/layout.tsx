@@ -7,6 +7,7 @@ import {
   Inter,
   IBM_Plex_Mono,
 } from "next/font/google";
+import { Providers } from "@/components/providers";
 import "../globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -51,9 +52,11 @@ export default async function LocaleLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} ${ibmPlexMono.variable} antialiased bg-bg text-text-primary font-sans`}
       >
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <Providers>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   );

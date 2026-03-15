@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -12,8 +13,8 @@ export default async function HomePage() {
     <>
       {/* ── Hero ── */}
       <section className="relative h-[900px] overflow-hidden">
-        {/* Background placeholder */}
-        <div className="absolute inset-0 bg-bg-surface" />
+        {/* Background */}
+        <Image src="/design-exports/kiJeb.png" alt="" fill className="object-cover" priority />
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% via-bg/15 via-30% to-bg/60 to-65%" />
@@ -103,7 +104,7 @@ export default async function HomePage() {
           <div className="flex flex-col gap-6">
             {/* Featured Photo card */}
             <div className="h-[340px] bg-bg-card border border-border rounded-sm overflow-hidden relative">
-              <div className="absolute inset-0 bg-bg-surface" />
+              <Image src="/design-exports/UyNEO.png" alt="" fill className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-bg/85 to-transparent" />
               <div className="relative h-full flex flex-col justify-end p-8 gap-2">
                 <span className="font-mono text-[9px] text-accent-dim tracking-[3px] font-medium uppercase">
@@ -144,8 +145,8 @@ export default async function HomePage() {
 
       {/* ── Quote Interlude ── */}
       <section className="h-[360px] relative overflow-hidden">
-        {/* Background image placeholder */}
-        <div className="absolute inset-0 bg-bg-surface" />
+        {/* Background image */}
+        <Image src="/design-exports/Wxrvq.png" alt="" fill className="object-cover" />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-bg/90 via-bg/50 to-bg/90" />
 
@@ -199,16 +200,21 @@ export default async function HomePage() {
       {/* ── About Preview ── */}
       <section className="py-[100px] px-5 md:px-10 xl:px-20">
         <div className="flex flex-col md:flex-row gap-12 md:gap-20 items-center">
-          {/* Portrait placeholder */}
-          <div className="w-full md:w-[360px] h-[450px] bg-bg-surface rounded-sm border border-border shrink-0" />
+          {/* Portrait */}
+          <div className="w-full md:w-[360px] h-[450px] rounded-sm border border-border shrink-0 relative overflow-hidden">
+            <Image src="/design-exports/tlHhS.png" alt="Portrait" fill className="object-cover" />
+          </div>
 
           {/* Bio content */}
           <div className="flex-1 flex flex-col gap-6">
-            <SectionLabel label="THE POET-MAGE" />
+            <SectionLabel label="THE ASTRONOMER" />
 
             <h2 className="font-serif text-3xl md:text-[42px] font-light text-warm-ivory leading-tight">
               Mihai Gavrilescu
             </h2>
+            <p className="font-mono text-sm text-accent tracking-[1px]">
+              @lemagepoet
+            </p>
             <p className="font-sans text-[15px] text-text-secondary leading-[1.8] max-w-[520px]">
               Poet, photographer, singer-songwriter, and researcher. Once a magician by trade, now a conjurer of words. I live between languages &mdash; Romanian and English &mdash; and between worlds: the precision of neural architectures and the silence of verse.
             </p>

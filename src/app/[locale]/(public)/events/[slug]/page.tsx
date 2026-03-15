@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ export default async function EventDetailPage() {
     <>
       {/* -- Hero Image -- */}
       <div className="h-[360px] relative overflow-hidden">
-        <div className="absolute inset-0 bg-bg-surface" />
+        <Image src="/design-exports/jgb40.png" alt="" fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#101828] via-[#101828CC]/60 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end px-20 pb-10 gap-3">
           <span className="font-mono text-[11px] font-medium uppercase tracking-[3px] text-gold">
@@ -39,7 +40,7 @@ export default async function EventDetailPage() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col gap-6">
           <p className="font-sans text-[15px] text-text-secondary leading-[1.7]">
-            Join Mihai Gavrilescu for an immersive evening at the National Museum
+            Join lemagepoet (Mihai Gavrilescu) for an immersive evening at the National Museum
             of Contemporary Art, where poetry, ambient music, and projected
             photography converge. The evening features live readings accompanied
             by original ambient compositions, while large-scale photography

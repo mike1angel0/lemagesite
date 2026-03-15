@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -38,15 +39,20 @@ export default async function AboutPage() {
       {/* ── Bio Hero ── */}
       <section className="flex flex-col md:flex-row gap-20 px-5 md:px-10 xl:px-20 py-20">
         {/* Portrait */}
-        <div className="w-full md:w-[420px] h-[560px] bg-bg-surface border border-border shrink-0" />
+        <div className="w-full md:w-[420px] h-[560px] border border-border shrink-0 relative overflow-hidden">
+          <Image src="/design-exports/yOHeR.png" alt="Portrait" fill className="object-cover" />
+        </div>
 
         {/* Intro */}
         <div className="flex flex-1 flex-col gap-6">
-          <SectionLabel label="THE POET-MAGE" />
+          <SectionLabel label="THE ASTRONOMER" />
 
           <h1 className="font-serif text-4xl md:text-[52px] font-light text-text-primary leading-tight">
             Mihai Gavrilescu
           </h1>
+          <p className="font-mono text-sm text-accent tracking-[1px]">
+            @lemagepoet
+          </p>
 
           <p className="font-sans text-[13px] text-accent-dim tracking-[2px]">
             Poet  &middot;  Photographer  &middot;  Singer-Songwriter  &middot;  AI Researcher  &middot;  Former Magician

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
 import { useTranslations } from "next-intl";
+import { createCheckoutSessionAction } from "@/lib/actions/stripe";
 
 type TierConfig = {
   titleKey: string;
@@ -68,7 +69,6 @@ export default function MembershipPaymentPage() {
   const config = tierConfigs[tierParam] || tierConfigs.patron;
 
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [donationAmount, setDonationAmount] = useState("");
 
   const price = billingCycle === "monthly" ? config.monthlyPrice : config.yearlyPrice;
 
@@ -77,69 +77,14 @@ export default function MembershipPaymentPage() {
       <section className="px-5 md:px-10 xl:px-20 py-16">
         <div className="flex flex-col items-center gap-8 max-w-md mx-auto">
           <SectionLabel label={t("sectionLabel")} />
-
           <h1 className="font-serif text-3xl md:text-[38px] font-light text-warm-ivory leading-tight text-center">
             {t("donationTitle")}
           </h1>
-
           <p className="font-sans text-sm text-text-secondary leading-relaxed text-center">
             {t("donationDescription")}
           </p>
-
-          <form
-            className="w-full flex flex-col gap-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Payment processing coming soon");
-            }}
-          >
-            <div className="flex flex-col gap-1.5">
-              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">
-                {t("customAmount")}
-              </label>
-              <div className="flex items-center h-10 bg-bg-elevated border border-border rounded px-3 gap-2">
-                <span className="font-sans text-sm text-text-muted">&euro;</span>
-                <input
-                  type="number"
-                  min="1"
-                  placeholder="25"
-                  value={donationAmount}
-                  onChange={(e) => setDonationAmount(e.target.value)}
-                  className="flex-1 bg-transparent font-sans text-sm text-text-primary focus:outline-none placeholder:text-text-muted"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-xs text-text-secondary">
-                {t("emailField")}
-              </label>
-              <div className="flex items-center h-10 bg-bg-elevated border border-border rounded px-3">
-                <span className="font-sans text-[13px] text-text-muted">your@email.com</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-xs text-text-secondary">
-                {t("cardField")}
-              </label>
-              <div className="flex items-center h-10 bg-bg-elevated border border-border rounded px-3">
-                <span className="font-mono text-[13px] text-text-muted">
-                  4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="flex items-center justify-center h-11 bg-accent text-text-on-accent font-sans text-xs font-medium tracking-[2px] uppercase rounded hover:bg-accent-glow transition-colors"
-            >
-              DONATE NOW
-            </button>
-          </form>
-
-          <p className="font-mono text-[10px] text-text-muted text-center tracking-[1px]">
-            {t("securedNote")}
+          <p className="font-sans text-sm text-text-muted text-center">
+            Donation support coming soon.
           </p>
         </div>
       </section>
@@ -216,35 +161,10 @@ export default function MembershipPaymentPage() {
             </button>
           </div>
 
-          {/* Form fields */}
-          <form
-            className="flex flex-col gap-5 mt-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Payment processing coming soon");
-            }}
-          >
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-xs text-text-secondary">
-                {t("emailField")}
-              </label>
-              <div className="flex items-center h-10 bg-bg-elevated border border-border rounded px-3">
-                <span className="font-sans text-[13px] text-text-muted">
-                  your@email.com
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-xs text-text-secondary">
-                {t("cardField")}
-              </label>
-              <div className="flex items-center h-10 bg-bg-elevated border border-border rounded px-3">
-                <span className="font-mono text-[13px] text-text-muted">
-                  4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
-                </span>
-              </div>
-            </div>
+          {/* Checkout form */}
+          <form action={createCheckoutSessionAction} className="flex flex-col gap-5 mt-6">
+            <input type="hidden" name="tier" value={tierParam} />
+            <input type="hidden" name="billingCycle" value={billingCycle} />
 
             <button
               type="submit"

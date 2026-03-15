@@ -1,14 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Play } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { ShareButtons } from "@/components/ui/share-buttons";
+import { PoemImageGenerator } from "@/components/ui/poem-image-generator";
+import { GatedOverlay } from "@/components/content/gated-overlay";
+import { SaveButton } from "@/components/ui/save-button";
+import { useSession } from "next-auth/react";
+import { hasAccess } from "@/lib/access";
 
 export default function PoemDetailPage() {
   const t = useTranslations("poetry");
   const tc = useTranslations("common");
+  const { data: session } = useSession();
+
+  const poemTitle = "The Cartographers of Silence";
+  const poemBgImage = "/design-exports/LBUKD.png";
+  const poemAccessTier = "PATRON"; // This would come from DB in real implementation
+  const poemStanzas = [
+    "We mapped the spaces between words,\nthe latitudes of unspoken thought —\neach silence a coordinate\non a chart no one had drawn before.",
+    "The instruments were simple:\na pen, a breath held too long,\nthe distance between your hand\nand the page where it almost landed.",
+    "We measured the weight of pauses\nin conversations that ended\nbefore they began — the cartography\nof everything left unsaid.",
+    "And in the end, we found that silence\nhad its own geography —\nvast, uncharted, beautiful,\nlike the dark side of a familiar moon.",
+  ];
+
+  const userTier = (session?.user as any)?.tier;
+  const canAccess = hasAccess(userTier, poemAccessTier);
 
   return (
     <article>
@@ -52,13 +72,16 @@ export default function PoemDetailPage() {
         <div className="w-10 h-px bg-accent-dim" />
       </div>
 
-      {/* -- Hero image placeholder -- */}
+      {/* -- Hero image -- */}
       <div className="w-full h-[360px] px-20">
-        <div className="w-full h-full bg-bg-surface rounded border border-border" />
+        <div className="w-full h-full rounded border border-border relative overflow-hidden">
+          <Image src="/design-exports/LBUKD.png" alt="Poem illustration" fill className="object-cover" />
+        </div>
       </div>
 
       {/* -- Poem body -- */}
-      <div className="flex flex-col items-center gap-8 px-[420px] py-16">
+      <div className="flex flex-col items-center gap-8 px-[420px] py-16 relative">
+        {/* First stanza - always visible */}
         <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
           We mapped the spaces between words,{"\n"}
           the latitudes of unspoken thought —{"\n"}
@@ -66,76 +89,116 @@ export default function PoemDetailPage() {
           on a chart no one had drawn before.
         </p>
 
-        <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
-          The instruments were simple:{"\n"}
-          a pen, a breath held too long,{"\n"}
-          the distance between your hand{"\n"}
-          and the page where it almost landed.
-        </p>
+        {canAccess ? (
+          <>
+            <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
+              The instruments were simple:{"\n"}
+              a pen, a breath held too long,{"\n"}
+              the distance between your hand{"\n"}
+              and the page where it almost landed.
+            </p>
 
-        <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
-          We measured the weight of pauses{"\n"}
-          in conversations that ended{"\n"}
-          before they began — the cartography{"\n"}
-          of everything left unsaid.
-        </p>
+            <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
+              We measured the weight of pauses{"\n"}
+              in conversations that ended{"\n"}
+              before they began — the cartography{"\n"}
+              of everything left unsaid.
+            </p>
 
-        <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
-          And in the end, we found that silence{"\n"}
-          had its own geography —{"\n"}
-          vast, uncharted, beautiful,{"\n"}
-          like the dark side of a familiar moon.
-        </p>
+            <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
+              And in the end, we found that silence{"\n"}
+              had its own geography —{"\n"}
+              vast, uncharted, beautiful,{"\n"}
+              like the dark side of a familiar moon.
+            </p>
+          </>
+        ) : (
+          <div className="relative w-full">
+            {/* Blurred preview */}
+            <div className="blur-sm select-none pointer-events-none opacity-50">
+              <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full">
+                The instruments were simple:{"\n"}
+                a pen, a breath held too long,{"\n"}
+                the distance between your hand{"\n"}
+                and the page where it almost landed.
+              </p>
+              <p className="font-serif text-[22px] font-light leading-[1.8] text-text-primary text-center w-full mt-8">
+                We measured the weight of pauses{"\n"}
+                in conversations that ended...
+              </p>
+            </div>
 
-        <div className="w-10 h-px bg-accent-dim" />
+            {/* Gated overlay */}
+            <div className="absolute inset-0 flex items-end">
+              <GatedOverlay contentType="poem" tier="Patron" className="w-full" />
+            </div>
+          </div>
+        )}
 
-        <p className="font-mono text-[11px] text-accent-dim tracking-[1px] text-center">
-          — Mihai Gavrilescu, from Nocturnal Echoes (2024)
-        </p>
+        {canAccess && (
+          <>
+            <div className="w-10 h-px bg-accent-dim" />
+            <p className="font-mono text-[11px] text-accent-dim tracking-[1px] text-center">
+              — lemagepoet, from Nocturnal Echoes (2024)
+            </p>
+          </>
+        )}
       </div>
 
-      {/* -- Tip Jar -- */}
-      <div className="flex flex-col items-center gap-4 px-[420px] py-8">
-        <p className="font-serif text-xl text-text-secondary italic font-light text-center">
-          Did this poem move you? Every tamed fox deserves a gift.
-        </p>
-        <div className="flex gap-3">
-          {["€2", "€5", "€10"].map((amount) => (
-            <Link
-              key={amount}
-              href="/membership/payment"
-              className="inline-flex items-center gap-1.5 border border-border rounded-full px-4 py-2 font-mono text-[11px] text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors"
-            >
-              <span>☕</span>
-              {amount}
-            </Link>
-          ))}
-        </div>
-      </div>
+      {canAccess && (
+        <>
+          {/* -- Tip Jar -- */}
+          <div className="flex flex-col items-center gap-4 px-[420px] py-8">
+            <p className="font-serif text-xl text-text-secondary italic font-light text-center">
+              Did this poem move you? Every tamed fox deserves a gift.
+            </p>
+            <div className="flex gap-3">
+              {["€2", "€5", "€10"].map((amount) => (
+                <Link
+                  key={amount}
+                  href="/membership/payment"
+                  className="inline-flex items-center gap-1.5 border border-border rounded-full px-4 py-2 font-mono text-[11px] text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors"
+                >
+                  <span>☕</span>
+                  {amount}
+                </Link>
+              ))}
+            </div>
+          </div>
 
-      {/* -- Action bar -- */}
-      <div className="flex justify-between items-center px-[200px] py-10">
-        <div className="flex items-center gap-4">
-          <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-            Share
-          </span>
-          <ShareButtons />
-        </div>
-        <div className="flex items-center gap-6">
-          <Link
-            href="/poetry/selenarium-notes-december"
-            className="font-sans text-xs text-accent-dim hover:text-accent tracking-[0.5px] transition-colors"
-          >
-            ← Previous Poem
-          </Link>
-          <Link
-            href="/poetry/neural-lullaby"
-            className="font-sans text-xs text-accent hover:text-text-primary tracking-[0.5px] transition-colors"
-          >
-            Next Poem →
-          </Link>
-        </div>
-      </div>
+          {/* -- Action bar -- */}
+          <div className="flex justify-between items-center px-[200px] py-10">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
+                  Share
+                </span>
+                <ShareButtons />
+              </div>
+              <PoemImageGenerator
+                title={poemTitle}
+                stanzas={poemStanzas}
+                bgImage={poemBgImage}
+              />
+              <SaveButton contentType="POEM" contentId="placeholder-poem-id" saved={false} />
+            </div>
+            <div className="flex items-center gap-6">
+              <Link
+                href="/poetry/selenarium-notes-december"
+                className="font-sans text-xs text-accent-dim hover:text-accent tracking-[0.5px] transition-colors"
+              >
+                ← Previous Poem
+              </Link>
+              <Link
+                href="/poetry/neural-lullaby"
+                className="font-sans text-xs text-accent hover:text-text-primary tracking-[0.5px] transition-colors"
+              >
+                Next Poem →
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* -- Partner Callout -- */}
       <div className="flex justify-center px-[200px] py-6">

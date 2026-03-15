@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 
@@ -17,7 +18,7 @@ export default async function SeriesDetailPage({
     <article>
       {/* -- Hero image with overlay -- */}
       <section className="w-full h-[500px] relative overflow-hidden">
-        <div className="absolute inset-0 bg-bg-surface" />
+        <Image src="/design-exports/KcAj3.png" alt="" fill className="object-cover" />
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#101828] via-[#101828]/60 to-transparent" />
@@ -46,14 +47,14 @@ export default async function SeriesDetailPage({
       {/* -- Photo grid -- */}
       <section className="px-20 py-12">
         <div className="grid grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {["h6Q53", "5XhNI", "S3LrL", "wjXTh", "b81Sw", "YQA3C"].map((imgId, i) => (
             <Link
               key={i}
               href={`/photography/fog-study-${i + 1}`}
               className="group"
             >
               <div className="h-[300px] bg-bg-surface rounded-sm overflow-hidden relative">
-                <div className="absolute inset-0 bg-bg-surface" />
+                <Image src={`/design-exports/${imgId}.png`} alt="" fill className="object-cover" />
               </div>
             </Link>
           ))}

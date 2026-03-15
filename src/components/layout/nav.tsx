@@ -9,6 +9,8 @@ import Image from "next/image";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavMobile } from "./nav-mobile";
+import { useSession, signOut } from "next-auth/react";
+import { MemberBadge } from "@/components/ui/member-badge";
 
 const navLinks = [
   { href: "/poetry", labelKey: "poetry" },
@@ -26,11 +28,16 @@ export function Nav() {
   const locale = useLocale();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
 
   const localePath = locale === "ro" ? "" : `/${locale}`;
 
   const pathnameWithoutLocale = pathname.replace(/^\/(en|ro)/, "") || "/";
   const targetLocale = locale === "ro" ? "en" : "ro";
+
+  const isLoggedIn = !!session?.user;
+  const userTier = (session?.user as any)?.tier;
+  const isPaidTier = userTier && userTier !== "FREE";
 
   return (
     <>
@@ -66,7 +73,7 @@ export function Nav() {
             ))}
           </div>
 
-          {/* Right: Language toggle + CTA (desktop) */}
+          {/* Right: Language toggle + Auth (desktop) */}
           <div className="hidden md:flex items-center gap-5">
             <IntlLink
               href={pathnameWithoutLocale}
@@ -75,12 +82,31 @@ export function Nav() {
             >
               {t("langToggle")}
             </IntlLink>
-            <Link
-              href={`${localePath}/membership`}
-              className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
-            >
-              {t("enterSelenarium")}
-            </Link>
+
+            {isLoggedIn ? (
+              <div className="flex items-center gap-4">
+                {isPaidTier && <MemberBadge tier={userTier} />}
+                <Link
+                  href={`${localePath}/account`}
+                  className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase hover:text-accent-glow transition-colors"
+                >
+                  {t("myAccount")}
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="font-sans text-[10px] font-medium text-text-muted tracking-[2px] uppercase hover:text-text-secondary transition-colors"
+                >
+                  {t("signOut")}
+                </button>
+              </div>
+            ) : (
+              <Link
+                href={`${localePath}/membership`}
+                className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase border border-accent-dim px-5 py-2 hover:border-accent hover:text-accent-glow transition-colors"
+              >
+                {t("enterSelenarium")}
+              </Link>
+            )}
           </div>
 
           {/* Mobile: Hamburger */}

@@ -20,6 +20,40 @@ export async function POST(req: NextRequest) {
   }
 
   switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const userId = session.metadata?.userId;
+      const tierParam = session.metadata?.tier;
+      const customerId = session.customer as string;
+
+      if (userId && customerId) {
+        let tier: "SUPPORTER" | "PATRON" | "INNER_CIRCLE" = "SUPPORTER";
+        if (tierParam === "patron") tier = "PATRON";
+        if (tierParam === "inner-circle") tier = "INNER_CIRCLE";
+
+        const subscriptionId = session.subscription as string;
+
+        await prisma.membership.upsert({
+          where: { userId },
+          update: {
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+            tier,
+            status: "ACTIVE",
+            startedAt: new Date(),
+          },
+          create: {
+            userId,
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+            tier,
+            status: "ACTIVE",
+            startedAt: new Date(),
+          },
+        });
+      }
+      break;
+    }
     case "customer.subscription.created":
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;

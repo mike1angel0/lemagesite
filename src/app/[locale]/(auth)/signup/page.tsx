@@ -5,10 +5,14 @@ import { Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { useActionState } from "react";
+import { signUpAction, googleSignInAction, type AuthState } from "@/lib/actions/auth";
 
 export default function SignupPage() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
+
+  const [state, formAction, pending] = useActionState(signUpAction, {} as AuthState);
 
   return (
     <>
@@ -29,35 +33,50 @@ export default function SignupPage() {
           {t("signupSubtitle")}
         </p>
 
+        {/* Error message */}
+        {state.error && (
+          <p className="mt-4 text-center font-sans text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded px-4 py-2">
+            {state.error}
+          </p>
+        )}
+
         {/* Form */}
-        <form className="mt-8 space-y-4">
+        <form action={formAction} className="mt-8 space-y-4">
           <Input
             id="name"
+            name="name"
             label={t("nameLabel")}
             type="text"
             placeholder="Your name"
+            required
           />
           <Input
             id="email"
+            name="email"
             label={t("emailLabel")}
             type="email"
             placeholder="you@example.com"
+            required
           />
           <Input
             id="password"
+            name="password"
             label={t("passwordLabel")}
             type="password"
             placeholder="••••••••"
+            required
           />
           <Input
-            id="confirm-password"
+            id="confirmPassword"
+            name="confirmPassword"
             label={t("confirmPasswordLabel")}
             type="password"
             placeholder="••••••••"
+            required
           />
 
-          <Button variant="filled" className="w-full h-12 mt-2">
-            {t("createAccount")}
+          <Button variant="filled" className="w-full h-12 mt-2" disabled={pending}>
+            {pending ? tc("loading") : t("createAccount")}
           </Button>
         </form>
 
@@ -69,14 +88,15 @@ export default function SignupPage() {
         </div>
 
         {/* Google sign-in */}
-        <button
-          type="button"
-          onClick={() => alert("Google sign-in coming soon")}
-          className="w-full h-11 flex items-center justify-center gap-2 border border-border rounded text-text-secondary font-sans text-[13px] hover:border-accent-dim hover:text-text-primary transition-colors"
-        >
-          <Globe className="size-4" />
-          {t("googleSignIn")}
-        </button>
+        <form action={googleSignInAction}>
+          <button
+            type="submit"
+            className="w-full h-11 flex items-center justify-center gap-2 border border-border rounded text-text-secondary font-sans text-[13px] hover:border-accent-dim hover:text-text-primary transition-colors"
+          >
+            <Globe className="size-4" />
+            {t("googleSignIn")}
+          </button>
+        </form>
 
         {/* Sign-in link */}
         <p className="mt-8 text-center">
@@ -99,13 +119,8 @@ export default function SignupPage() {
 
       {/* -- Right Panel -- */}
       <div className="hidden md:block w-[560px] bg-bg-surface relative overflow-hidden">
-        {/* Background image placeholder */}
         <div className="absolute inset-0 bg-bg-elevated" />
-
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
-
-        {/* Quote overlay */}
         <div className="absolute bottom-12 left-12 right-12 flex flex-col gap-4">
           <p className="font-serif text-2xl font-light text-text-primary leading-snug max-w-[400px]">
             &ldquo;The only way to do great work is to love what you do.&rdquo;

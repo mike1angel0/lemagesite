@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,8 +41,8 @@ export default function PhotoDetailPage() {
       </div>
 
       {/* -- Image frame -- */}
-      <div className="w-full h-[780px] bg-black px-20 py-6">
-        <div className="w-full h-full bg-bg-surface" />
+      <div className="w-full h-[780px] bg-black px-20 py-6 relative">
+        <Image src="/design-exports/c4ouB.png" alt="Photograph" fill className="object-contain" />
       </div>
 
       {/* -- Below image -- */}

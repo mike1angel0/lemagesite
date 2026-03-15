@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,9 @@ export default function ProductDetailPage() {
       {/* -- Product Hero -- */}
       <div className="flex gap-12 px-20 py-16">
         {/* Product Image */}
-        <div className="w-[500px] h-[500px] bg-bg-surface rounded-lg shrink-0" />
+        <div className="w-[500px] h-[500px] rounded-lg shrink-0 relative overflow-hidden">
+          <Image src="/design-exports/kmrzS.png" alt="Product" fill className="object-cover" />
+        </div>
 
         {/* Product Info */}
         <div className="flex-1 flex flex-col justify-center gap-5">

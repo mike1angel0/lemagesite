@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { PoemCard } from "@/components/content/poem-card";
@@ -94,8 +95,8 @@ export default async function PoetryPage() {
 
       {/* ── Quote Interlude ── */}
       <section className="h-[280px] relative overflow-hidden flex items-center justify-center">
-        {/* Background image placeholder */}
-        <div className="absolute inset-0 bg-bg-surface" />
+        {/* Background image */}
+        <Image src="/design-exports/h6MJQ.png" alt="" fill className="object-cover" />
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-bg/85 via-bg/50 to-bg/85" />
 

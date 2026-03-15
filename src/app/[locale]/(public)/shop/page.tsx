@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const products = [
     title: "Cartography of Silence",
     price: "\u20AC24",
     slug: "/shop/cartography-of-silence",
+    image: "/design-exports/Qkbam.png",
   },
   {
     tag: "PRINT",
@@ -28,6 +30,7 @@ const products = [
     title: "Fog Studies No. 7 \u2014 Signed",
     price: "\u20AC45",
     slug: "/shop/fog-studies-no-7",
+    image: "/design-exports/Z8jP7.png",
   },
   {
     tag: "APPAREL",
@@ -35,6 +38,7 @@ const products = [
     title: "Selenarium Tee \u2014 Midnight",
     price: "\u20AC32",
     slug: "/shop/selenarium-tee",
+    image: "/design-exports/KnCm9.png",
   },
   {
     tag: "OBJECT",
@@ -42,6 +46,7 @@ const products = [
     title: "Ceramic Selenarium Mug",
     price: "\u20AC18",
     slug: "/shop/ceramic-mug",
+    image: "/design-exports/KFqLU.png",
   },
   {
     tag: "DIGITAL",
@@ -49,6 +54,7 @@ const products = [
     title: "Complete Poetry PDF Bundle",
     price: "\u20AC12",
     slug: "/shop/poetry-pdf-bundle",
+    image: "/design-exports/BxAPG.png",
   },
   {
     tag: "PRINT",
@@ -56,6 +62,7 @@ const products = [
     title: "Winter Light Triptych",
     price: "\u20AC65",
     slug: "/shop/winter-light-triptych",
+    image: "/design-exports/SYBpY.png",
   },
 ];
 
@@ -105,8 +112,10 @@ export default function ShopPage() {
         </span>
 
         <div className="flex flex-col md:flex-row gap-8 mt-8 h-[420px]">
-          {/* Image placeholder */}
-          <div className="flex-1 h-full bg-bg-surface border border-border rounded" />
+          {/* Featured image */}
+          <div className="flex-1 h-full border border-border rounded relative overflow-hidden">
+            <Image src="/design-exports/sYnu8.png" alt="Featured product" fill className="object-cover" />
+          </div>
 
           {/* Info */}
           <div className="flex flex-col justify-center gap-5 w-full md:w-[480px]">
@@ -155,8 +164,10 @@ export default function ShopPage() {
               href={product.slug}
               className="flex flex-col gap-4"
             >
-              {/* Image placeholder */}
-              <div className="w-full h-[340px] bg-bg-surface border border-border rounded" />
+              {/* Product image */}
+              <div className="w-full h-[340px] border border-border rounded relative overflow-hidden">
+                <Image src={product.image} alt={product.title} fill className="object-cover" />
+              </div>
 
               <div className="flex flex-col gap-2">
                 <span className={`font-mono text-[9px] tracking-[2px] ${product.tagColor}`}>
