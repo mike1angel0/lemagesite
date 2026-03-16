@@ -26,19 +26,24 @@ export default async function AdminEditorEditPage({ params }: EditorEditPageProp
       ? (content as Record<string, unknown>).description as string || ""
       : (content as Record<string, unknown>).body as string || (content as Record<string, unknown>).abstract as string || "";
 
+  const r = content as Record<string, unknown>;
   const serialized = {
     id: content.id,
     contentType: content.contentType,
     title: content.title,
     body: bodyField,
-    accessTier: (content as Record<string, unknown>).accessTier as string || "FREE",
+    accessTier: r.accessTier as string || "FREE",
     publishedAt: content.publishedAt,
-    collection: (content as Record<string, unknown>).collection as string || "",
-    category: (content as Record<string, unknown>).category as string || "",
-    abstract: (content as Record<string, unknown>).abstract as string || "",
-    doi: (content as Record<string, unknown>).doi as string || "",
-    pdfUrl: (content as Record<string, unknown>).pdfUrl as string || "",
-    imageUrl: (content as Record<string, unknown>).imageUrl as string || "",
+    collection: r.collection as string || "",
+    category: r.category as string || "",
+    abstract: r.abstract as string || "",
+    doi: r.doi as string || "",
+    pdfUrl: r.pdfUrl as string || "",
+    imageUrl: r.imageUrl as string || "",
+    thumbnail: r.thumbnail as string || "",
+    coverImage: r.coverImage as string || "",
+    readTime: r.readTime as number | undefined,
+    essayCategory: r.category as string || "",
   };
 
   return <EditorEditClient content={serialized} />;

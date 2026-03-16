@@ -1,14 +1,15 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { SectionLabel } from "@/components/ui/section-label";
 import { QuoteInterlude } from "@/components/content/quote-interlude";
+import { getPageContent } from "@/lib/data";
 
 type TierDef = {
   labelKey: string;
   labelColor: string;
   nameKey: string;
   price: string;
-  period: string;
+  periodKey: string;
   descKey: string;
   featureKeys: string[];
   ctaKey: string;
@@ -22,18 +23,14 @@ type TierDef = {
 
 const tierDefs: TierDef[] = [
   {
-    labelKey: "FREE",
+    labelKey: "free",
     labelColor: "text-text-muted",
     nameKey: "free",
-    price: "Free",
-    period: "",
-    descKey: "The public selenarium.",
-    featureKeys: [
-      "\u2713  Selected poems",
-      "\u2713  Research abstracts",
-      "\u2713  Newsletter",
-    ],
-    ctaKey: "BROWSE FREE",
+    price: "",
+    periodKey: "",
+    descKey: "freeDescription",
+    featureKeys: ["featureSelectedPoems", "featureResearchAbstracts", "featureNewsletter"],
+    ctaKey: "ctaGetStarted",
     ctaHref: "/poetry",
     ctaStyle: "ghost",
     highlighted: false,
@@ -42,18 +39,14 @@ const tierDefs: TierDef[] = [
     bgColor: "",
   },
   {
-    labelKey: "SUPPORTER",
+    labelKey: "supporter",
     labelColor: "text-accent-dim",
     nameKey: "supporter",
     price: "\u20AC4",
-    period: "/month",
-    descKey: "The deeper view.",
-    featureKeys: [
-      "\u2713  Full poems",
-      "\u2713  Full essays",
-      "\u2713  Selected photography series",
-    ],
-    ctaKey: "BECOME SUPPORTER",
+    periodKey: "perMonth",
+    descKey: "supporterTagline",
+    featureKeys: ["featureFullPoems", "featureFullEssays", "featureSelectedPhotography"],
+    ctaKey: "ctaBecomeSupporter",
     ctaHref: "/membership/payment?tier=supporter",
     ctaStyle: "filled",
     highlighted: false,
@@ -62,40 +55,30 @@ const tierDefs: TierDef[] = [
     bgColor: "",
   },
   {
-    labelKey: "PATRON",
+    labelKey: "patron",
     labelColor: "text-accent",
     nameKey: "patron",
     price: "\u20AC10",
-    period: "/month",
-    descKey: "Full selenarium access.",
-    featureKeys: [
-      "\u2713  Everything in Supporter",
-      "\u2713  Full research papers",
-      "\u2713  Deep dives & behind-the-scenes",
-      "\u2713  Early access to new work",
-    ],
-    ctaKey: "BECOME PATRON",
+    periodKey: "perMonth",
+    descKey: "patronTagline",
+    featureKeys: ["featureEverythingSupporter", "featureFullResearchPapers", "featureDeepDives", "featureEarlyAccess"],
+    ctaKey: "ctaBecomePatron",
     ctaHref: "/membership/payment?tier=patron",
     ctaStyle: "filled",
     highlighted: true,
-    badgeKey: "RECOMMENDED",
+    badgeKey: "recommended",
     borderColor: "border-accent",
     bgColor: "bg-bg-card",
   },
   {
-    labelKey: "INNER CIRCLE",
+    labelKey: "innerCircle",
     labelColor: "text-accent-dim",
     nameKey: "innerCircle",
     price: "\u20AC200",
-    period: "/month",
-    descKey: "The private quarters.",
-    featureKeys: [
-      "\u2713  Everything in Patron",
-      "\u2713  Drafts & private reflections",
-      "\u2713  Quarterly private session",
-      "\u2713  Early book access",
-    ],
-    ctaKey: "JOIN INNER CIRCLE",
+    periodKey: "perMonth",
+    descKey: "innerCircleTagline",
+    featureKeys: ["featureEverythingPatron", "featureWipDrafts", "featureQuarterlySession", "featureEarlyBookAccess"],
+    ctaKey: "ctaJoinInnerCircle",
     ctaHref: "/membership/payment?tier=inner-circle",
     ctaStyle: "accent-ghost",
     highlighted: false,
@@ -107,21 +90,21 @@ const tierDefs: TierDef[] = [
 
 export default async function MembershipPage() {
   const t = await getTranslations("membership");
+  const locale = await getLocale();
+  const content = await getPageContent("membership", ["sectionLabel", "heroTitle", "heroDescription"], locale, t);
 
   return (
     <>
       {/* ── Hero ── */}
       <section className="flex flex-col items-center px-5 md:px-10 xl:px-20 pt-20 pb-[60px] gap-6">
-        <SectionLabel label={t("sectionLabel")} className="justify-center" />
+        <SectionLabel label={content.sectionLabel} className="justify-center" />
 
         <h1 className="font-serif text-4xl md:text-5xl xl:text-[56px] font-light text-text-primary text-center leading-[1.15] max-w-[600px] whitespace-pre-line">
-          Choose how deep{"\n"}you want to look.
+          {content.heroTitle}
         </h1>
 
         <p className="font-sans text-sm text-text-secondary text-center leading-[1.6] max-w-[560px] whitespace-pre-line">
-          From published work to private drafts. From abstracts to full research.
-          {"\n"}Every tier unlocks a deeper layer of the Selenarium.
-          {"\n\n"}&ldquo;One sees clearly only with the heart.&rdquo;
+          {content.heroDescription}
         </p>
       </section>
 
@@ -136,19 +119,19 @@ export default async function MembershipPage() {
               {/* Badge */}
               {tier.badgeKey && (
                 <span className="font-mono text-[9px] font-medium uppercase tracking-[3px] text-accent">
-                  {tier.badgeKey}
+                  {t(tier.badgeKey)}
                 </span>
               )}
 
               {/* Tier Label */}
               <span className={`font-mono text-[10px] font-medium uppercase tracking-[3px] ${tier.labelColor}`}>
-                {tier.labelKey}
+                {t(tier.labelKey)}
               </span>
 
               {/* Price */}
-              {tier.price === "Free" ? (
+              {!tier.price ? (
                 <span className="font-serif text-[36px] font-light text-text-primary">
-                  Free
+                  {t("free")}
                 </span>
               ) : (
                 <div className="flex items-end gap-1">
@@ -156,14 +139,14 @@ export default async function MembershipPage() {
                     {tier.price}
                   </span>
                   <span className="font-sans text-xs text-text-muted pb-1">
-                    {tier.period}
+                    {t(tier.periodKey)}
                   </span>
                 </div>
               )}
 
               {/* Description */}
               <span className="font-sans text-[13px] text-text-secondary">
-                {tier.descKey}
+                {t(tier.descKey)}
               </span>
 
               {/* Divider */}
@@ -171,12 +154,12 @@ export default async function MembershipPage() {
 
               {/* Features */}
               <ul className="space-y-3 flex-1">
-                {tier.featureKeys.map((feature) => (
+                {tier.featureKeys.map((featureKey) => (
                   <li
-                    key={feature}
+                    key={featureKey}
                     className="font-sans text-xs text-text-secondary"
                   >
-                    {feature}
+                    ✓  {t(featureKey)}
                   </li>
                 ))}
               </ul>
@@ -192,7 +175,7 @@ export default async function MembershipPage() {
                     : "border border-border text-text-secondary"
                 }`}
               >
-                {tier.ctaKey}
+                {t(tier.ctaKey)}
               </Link>
             </div>
           ))}
@@ -201,26 +184,25 @@ export default async function MembershipPage() {
 
       {/* ── Quote Interlude ── */}
       <QuoteInterlude
-        quote={`We measured the weight of pauses\nin conversations that ended before they began \u2014\nthe cartography of everything left unsaid.`}
-        attribution={`From Cartography of Silence`}
+        quote={t("quoteText")}
+        attribution={t("quoteAuthor")}
         imageUrl="/images/membership-quote-bg.jpg"
       />
 
       {/* ── One-time Donation ── */}
       <section className="border-t border-border px-5 md:px-10 xl:px-20 py-[60px] flex flex-col items-center gap-5">
         <h2 className="font-serif text-2xl font-light text-text-primary text-center">
-          Or make a one-time donation
+          {t("donationTitle")}
         </h2>
         <p className="font-sans text-[13px] text-text-secondary text-center leading-[1.6] max-w-[400px]">
-          Support the Selenarium with a single contribution.
-          {"\n"}Even the smallest star illuminates something.
+          {t("donationDescription")}
         </p>
         <Link
           href="/membership/payment?tier=donation"
           className="border border-accent-dim px-7 py-3 transition-opacity hover:opacity-80"
         >
           <span className="font-sans text-[11px] font-medium tracking-[2px] uppercase text-accent">
-            DONATE &rarr;
+            {t("donationLabel")} &rarr;
           </span>
         </Link>
       </section>

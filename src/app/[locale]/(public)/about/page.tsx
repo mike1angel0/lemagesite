@@ -3,8 +3,22 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
+import { getAboutContent, getSocialLinks, getSiteImages } from "@/lib/data";
+import { getSiteConfig } from "@/lib/site-config";
+import { BLUR_DATA_URL } from "@/lib/placeholders";
 
-const collaborators = [
+const SOCIAL_LABELS: Record<string, string> = {
+  instagram: "Instagram", youtube: "YouTube", tiktok: "TikTok", facebook: "Facebook",
+  twitter: "X", bluesky: "Bluesky", threads: "Threads", mastodon: "Mastodon",
+  medium: "Medium", substack: "Substack", spotify: "Spotify", soundcloud: "SoundCloud",
+  bandcamp: "Bandcamp", appleMusic: "Apple Music", github: "GitHub", linkedin: "LinkedIn",
+  pinterest: "Pinterest", tumblr: "Tumblr", patreon: "Patreon", kofi: "Ko-fi",
+  discord: "Discord", telegram: "Telegram", whatsapp: "WhatsApp", vimeo: "Vimeo",
+  twitch: "Twitch", behance: "Behance", dribbble: "Dribbble", flickr: "Flickr",
+  goodreads: "Goodreads", website: "Website",
+};
+
+const defaultCollaborators = [
   {
     name: "NEMIRA",
     tag: "Publisher",
@@ -33,6 +47,11 @@ const collaborators = [
 
 export default async function AboutPage() {
   const t = await getTranslations("about");
+  const [aboutContent, config, socialLinks, siteImages] = await Promise.all([getAboutContent(), getSiteConfig(), getSocialLinks(), getSiteImages()]);
+
+  const collaborators = aboutContent.about_collaborators
+    ? JSON.parse(aboutContent.about_collaborators)
+    : defaultCollaborators;
 
   return (
     <>
@@ -40,85 +59,85 @@ export default async function AboutPage() {
       <section className="flex flex-col md:flex-row gap-20 px-5 md:px-10 xl:px-20 py-20">
         {/* Portrait */}
         <div className="w-full md:w-[420px] h-[560px] border border-border shrink-0 relative overflow-hidden">
-          <Image src="/design-exports/yOHeR.png" alt="Portrait" fill className="object-cover" />
+          <Image src={siteImages.portrait} alt="Portrait" fill className="object-cover" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
         </div>
 
         {/* Intro */}
         <div className="flex flex-1 flex-col gap-6">
-          <SectionLabel label="THE ASTRONOMER" />
+          <SectionLabel label={t("astronomerLabel")} />
 
           <h1 className="font-serif text-4xl md:text-[52px] font-light text-text-primary leading-tight">
-            Mihai Gavrilescu
+            {aboutContent.about_displayName || config.authorName}
           </h1>
           <p className="font-mono text-sm text-accent tracking-[1px]">
-            @lemagepoet
+            {aboutContent.about_handle || config.authorHandle}
           </p>
 
+          {Object.keys(socialLinks).length > 0 && (
+            <div className="flex flex-wrap items-center gap-4">
+              {Object.entries(socialLinks).map(([key, url]) => (
+                <a
+                  key={key}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[11px] text-text-muted hover:text-accent transition-colors tracking-[1px]"
+                >
+                  {SOCIAL_LABELS[key] ?? key}
+                </a>
+              ))}
+            </div>
+          )}
+
           <p className="font-sans text-[13px] text-accent-dim tracking-[2px]">
-            Poet  &middot;  Photographer  &middot;  Singer-Songwriter  &middot;  AI Researcher  &middot;  Former Magician
+            {aboutContent.about_roles || t("roleLabel")}
           </p>
 
           <div className="font-sans text-[15px] text-text-secondary leading-[1.8] max-w-[560px] space-y-4">
-            <p>
-              I live between languages — Romanian and English — and between worlds: the precision of neural architectures and the silence of verse. Born in Bucharest, I studied computer science before realizing that the most interesting algorithms are the ones that fail beautifully.
-            </p>
-            <p>
-              Before all of this, I was a magician. Not the metaphorical kind — the kind with cards and misdirection and audiences who wanted to believe. I traded that for poetry, which is really just a slower, more permanent form of the same trick: making the invisible appear.
-            </p>
-            <p>
-              My work explores the intersection of artificial and human intelligence. Through poetry, I map the spaces where language breaks down. Through research, I study how machines approximate meaning. Through photography, I document what remains when both fail.
-            </p>
-            <p>
-              This selenarium is the convergence point — a place where art and science exist not in tension, but in dialogue. A grown-up asteroid B612, if you will.
-            </p>
+            {(aboutContent.about_bio || `${t("bio1")}\n\n${t("bio2")}`).split("\n\n").filter(Boolean).map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
           </div>
 
           <p className="font-serif text-2xl italic text-accent leading-[1.4]">
-            &ldquo;I write to understand what I think about thinking.
-            {"\n"}I perform magic to understand what I think about believing.&rdquo;
+            &ldquo;{aboutContent.about_personalQuote || t("personalQuote")}&rdquo;
           </p>
         </div>
       </section>
 
       {/* ── Academic CV ── */}
       <section className="border-t border-border px-5 md:px-10 xl:px-20 py-[60px] flex flex-col gap-10">
-        <SectionLabel label="ACADEMIC CV" />
+        <SectionLabel label={t("academicCvLabel")} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
           {/* Left: Education + Publications */}
           <div className="flex flex-col gap-6">
             <span className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim">
-              EDUCATION
+              {t("educationLabel")}
             </span>
-            <p className="font-sans text-[13px] text-text-secondary leading-[1.6]">
-              Ph.D. Candidate, Computational Linguistics — University of Bucharest, 2022–present
-              {"\n"}M.Sc. Computer Science, AI — Politehnica University, 2020
+            <p className="font-sans text-[13px] text-text-secondary leading-[1.6] whitespace-pre-line">
+              {aboutContent.about_education || "Ph.D. Candidate, Computational Linguistics — University of Bucharest, 2022–present\nM.Sc. Computer Science, AI — Politehnica University, 2020"}
             </p>
 
             <span className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim">
-              SELECTED PUBLICATIONS
+              {t("publicationsLabel")}
             </span>
-            <p className="font-sans text-[13px] text-text-secondary leading-[1.6]">
-              Neural Architectures and the Poetics of Attention (2025)
-              {"\n"}On Machine Grief: Can Artificial Systems Experience Loss? (2024)
-              {"\n"}Generative Verse: Fine-Tuning LLMs on Poetic Corpora (2024)
+            <p className="font-sans text-[13px] text-text-secondary leading-[1.6] whitespace-pre-line">
+              {aboutContent.about_publications || "Neural Architectures and the Poetics of Attention (2025)\nOn Machine Grief: Can Artificial Systems Experience Loss? (2024)\nGenerative Verse: Fine-Tuning LLMs on Poetic Corpora (2024)"}
             </p>
           </div>
 
           {/* Right: Achievements + Downloads */}
           <div className="flex flex-col gap-6">
             <span className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim">
-              ACHIEVEMENTS
+              {t("achievementsLabel")}
             </span>
-            <p className="font-sans text-[13px] text-text-secondary leading-[1.6]">
-              Romanian National Poetry Prize, 2024
-              {"\n"}Best Paper, ACL Workshop on Creativity &amp; NLP, 2023
-              {"\n"}Pushcart Prize Nominee, 2022
-              {"\n"}Carpathian Arts Residency Fellow, 2023
+            <p className="font-sans text-[13px] text-text-secondary leading-[1.6] whitespace-pre-line">
+              {aboutContent.about_achievements || "Romanian National Poetry Prize, 2024\nBest Paper, ACL Workshop on Creativity & NLP, 2023\nPushcart Prize Nominee, 2022\nCarpathian Arts Residency Fellow, 2023"}
             </p>
 
             <span className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim">
-              DOWNLOADS
+              {t("downloadsLabel")}
             </span>
             <div className="border border-accent-dim px-5 py-2.5 w-fit">
               <span className="font-sans text-xs text-accent">
@@ -131,10 +150,10 @@ export default async function AboutPage() {
 
       {/* ── Collaborators & Partners ── */}
       <section className="border-t border-border px-5 md:px-10 xl:px-20 py-[60px] flex flex-col gap-10">
-        <SectionLabel label="COLLABORATORS & PARTNERS" />
+        <SectionLabel label={t("collaboratorsLabel")} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {collaborators.map((collab) => (
+          {collaborators.map((collab: { name: string; tag: string; desc: string; link: string }) => (
             <div
               key={collab.name}
               className="bg-bg-card border border-border rounded-lg p-6 flex flex-col gap-4"
@@ -160,24 +179,22 @@ export default async function AboutPage() {
 
       {/* ── Support the Selenarium ── */}
       <section className="border-t border-border bg-bg-card px-5 md:px-10 xl:px-20 py-[60px] flex flex-col items-center gap-5">
-        <SectionLabel label="SUPPORT SELENARIUM" className="justify-center" />
+        <SectionLabel label={t("supportLabel")} className="justify-center" />
 
         <h2 className="font-serif text-[28px] font-light text-text-primary text-center">
-          If this work resonates with you
+          {aboutContent.about_supportHeading || t("supportTitle")}
         </h2>
 
         <p className="font-sans text-sm text-text-secondary text-center leading-[1.6] max-w-[520px]">
-          Your support keeps this selenarium running — funding independent research,
-          {"\n"}new recordings, photography expeditions, and open-access poetry.
-          {"\n\n"}Every lamp needs someone to light it.
+          {aboutContent.about_supportDescription || t("supportDescription")}
         </p>
 
         <div className="flex gap-4">
           <Button variant="filled" size="lg" asChild>
-            <Link href="/membership">Become a Patron</Link>
+            <Link href="/membership">{t("ctaBecomePatron")}</Link>
           </Button>
           <Button variant="ghost" size="lg" asChild>
-            <Link href="/membership/payment">One-time Donation</Link>
+            <Link href="/membership/payment">{t("ctaDonation")}</Link>
           </Button>
         </div>
       </section>

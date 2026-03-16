@@ -1,16 +1,19 @@
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
+import { getSocialLinks } from "@/lib/data";
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const socialLinks = await getSocialLinks();
+
   return (
     <>
       <Nav />
       <main className="min-h-screen">{children}</main>
-      <Footer />
+      <Footer socialLinks={socialLinks} />
     </>
   );
 }

@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { saveSeoSettingsAction } from "@/lib/actions/seo";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://theselenarium.art";
 
 const pages = [
   { id: "home", label: "Home", path: "/" },
@@ -37,7 +40,7 @@ const defaultSEO: Record<string, PageSEO> = {
     ogTitle:
       "Selenarium — Poetry, Photography & Sound",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art",
+    canonicalUrl: SITE_URL,
     robots: "index, follow",
     schemaType: "WebSite",
     score: 92,
@@ -48,7 +51,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Contemporary poetry exploring silence, memory, and the geometry of longing. Original works by lemagepoet.",
     ogTitle: "Poetry — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/poetry",
+    canonicalUrl: `${SITE_URL}/poetry`,
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 88,
@@ -59,7 +62,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Fine art photography series including Fog Studies, Winter Light, and Urban Solitude. Medium format film and digital works.",
     ogTitle: "Photography — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/photography",
+    canonicalUrl: `${SITE_URL}/photography`,
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 85,
@@ -70,7 +73,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Ambient soundscapes, field recordings, and experimental music compositions.",
     ogTitle: "Music — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/music",
+    canonicalUrl: `${SITE_URL}/music`,
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 78,
@@ -81,7 +84,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Curated reading lists, book reviews, and literary recommendations.",
     ogTitle: "Library — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/books",
+    canonicalUrl: `${SITE_URL}/books`,
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 72,
@@ -92,7 +95,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Research notes, investigations, and explorations in art, language, and perception.",
     ogTitle: "Research — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/research",
+    canonicalUrl: `${SITE_URL}/research`,
     robots: "index, follow",
     schemaType: "CollectionPage",
     score: 68,
@@ -103,7 +106,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Long-form essays on silence, observation, and the creative process.",
     ogTitle: "Journal — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/essays",
+    canonicalUrl: `${SITE_URL}/essays`,
     robots: "index, follow",
     schemaType: "Blog",
     score: 90,
@@ -114,7 +117,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Biography and artistic statement. Poet, photographer, and sound artist based in Romania.",
     ogTitle: "About lemagepoet",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/about",
+    canonicalUrl: `${SITE_URL}/about`,
     robots: "index, follow",
     schemaType: "ProfilePage",
     score: 82,
@@ -125,7 +128,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Join Selenarium community. Access exclusive poetry, photography, and behind-the-scenes content.",
     ogTitle: "Become a Member — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/membership",
+    canonicalUrl: `${SITE_URL}/membership`,
     robots: "index, follow",
     schemaType: "WebPage",
     score: 86,
@@ -136,7 +139,7 @@ const defaultSEO: Record<string, PageSEO> = {
       "Get in touch for collaborations, press inquiries, or just to say hello.",
     ogTitle: "Contact — Selenarium",
     ogImage: "",
-    canonicalUrl: "https://theselenarium.art/contact",
+    canonicalUrl: `${SITE_URL}/contact`,
     robots: "index, follow",
     schemaType: "ContactPage",
     score: 74,
@@ -187,10 +190,19 @@ export default function SEOEditorPage() {
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
-    await new Promise((r) => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      const result = await saveSeoSettingsAction(seoData);
+      if (result.error) {
+        console.error("SEO save error:", result.error);
+      } else {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
+    } catch (e) {
+      console.error("SEO save error:", e);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -319,7 +331,7 @@ export default function SEOEditorPage() {
                 {current.seoTitle || "Page Title"}
               </p>
               <p className="font-mono text-[11px] text-[#6BBF7B] truncate">
-                {current.canonicalUrl || "https://theselenarium.art"}
+                {current.canonicalUrl || SITE_URL}
               </p>
               <p className="font-sans text-xs text-text-muted line-clamp-2">
                 {current.metaDescription || "Page description will appear here."}
@@ -353,7 +365,7 @@ export default function SEOEditorPage() {
                 type="text"
                 value={current.ogImage}
                 onChange={(e) => updateField("ogImage", e.target.value)}
-                placeholder="https://theselenarium.art/og/home.jpg"
+                placeholder={`${SITE_URL}/og/home.jpg`}
                 className="w-full border border-border bg-transparent rounded py-2.5 px-3 font-sans text-sm text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
               />
               {!current.ogImage && (

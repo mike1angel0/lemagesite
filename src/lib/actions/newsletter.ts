@@ -15,6 +15,10 @@ export type LinkedContentItem = {
   id: string;
   type: "Poem" | "Photo" | "Essay" | "Research" | "Event";
   title: string;
+  excerpt?: string | null;
+  image?: string | null;
+  slug: string;
+  meta?: string | null;
 };
 
 export async function searchContentForLinkingAction(query: string, type?: string) {
@@ -27,24 +31,65 @@ export async function searchContentForLinkingAction(query: string, type?: string
     : {};
 
   if (!type || type === "Poem") {
-    const poems = await prisma.poem.findMany({ where, select: { id: true, title: true }, take: 10, orderBy: { createdAt: "desc" } });
-    results.push(...poems.map((p) => ({ id: p.id, type: "Poem" as const, title: p.title })));
+    const poems = await prisma.poem.findMany({
+      where,
+      select: { id: true, title: true, slug: true, excerpt: true, collection: true },
+      take: 10,
+      orderBy: { createdAt: "desc" },
+    });
+    results.push(...poems.map((p) => ({
+      id: p.id, type: "Poem" as const, title: p.title, slug: `/poetry/${p.slug}`,
+      excerpt: p.excerpt, meta: p.collection,
+    })));
   }
   if (!type || type === "Photo") {
-    const photos = await prisma.photo.findMany({ where, select: { id: true, title: true }, take: 10, orderBy: { createdAt: "desc" } });
-    results.push(...photos.map((p) => ({ id: p.id, type: "Photo" as const, title: p.title })));
+    const photos = await prisma.photo.findMany({
+      where,
+      select: { id: true, title: true, slug: true, imageUrl: true, description: true },
+      take: 10,
+      orderBy: { createdAt: "desc" },
+    });
+    results.push(...photos.map((p) => ({
+      id: p.id, type: "Photo" as const, title: p.title, slug: `/photography/${p.slug}`,
+      excerpt: p.description, image: p.imageUrl,
+    })));
   }
   if (!type || type === "Essay") {
-    const essays = await prisma.essay.findMany({ where, select: { id: true, title: true }, take: 10, orderBy: { createdAt: "desc" } });
-    results.push(...essays.map((e) => ({ id: e.id, type: "Essay" as const, title: e.title })));
+    const essays = await prisma.essay.findMany({
+      where,
+      select: { id: true, title: true, slug: true, excerpt: true, thumbnail: true, readTime: true, category: true },
+      take: 10,
+      orderBy: { createdAt: "desc" },
+    });
+    results.push(...essays.map((e) => ({
+      id: e.id, type: "Essay" as const, title: e.title, slug: `/essays/${e.slug}`,
+      excerpt: e.excerpt, image: e.thumbnail, meta: e.readTime ? `${e.readTime} min read` : e.category,
+    })));
   }
   if (!type || type === "Research") {
-    const research = await prisma.researchPaper.findMany({ where, select: { id: true, title: true }, take: 10, orderBy: { createdAt: "desc" } });
-    results.push(...research.map((r) => ({ id: r.id, type: "Research" as const, title: r.title })));
+    const research = await prisma.researchPaper.findMany({
+      where,
+      select: { id: true, title: true, slug: true, abstract: true, tags: true },
+      take: 10,
+      orderBy: { createdAt: "desc" },
+    });
+    results.push(...research.map((r) => ({
+      id: r.id, type: "Research" as const, title: r.title, slug: `/research/${r.slug}`,
+      excerpt: r.abstract ? r.abstract.slice(0, 200) : null, meta: r.tags.slice(0, 3).join(", "),
+    })));
   }
   if (!type || type === "Event") {
-    const events = await prisma.event.findMany({ where: query ? { title: { contains: query, mode: "insensitive" } } : {}, select: { id: true, title: true }, take: 10, orderBy: { date: "desc" } });
-    results.push(...events.map((e) => ({ id: e.id, type: "Event" as const, title: e.title })));
+    const events = await prisma.event.findMany({
+      where: query ? { title: { contains: query, mode: "insensitive" } } : {},
+      select: { id: true, title: true, slug: true, description: true, location: true, date: true, image: true },
+      take: 10,
+      orderBy: { date: "desc" },
+    });
+    results.push(...events.map((e) => ({
+      id: e.id, type: "Event" as const, title: e.title, slug: `/events/${e.slug}`,
+      excerpt: e.description ? e.description.slice(0, 200) : null, image: e.image,
+      meta: `${e.date.toLocaleDateString("en", { month: "short", day: "numeric" })}${e.location ? ` · ${e.location}` : ""}`,
+    })));
   }
 
   return results;

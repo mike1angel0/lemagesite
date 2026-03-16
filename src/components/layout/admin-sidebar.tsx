@@ -21,6 +21,7 @@ import {
   Search,
   Palette,
   MessageSquare,
+  PenLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +39,7 @@ const sidebarItems = [
   { key: "events", href: "/admin/events", icon: Calendar, label: "Events" },
   { key: "orders", href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { key: "media", href: "/admin/media", icon: ImageIcon, label: "Media Library" },
+  { key: "page-content", href: "/admin/page-content", icon: PenLine, label: "Page Content" },
   { key: "designs", href: "/admin/designs", icon: Palette, label: "Designs" },
   { key: "seo", href: "/admin/seo", icon: Search, label: "SEO" },
   { key: "settings", href: "/admin/settings", icon: Settings, label: "Settings" },

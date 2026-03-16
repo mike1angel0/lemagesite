@@ -5,6 +5,7 @@ import { useState } from "react";
 interface EssayImageGeneratorProps {
   title: string;
   excerpt: string;
+  body: string;
   category?: string;
   readTime?: string;
   bgImage?: string;
@@ -301,6 +302,162 @@ function renderEssayImage(
   }
 }
 
+function renderSummarySlide(
+  canvas: HTMLCanvasElement,
+  bgImg: HTMLImageElement | null,
+  logoImg: HTMLImageElement | null,
+  title: string,
+  summary: string,
+  format: Format,
+) {
+  const scale = 3;
+  const { width: w, height: h } = FORMATS[format];
+  const width = w * scale;
+  const height = h * scale;
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d")!;
+  ctx.scale(scale, scale);
+
+  // Solid dark background
+  ctx.fillStyle = "#1A150E";
+  ctx.fillRect(0, 0, w, h);
+
+  // Background photo
+  if (bgImg) {
+    const imgRatio = bgImg.width / bgImg.height;
+    const canvasRatio = w / h;
+    let sx = 0, sy = 0, sw = bgImg.width, sh = bgImg.height;
+    if (imgRatio > canvasRatio) {
+      sw = bgImg.height * canvasRatio;
+      sx = (bgImg.width - sw) / 2;
+    } else {
+      sh = bgImg.width / canvasRatio;
+      sy = (bgImg.height - sh) / 2;
+    }
+    ctx.drawImage(bgImg, sx, sy, sw, sh, 0, 0, w, h);
+  }
+
+  // Darker overlay for readability
+  ctx.fillStyle = "rgba(26, 21, 14, 0.85)";
+  ctx.fillRect(0, 0, w, h);
+  drawVignette(ctx, w, h);
+  drawInsetBorder(ctx, w, h);
+
+  const padding = 80;
+  const contentWidth = w - padding * 2;
+  const isStory = format === "story";
+  const bottomBarHeight = isStory ? 220 : 180;
+
+  // ── Measure everything first to center vertically ──
+  const labelHeight = 13;
+  const labelToTitle = isStory ? 44 : 36;
+
+  const titleSize = isStory ? 32 : 28;
+  const titleLineHeight = titleSize * 1.3;
+  ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+  const titleLines = wrapText(ctx, title, contentWidth).slice(0, 2);
+  const titleBlockHeight = titleLines.length * titleLineHeight;
+
+  const titleToDivider = isStory ? 28 : 20;
+  const dividerHeight = 1;
+  const dividerToSummary = isStory ? 44 : 36;
+
+  const summaryFontSize = isStory ? 26 : 24;
+  const summaryLineHeight = summaryFontSize * 1.8;
+  ctx.font = `300 ${summaryFontSize}px "Cormorant Garamond", Georgia, serif`;
+  const allSummaryLines = wrapText(ctx, summary, contentWidth - 40);
+
+  // Available vertical space between inset border and bottom bar
+  const availableTop = padding + 32;
+  const availableBottom = h - bottomBarHeight;
+  const availableHeight = availableBottom - availableTop;
+
+  // Fixed heights (everything except summary lines)
+  const fixedHeight = labelHeight + labelToTitle + titleBlockHeight + titleToDivider + dividerHeight + dividerToSummary;
+
+  // How many summary lines fit
+  const summaryAvailable = availableHeight - fixedHeight;
+  const maxLines = Math.max(1, Math.floor(summaryAvailable / summaryLineHeight));
+  const displayLines = allSummaryLines.slice(0, maxLines);
+  if (allSummaryLines.length > maxLines && displayLines.length > 0) {
+    displayLines[displayLines.length - 1] = displayLines[displayLines.length - 1].replace(/\s*\S+$/, "…");
+  }
+
+  const summaryBlockHeight = displayLines.length * summaryLineHeight;
+  const totalHeight = fixedHeight + summaryBlockHeight;
+
+  // Center the entire content block vertically
+  let y = availableTop + (availableHeight - totalHeight) / 2;
+
+  // ── "CONTINUE READING" label ──
+  ctx.font = '400 13px Inter, system-ui, sans-serif';
+  ctx.fillStyle = "#C9A96E";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.letterSpacing = "3px";
+  y += labelHeight / 2;
+  ctx.fillText("CONTINUE READING", w / 2, y);
+  y += labelHeight / 2 + labelToTitle;
+
+  // ── Title (smaller) ──
+  ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+  ctx.fillStyle = "rgba(245, 238, 216, 0.7)";
+  ctx.letterSpacing = "0px";
+  ctx.textAlign = "center";
+  for (const line of titleLines) {
+    y += titleLineHeight / 2;
+    ctx.fillText(line, w / 2, y);
+    y += titleLineHeight / 2;
+  }
+
+  // ── Gold divider ──
+  y += titleToDivider;
+  const dividerW = 40;
+  ctx.fillStyle = "#C9A96E";
+  ctx.fillRect(w / 2 - dividerW, y, dividerW * 2, 1);
+  ctx.save();
+  ctx.translate(w / 2, y);
+  ctx.rotate(Math.PI / 4);
+  ctx.fillRect(-3, -3, 6, 6);
+  ctx.restore();
+  y += dividerHeight + dividerToSummary;
+
+  // ── Summary text ──
+  ctx.font = `300 ${summaryFontSize}px "Cormorant Garamond", Georgia, serif`;
+  ctx.fillStyle = "#F5EED8";
+  ctx.textAlign = "center";
+  ctx.letterSpacing = "0px";
+  for (const line of displayLines) {
+    y += summaryLineHeight / 2;
+    ctx.fillText(line, w / 2, y);
+    y += summaryLineHeight / 2;
+  }
+
+  // ── Bottom bar ──
+  const bottomY = h - bottomBarHeight / 2;
+  ctx.font = "400 16px Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "3px";
+  ctx.fillStyle = "#C9A96E";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText("SELENARIUM", padding, bottomY);
+
+  ctx.font = "400 15px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "rgba(245, 238, 216, 0.5)";
+  ctx.letterSpacing = "1px";
+  ctx.fillText("Read more on mihaigavrilescu.ro", padding, bottomY + 24);
+
+  if (logoImg) {
+    const logoSize = 120;
+    const logoX = w - 40 - logoSize;
+    const logoY = bottomY - logoSize / 2;
+    ctx.globalAlpha = 0.7;
+    ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+    ctx.globalAlpha = 1;
+  }
+}
+
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -318,31 +475,65 @@ function downloadBlob(blob: Blob, filename: string) {
 export function EssayImageGenerator({
   title,
   excerpt,
+  body,
   category = "",
   readTime = "",
   bgImage,
 }: EssayImageGeneratorProps) {
   const [loading, setLoading] = useState<Format | null>(null);
+  const [cachedSummary, setCachedSummary] = useState<string | null>(null);
+
+  async function getSummary(): Promise<string> {
+    if (cachedSummary) return cachedSummary;
+
+    try {
+      const res = await fetch("/api/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: body,
+          contentType: "essay",
+          style: "instagram",
+        }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      const summary = data.summary || excerpt;
+      setCachedSummary(summary);
+      return summary;
+    } catch {
+      // Fallback to excerpt
+      setCachedSummary(excerpt);
+      return excerpt;
+    }
+  }
 
   async function generateImage(format: Format) {
     setLoading(format);
     try {
-      await ensureFontsLoaded();
-
-      const [bgImg, logoImg] = await Promise.all([
+      const [, bgImg, logoImg, summary] = await Promise.all([
+        ensureFontsLoaded(),
         bgImage ? loadImage(bgImage).catch(() => null) : Promise.resolve(null),
         loadImage("/logo.png").catch(() => null),
+        getSummary(),
       ]);
 
-      const canvas = document.createElement("canvas");
-      renderEssayImage(canvas, bgImg, logoImg, title, excerpt, category, readTime, format);
-
-      const blob = await canvasToBlob(canvas);
       const slug = title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
-      downloadBlob(blob, `${slug}-${format}.png`);
+
+      // Slide 1: Title card
+      const canvas1 = document.createElement("canvas");
+      renderEssayImage(canvas1, bgImg, logoImg, title, excerpt, category, readTime, format);
+      const blob1 = await canvasToBlob(canvas1);
+      downloadBlob(blob1, `${slug}-${format}-1-title.png`);
+
+      // Slide 2: Summary card
+      const canvas2 = document.createElement("canvas");
+      renderSummarySlide(canvas2, bgImg, logoImg, title, summary, format);
+      const blob2 = await canvasToBlob(canvas2);
+      downloadBlob(blob2, `${slug}-${format}-2-summary.png`);
     } catch (err) {
       console.error("Image generation failed:", err);
     } finally {

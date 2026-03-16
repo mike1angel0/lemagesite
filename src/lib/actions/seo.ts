@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { writeFile, readFile, access } from "fs/promises";
 import path from "path";
 import { PAGE_METADATA } from "@/lib/seo/metadata";
+import { SITE_URL } from "@/lib/site-config";
 
 async function requireAdmin() {
   const session = await auth();
@@ -296,7 +297,7 @@ function analyzeHtml(html: string, routePath: string): {
   // SERP preview
   const serp: SerpPreview = {
     title: titleText || defaultMeta?.title || "Untitled Page",
-    url: `theselenarium.art${routePath}`,
+    url: `${SITE_URL.replace(/^https?:\/\//, "")}${routePath}`,
     description: descText || defaultMeta?.description || "No description available.",
   };
 
@@ -406,7 +407,7 @@ export async function runSeoAuditAction(): Promise<
   const admin = await requireAdmin();
   if (!admin) return { error: "Not authorized" };
 
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXTAUTH_URL || process.env.SITE_URL || "http://localhost:3000";
 
   // 1. Audit each page
   const pages: PageAudit[] = [];
@@ -424,7 +425,7 @@ export async function runSeoAuditAction(): Promise<
           label: route.label,
           checks: [{ name: "HTTP Status", status: "fail", detail: `${res.status} response` }],
           score: 0,
-          serp: { title: route.label, url: `theselenarium.art${route.path}`, description: "" },
+          serp: { title: route.label, url: `${SITE_URL.replace(/^https?:\/\//, "")}${route.path}`, description: "" },
           wordCount: 0,
           headingStructure: [],
           internalLinks: 0,
@@ -453,7 +454,7 @@ export async function runSeoAuditAction(): Promise<
         label: route.label,
         checks: [{ name: "Fetch", status: "fail", detail: `Could not reach: ${e instanceof Error ? e.message : "unknown"}` }],
         score: 0,
-        serp: { title: route.label, url: `theselenarium.art${route.path}`, description: "" },
+        serp: { title: route.label, url: `${SITE_URL.replace(/^https?:\/\//, "")}${route.path}`, description: "" },
         wordCount: 0,
         headingStructure: [],
         internalLinks: 0,
@@ -583,7 +584,7 @@ export async function applySeoFixAction(
     const content = `import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
-const BASE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
+const BASE_URL = process.env.NEXTAUTH_URL || process.env.SITE_URL || "https://theselenarium.art";
 const LOCALES = ["en", "ro"] as const;
 
 function localized(p: string, priority: number, freq: MetadataRoute.Sitemap[number]["changeFrequency"] = "weekly", lastMod?: Date): MetadataRoute.Sitemap {
@@ -636,7 +637,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (await fileExists(fp)) return { success: "robots.ts already exists" };
     const content = `import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
+const BASE_URL = process.env.NEXTAUTH_URL || process.env.SITE_URL || "https://theselenarium.art";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -772,4 +773,43 @@ export async function applyAllFixesAction(
     results.push({ id: fixId, ...result });
   }
   return { results };
+}
+
+// ─── SEO Editor — Save page-level SEO settings ──────────
+
+export type PageSeoData = {
+  seoTitle: string;
+  metaDescription: string;
+  ogTitle: string;
+  ogImage: string;
+  canonicalUrl: string;
+  robots: string;
+  schemaType: string;
+};
+
+export async function saveSeoSettingsAction(
+  data: Record<string, PageSeoData>,
+): Promise<{ error?: string; success?: string }> {
+  const admin = await requireAdmin();
+  if (!admin) return { error: "Not authorized" };
+
+  const upserts: { key: string; value: string }[] = [];
+
+  for (const [pageId, seo] of Object.entries(data)) {
+    for (const [field, value] of Object.entries(seo)) {
+      if (typeof value === "string") {
+        upserts.push({ key: `seo_${pageId}_${field}`, value });
+      }
+    }
+  }
+
+  for (const { key, value } of upserts) {
+    await prisma.siteSetting.upsert({
+      where: { key },
+      update: { value },
+      create: { key, value },
+    });
+  }
+
+  return { success: `Saved SEO settings for ${Object.keys(data).length} pages` };
 }

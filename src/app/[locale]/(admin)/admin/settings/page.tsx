@@ -10,13 +10,7 @@ export default async function AdminSettingsPage() {
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (user?.role !== "ADMIN") redirect("/account");
 
-  const settings = await prisma.siteSetting.findMany({
-    where: {
-      key: {
-        in: ["siteName", "language", "timezone", "instagram", "medium", "youtube"],
-      },
-    },
-  });
+  const settings = await prisma.siteSetting.findMany();
 
   const settingsMap: Record<string, string> = {};
   for (const s of settings) {

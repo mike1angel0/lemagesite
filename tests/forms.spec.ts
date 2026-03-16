@@ -77,19 +77,19 @@ test.describe("Signup form", () => {
     await expect(page.locator("#name")).toBeVisible();
     await expect(page.locator("#email")).toBeVisible();
     await expect(page.locator("#password")).toBeVisible();
-    await expect(page.locator("#confirm-password")).toBeVisible();
+    await expect(page.locator("#confirmPassword")).toBeVisible();
   });
 
   test("form fields accept input", async ({ page }) => {
     await page.locator("#name").fill("Jane Smith");
     await page.locator("#email").fill("jane@example.com");
     await page.locator("#password").fill("mypassword123");
-    await page.locator("#confirm-password").fill("mypassword123");
+    await page.locator("#confirmPassword").fill("mypassword123");
 
     await expect(page.locator("#name")).toHaveValue("Jane Smith");
     await expect(page.locator("#email")).toHaveValue("jane@example.com");
     await expect(page.locator("#password")).toHaveValue("mypassword123");
-    await expect(page.locator("#confirm-password")).toHaveValue(
+    await expect(page.locator("#confirmPassword")).toHaveValue(
       "mypassword123"
     );
   });

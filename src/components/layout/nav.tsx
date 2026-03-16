@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { NavMobile } from "./nav-mobile";
 import { useSession, signOut } from "next-auth/react";
 import { MemberBadge } from "@/components/ui/member-badge";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const navLinks = [
   { href: "/poetry", labelKey: "poetry" },
@@ -75,6 +76,7 @@ export function Nav() {
 
           {/* Right: Language toggle + Auth (desktop) */}
           <div className="hidden md:flex items-center gap-5">
+            <ThemeToggle />
             <IntlLink
               href={pathnameWithoutLocale}
               locale={targetLocale}

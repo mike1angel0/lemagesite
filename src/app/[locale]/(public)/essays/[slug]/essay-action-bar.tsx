@@ -5,8 +5,10 @@ import { EssayImageGenerator } from "@/components/ui/essay-image-generator";
 import { SaveButton } from "@/components/ui/save-button";
 
 interface EssayActionBarProps {
+  essayId: string;
   title: string;
   excerpt: string;
+  body: string;
   category: string;
   readTime: string;
   shareLabels: { x: string; facebook: string; copyLink: string };
@@ -14,8 +16,10 @@ interface EssayActionBarProps {
 }
 
 export function EssayActionBar({
+  essayId,
   title,
   excerpt,
+  body,
   category,
   readTime,
   shareLabels,
@@ -32,10 +36,11 @@ export function EssayActionBar({
       <EssayImageGenerator
         title={title}
         excerpt={excerpt}
+        body={body}
         category={category}
         readTime={readTime}
       />
-      <SaveButton contentType="ESSAY" contentId="placeholder-essay-id" saved={false} />
+      <SaveButton contentType="ESSAY" contentId={essayId} saved={false} />
     </div>
   );
 }

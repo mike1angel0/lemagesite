@@ -1,7 +1,12 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
-const BASE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
+import { SITE_URL } from "@/lib/site-config";
+
+// Force dynamic rendering — sitemap needs DB access at request time
+export const dynamic = "force-dynamic";
+
+const BASE_URL = SITE_URL;
 const LOCALES = ["en", "ro"] as const;
 
 function localized(path: string, priority: number, freq: MetadataRoute.Sitemap[number]["changeFrequency"] = "weekly", lastMod?: Date): MetadataRoute.Sitemap {
@@ -24,8 +29,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localized("/about", 0.6, "monthly"),
     ...localized("/shop", 0.8, "weekly"),
     ...localized("/books", 0.7, "weekly"),
+    ...localized("/membership", 0.6, "monthly"),
     ...localized("/membership/payment", 0.5, "monthly"),
+    ...localized("/events", 0.7, "weekly"),
     ...localized("/contact", 0.4, "monthly"),
+    ...localized("/search", 0.3, "weekly"),
+    ...localized("/terms", 0.2, "yearly"),
+    ...localized("/privacy", 0.2, "yearly"),
   ];
 
   const [poems, photos, photoSeries, essays, research, albums, books, products, events] =

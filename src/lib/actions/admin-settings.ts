@@ -30,22 +30,40 @@ export async function saveSettingsAction(
   const admin = await requireAdmin();
   if (!admin) return { error: "Not authorized" };
 
-  const keys = [
-    "siteName",
-    "language",
-    "timezone",
-    "instagram",
-    "medium",
-    "youtube",
+  const generalKeys = [
+    "siteName", "language", "timezone",
+    "siteDescription", "authorName", "authorHandle",
+    "contactEmail", "senderEmail", "twitterHandle",
+    "heroImage", "portraitImage", "ogDefaultImage",
+  ];
+  const socialKeys = [
+    "instagram", "youtube", "tiktok", "facebook", "twitter", "bluesky",
+    "threads", "mastodon", "medium", "substack", "spotify", "soundcloud",
+    "bandcamp", "appleMusic", "github", "linkedin", "pinterest", "tumblr",
+    "patreon", "kofi", "discord", "telegram", "whatsapp", "vimeo", "twitch",
+    "behance", "dribbble", "flickr", "goodreads", "website",
   ];
 
-  for (const key of keys) {
+  for (const key of generalKeys) {
     const value = (formData.get(key) as string) || "";
     await prisma.siteSetting.upsert({
       where: { key },
       update: { value },
       create: { key, value },
     });
+  }
+
+  for (const key of socialKeys) {
+    const value = (formData.get(key) as string)?.trim() || "";
+    if (value) {
+      await prisma.siteSetting.upsert({
+        where: { key },
+        update: { value },
+        create: { key, value },
+      });
+    } else {
+      await prisma.siteSetting.deleteMany({ where: { key } });
+    }
   }
 
   return { success: true };

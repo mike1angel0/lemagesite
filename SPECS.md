@@ -1,4 +1,4 @@
-# The Observatory (LMG Website) -- Complete Design Specification
+# Selenarium -- Complete Design Specification
 
 **Design File:** `/Users/mihaigavrilescu/IdeaProjects/lmg website/lmgsite.pen`
 **Canvas Width:** 1440px (desktop), 640px (email template)
@@ -124,7 +124,7 @@
 |---------|---------|-------|
 | **navLeft** | Logo frame 160x76px | Image with `screen` blend mode over `$bg` |
 | **navCenter** | 8 links: Poetry, Photography, Music, Research, Essays, Books, Shop, Membership | Inter 12px, `$text-secondary`, ls: 1px, gap: 32px |
-| **navRight** | "EN / RO" toggle + "ENTER THE OBSERVATORY" CTA | IBM Plex Mono 10px `$text-muted` + Inter 10px 500 `$starlight`, gap: 20px |
+| **navRight** | "EN / RO" toggle + "ENTER SELENARIUM" CTA | IBM Plex Mono 10px `$text-muted` + Inter 10px 500 `$starlight`, gap: 20px |
 
 **CTA Button:** Padding 8px 20px, border 1px `$accent-dim`
 
@@ -166,7 +166,7 @@ Horizontal, center-aligned, gap: 6px
 
 ## Public Pages
 
-### 1. Home -- Observatory (ID: `2WMFV`)
+### 1. Home -- Selenarium (ID: `2WMFV`)
 
 **Purpose:** Landing page for the creative portfolio and membership site.
 **Sections:**
@@ -177,7 +177,7 @@ Horizontal, center-aligned, gap: 6px
 - **Decorative stars:** 12 small ellipses (2-4px), gold/silver, scattered with varying opacity (0.3-0.7)
 - **Content (flex-end, centered):**
   - SectionLabel: "WELCOME, WANDERER"
-  - Headline: "Come in from the dark.\nThe observatory is open." (Cormorant Garamond 56px, 300, `$warm-ivory`, fixed-width 750px)
+  - Headline: "Come in from the dark.\nThe selenarium is open." (Cormorant Garamond 56px, 300, `$warm-ivory`, fixed-width 750px)
   - Decorative divider: line + flower-2 icon (`#C07070`, opacity 0.6) + line
   - Subtitle: "Poetry . Photography . Music . Research . Magic" (IBM Plex Mono 11px, `$accent-dim`, ls: 3px)
   - **Two CTAs:**
@@ -185,7 +185,7 @@ Horizontal, center-aligned, gap: 6px
     - "About the Poet-Mage" -- outlined, border 1px `$accent-dim`
 
 #### Featured Section (padding: 80px)
-- SectionLabel: "LATEST FROM THE OBSERVATORY"
+- SectionLabel: "LATEST FROM SELENARIUM"
 - **Two-column grid (gap: 24px):**
   - Left: Latest Poem card (340px, `$bg-card`) + Recent Research card (200px, `$bg-card` + LockBadge)
   - Right: Featured Photo card (340px, image with gradient overlay) + Recent Essay card (200px, `$bg-card`)
@@ -208,7 +208,7 @@ Horizontal, center-aligned, gap: 6px
 - Pull quote: Cormorant Garamond 22px, italic, `$starlight`
 
 #### Newsletter Section (`$bg-surface`, padding: 80px)
-- SectionLabel: "DISPATCHES FROM THE OBSERVATORY"
+- SectionLabel: "DISPATCHES FROM SELENARIUM"
 - Headline: Cormorant Garamond 38px, 300, `$warm-ivory`
 - Email form: input (320px) + "Subscribe" button (filled `$starlight`)
 - Note: "Powered by Substack . Also available on Medium"
@@ -226,7 +226,7 @@ Horizontal, center-aligned, gap: 6px
 
 #### Hero (padding: 80px 80px 60px 80px)
 - SectionLabel: "POETRY"
-- Title: "Verses from the\nObservatory" (56px, fixed-width 700px)
+- Title: "Verses from the\nSelenarium" (56px, fixed-width 700px)
 - Description with Saint-Exupery quote
 - **Filter tabs:** All (active, `$accent`, weight 500) | Silence & Space | Intelligence | Longing | Romanian (Inter 12px, `$text-muted`)
 
@@ -239,7 +239,7 @@ Vertical list, each row: horizontal, `space-between`, padding: 32px 0, top borde
 | Neural Lullaby | INTELLIGENCE | EN | SUPPORTER | -- |
 | Scrisoare catre nimeni | LONGING | RO | -- | -- |
 | Attention Is All You Need (To Grieve) | INTELLIGENCE | EN | PATRON ONLY | headphones icon |
-| Observatory Notes, December | SILENCE & SPACE | EN / RO | -- | -- |
+| Selenarium Notes, December | SILENCE & SPACE | EN / RO | -- | -- |
 
 Each row: Meta tags (IBM Plex Mono 9px) + Title (Cormorant Garamond 28px) + Excerpt (15px italic) | Arrow
 
@@ -354,7 +354,7 @@ Each essay: Image (280x200px) + Content (tag, title, excerpt, meta), horizontal,
 
 ---
 
-### 8. Membership -- Observatory (ID: `Qz4tR`)
+### 8. Membership -- Selenarium (ID: `Qz4tR`)
 
 **Purpose:** Subscription pricing page with 4 tiers.
 
@@ -520,7 +520,7 @@ All follow a consistent pattern:
   - Form: Email + Password inputs + "Forgot password?" link
   - Divider with "or"
   - Google Sign-In button (outlined, 44px height)
-  - Sign-up link: "Don't have an account? Join the Observatory"
+  - Sign-up link: "Don't have an account? Join Selenarium"
 - **Right panel** (560px): Atmospheric forest image + literary quote (Saint-Exupery)
 
 ### Member -- Account (ID: `e6CJf`)

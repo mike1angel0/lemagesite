@@ -165,6 +165,7 @@ model Poem {
   collection  String?
   language    String?
   audioUrl    String?
+  coverImage  String?
   accessTier  AccessTier @default(FREE)
   featured    Boolean    @default(false)
   excerpt     String?
@@ -279,6 +280,7 @@ model ResearchPaper {
   tags        String[]
   doi         String?
   year        Int?
+  coverImage  String?
   accessTier  AccessTier @default(FREE)
   pdfUrl      String?
   publishedAt DateTime?
@@ -421,6 +423,18 @@ model Newsletter {
   replyTo       String?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+}
+
+// ──────────────────────────────────────────────
+// Subscribers
+// ──────────────────────────────────────────────
+
+model Subscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  source         String?   // "footer", "homepage", etc.
 }
 
 // ──────────────────────────────────────────────

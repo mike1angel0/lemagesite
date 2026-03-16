@@ -241,6 +241,12 @@ export function MusicPlayer({ tracks, albumTitle }: MusicPlayerProps) {
 
           {/* Progress bar */}
           <div
+            role="slider"
+            aria-label="Seek"
+            aria-valuenow={Math.round(currentTime)}
+            aria-valuemin={0}
+            aria-valuemax={Math.round(duration)}
+            tabIndex={0}
             className="h-1.5 bg-border rounded-full cursor-pointer group mb-4"
             onClick={seek}
           >
@@ -258,6 +264,7 @@ export function MusicPlayer({ tracks, albumTitle }: MusicPlayerProps) {
               <button
                 type="button"
                 onClick={skipPrev}
+                aria-label="Previous track"
                 className="text-text-muted hover:text-text-primary transition-colors"
               >
                 <SkipBack className="size-4" />
@@ -266,6 +273,7 @@ export function MusicPlayer({ tracks, albumTitle }: MusicPlayerProps) {
               <button
                 type="button"
                 onClick={playPause}
+                aria-label={isPlaying ? "Pause" : "Play"}
                 className="w-9 h-9 rounded-full bg-gold flex items-center justify-center hover:opacity-90 transition-opacity"
               >
                 {isPlaying ? (
@@ -278,6 +286,7 @@ export function MusicPlayer({ tracks, albumTitle }: MusicPlayerProps) {
               <button
                 type="button"
                 onClick={skipNext}
+                aria-label="Next track"
                 className="text-text-muted hover:text-text-primary transition-colors"
               >
                 <SkipForward className="size-4" />
@@ -289,6 +298,7 @@ export function MusicPlayer({ tracks, albumTitle }: MusicPlayerProps) {
               <button
                 type="button"
                 onClick={toggleMute}
+                aria-label={muted || volume === 0 ? "Unmute" : "Mute"}
                 className="text-text-muted hover:text-text-primary transition-colors"
               >
                 {muted || volume === 0 ? (
@@ -298,6 +308,12 @@ export function MusicPlayer({ tracks, albumTitle }: MusicPlayerProps) {
                 )}
               </button>
               <div
+                role="slider"
+                aria-label="Volume"
+                aria-valuenow={Math.round((muted ? 0 : volume) * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                tabIndex={0}
                 className="w-20 h-1 bg-border rounded-full cursor-pointer"
                 onClick={changeVolume}
               >

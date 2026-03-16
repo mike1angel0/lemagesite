@@ -38,6 +38,7 @@ export async function savePoemAction(
   const body = (formData.get("body") as string)?.trim();
   const tier = (formData.get("tier") as string) || "Free";
   const tags = (formData.get("tags") as string)?.trim();
+  const coverImage = (formData.get("coverImage") as string)?.trim();
   const publish = formData.get("publish") === "true";
 
   if (!title) return { error: "Title is required" };
@@ -53,6 +54,7 @@ export async function savePoemAction(
       slug,
       body,
       collection: tags || null,
+      coverImage: coverImage || null,
       accessTier: tierMap[tier] || "FREE",
       publishedAt: publish ? new Date() : null,
     },
@@ -78,6 +80,7 @@ export async function saveResearchAction(
   const doi = (formData.get("doi") as string)?.trim();
   const yearStr = formData.get("year") as string;
   const pdfUrl = (formData.get("pdfUrl") as string)?.trim();
+  const coverImage = (formData.get("coverImage") as string)?.trim();
   const publish = formData.get("publish") === "true";
 
   if (!title) return { error: "Title is required" };
@@ -99,6 +102,7 @@ export async function saveResearchAction(
       tags: tagList,
       doi: doi || null,
       year: yearStr ? parseInt(yearStr) : null,
+      coverImage: coverImage || null,
       pdfUrl: pdfUrl || null,
       accessTier: tierMap[tier] || "FREE",
       publishedAt: publish ? new Date() : null,
@@ -159,6 +163,7 @@ export async function saveEssayAction(
   const tags = (formData.get("tags") as string)?.trim();
   const readTimeStr = formData.get("readTime") as string;
   const essayCategory = (formData.get("essayCategory") as string)?.trim();
+  const thumbnail = (formData.get("thumbnail") as string)?.trim();
   const publish = formData.get("publish") === "true";
 
   if (!title) return { error: "Title is required" };
@@ -175,6 +180,7 @@ export async function saveEssayAction(
       body,
       category: essayCategory || tags || null,
       readTime: readTimeStr ? parseInt(readTimeStr) : null,
+      thumbnail: thumbnail || null,
       accessTier: tierMap[tier] || "FREE",
       publishedAt: publish ? new Date() : null,
     },
@@ -265,6 +271,7 @@ export async function updateContentAction(
           title,
           body: body || "",
           collection: tags || null,
+          coverImage: (formData.get("coverImage") as string) || undefined,
           accessTier: tierMap[tier] || "FREE",
           publishedAt: publish ? new Date() : null,
         },
@@ -282,18 +289,23 @@ export async function updateContentAction(
         },
       });
       break;
-    case "Essay":
+    case "Essay": {
+      const essayCategory = (formData.get("essayCategory") as string)?.trim();
+      const readTimeStr = formData.get("readTime") as string;
       await prisma.essay.update({
         where: { id },
         data: {
           title,
           body: body || "",
-          category: tags || null,
+          category: essayCategory || tags || null,
+          readTime: readTimeStr ? parseInt(readTimeStr) : undefined,
+          thumbnail: (formData.get("thumbnail") as string) || undefined,
           accessTier: tierMap[tier] || "FREE",
           publishedAt: publish ? new Date() : null,
         },
       });
       break;
+    }
     case "Research":
       await prisma.researchPaper.update({
         where: { id },
@@ -302,6 +314,7 @@ export async function updateContentAction(
           body: body || null,
           abstract: (formData.get("abstract") as string) || null,
           doi: (formData.get("doi") as string) || null,
+          coverImage: (formData.get("coverImage") as string) || undefined,
           pdfUrl: (formData.get("pdfUrl") as string) || null,
           accessTier: tierMap[tier] || "FREE",
           publishedAt: publish ? new Date() : null,

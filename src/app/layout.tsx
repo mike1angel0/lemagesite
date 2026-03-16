@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-
-const SITE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
+import { SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,6 +25,7 @@ export const metadata: Metadata = {
     "Mihai Gavrilescu",
     "Selenarium",
   ],
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     siteName: "Selenarium",
@@ -54,6 +54,15 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
+  },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
   verification: {
     // google: "your-google-verification-code",

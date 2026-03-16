@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
+import { SITE_URL } from "@/lib/site-config";
+
+const BASE_URL = SITE_URL;
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -23,5 +25,9 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
+    host: BASE_URL,
   };
 }
+
+// Allow crawlers to discover the RSS feed
+// (sitemap already covers pages; RSS is for feed readers)

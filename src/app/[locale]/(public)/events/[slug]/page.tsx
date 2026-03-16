@@ -1,75 +1,65 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShareButtons } from "@/components/ui/share-buttons";
+import { getEventBySlug } from "@/lib/data";
+import { PLACEHOLDER } from "@/lib/placeholders";
 
-const programme = [
-  { time: "19:00", label: "Doors Open — Gallery Installation" },
-  { time: "20:00", label: "Opening: Cartographers of Silence (readings + projections)" },
-  { time: "20:45", label: "Nocturnal Echoes — Live Ambient Performance" },
-  { time: "21:30", label: "Q&A and Book Signing" },
-];
-
-export default async function EventDetailPage() {
+export default async function EventDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const t = await getTranslations("events");
   const tc = await getTranslations("common");
+  const locale = await getLocale();
+
+  const event = await getEventBySlug(slug);
+  if (!event) notFound();
+
+  const isUpcoming = new Date(event.date) > new Date();
+  const formattedDate = new Intl.DateTimeFormat(locale, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(event.date));
 
   return (
     <>
       {/* -- Hero Image -- */}
       <div className="h-[360px] relative overflow-hidden">
-        <Image src="/design-exports/jgb40.png" alt="" fill className="object-cover" />
+        <Image src={event.image ?? PLACEHOLDER.event} alt="" fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#101828] via-[#101828CC]/60 to-transparent" />
-        <div className="absolute inset-0 flex flex-col justify-end px-20 pb-10 gap-3">
+        <div className="absolute inset-0 flex flex-col justify-end px-5 md:px-20 pb-10 gap-3">
           <span className="font-mono text-[11px] font-medium uppercase tracking-[3px] text-gold">
-            UPCOMING EVENT
+            {isUpcoming ? t("upcomingEvent") : t("pastEvent")}
           </span>
           <h1 className="font-serif text-[40px] font-semibold text-text-primary leading-tight max-w-2xl">
-            Nocturnal Echoes — Live at MNAC
+            {event.title}
           </h1>
-          <p className="font-sans text-base text-text-secondary">
-            A night of poetry, ambient music, and projected photography
-          </p>
+          {event.type && (
+            <p className="font-sans text-base text-text-secondary">
+              {event.type}
+            </p>
+          )}
         </div>
       </div>
 
       {/* -- Content -- */}
-      <div className="flex gap-12 px-20 py-10">
+      <div className="flex gap-12 px-5 md:px-20 py-10">
         {/* Main Content */}
         <div className="flex-1 flex flex-col gap-6">
-          <p className="font-sans text-[15px] text-text-secondary leading-[1.7]">
-            Join lemagepoet (Mihai Gavrilescu) for an immersive evening at the National Museum
-            of Contemporary Art, where poetry, ambient music, and projected
-            photography converge. The evening features live readings accompanied
-            by original ambient compositions, while large-scale photography
-            projections transform the gallery into a cosmic selenarium.
-          </p>
-
-          {/* Programme */}
-          <div>
-            <span className="font-mono text-[11px] font-medium text-text-muted tracking-[2px]">
-              Programme
-            </span>
-            <div className="mt-4 rounded-lg overflow-hidden border border-border bg-bg-card">
-              {programme.map((item, i) => (
-                <div
-                  key={item.time}
-                  className={`flex gap-4 px-4 py-3 ${
-                    i < programme.length - 1 ? "border-b border-border" : ""
-                  }`}
-                >
-                  <span className="font-mono text-[11px] text-accent-dim w-12 shrink-0">
-                    {item.time}
-                  </span>
-                  <span className="font-sans text-sm text-text-primary">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {event.description && (
+            <p className="font-sans text-[15px] text-text-secondary leading-[1.7]">
+              {event.description}
+            </p>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -78,46 +68,36 @@ export default async function EventDetailPage() {
             <div className="flex flex-col gap-4">
               <div>
                 <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-                  Date &amp; Time
+                  {tc("dateAndTime")}
                 </span>
                 <p className="font-sans text-sm text-text-primary mt-1">
-                  March 15, 2026 — 19:00
+                  {formattedDate}
                 </p>
               </div>
-              <div>
-                <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-                  Location
-                </span>
-                <p className="font-sans text-sm text-text-primary mt-1">
-                  MNAC Bucharest
-                </p>
-              </div>
-              <div>
-                <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-                  Admission
-                </span>
-                <p className="font-sans text-sm text-text-secondary mt-1">
-                  Free for members &middot; &euro;15 General
-                </p>
-              </div>
-              <div>
-                <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-                  Capacity
-                </span>
-                <p className="font-sans text-sm text-text-secondary mt-1">
-                  42 / 120 seats remaining
-                </p>
-              </div>
+              {event.location && (
+                <div>
+                  <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
+                    {tc("location")}
+                  </span>
+                  <p className="font-sans text-sm text-text-primary mt-1">
+                    {event.location}
+                  </p>
+                </div>
+              )}
             </div>
 
-            <Button variant="gold" size="lg" className="w-full mt-6" asChild>
-              <Link href="/contact">Reserve Your Spot</Link>
-            </Button>
+            {isUpcoming && event.rsvpUrl && (
+              <Button variant="gold" size="lg" className="w-full mt-6" asChild>
+                <a href={event.rsvpUrl} target="_blank" rel="noopener noreferrer">
+                  {t("reserveSpot")}
+                </a>
+              </Button>
+            )}
           </Card>
 
           <Card padding="p-5">
             <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-              Share This Event
+              {t("shareEvent")}
             </span>
             <div className="flex items-center gap-4 mt-3">
               <ShareButtons />

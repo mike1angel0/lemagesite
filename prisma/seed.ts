@@ -229,13 +229,11 @@ async function main() {
     { title: "Selenarium Notes, December", duration: "7:29", order: 7, accessTier: "INNER_CIRCLE" as const },
   ];
 
+  // Delete existing tracks for this album before re-creating
+  await prisma.track.deleteMany({ where: { albumId: album.id } });
   for (const track of trackData) {
-    await prisma.track.upsert({
-      where: {
-        id: `track-${track.order}`,
-      },
-      update: {},
-      create: {
+    await prisma.track.create({
+      data: {
         title: track.title,
         duration: track.duration,
         order: track.order,
@@ -400,8 +398,68 @@ async function main() {
   console.log(`Seeded ${partners.length} partners`);
 
   // ──────────────────────────────────────────────
+  // Photo Series & Photos
+  // ──────────────────────────────────────────────
+  const fogStudies = await prisma.photoSeries.upsert({
+    where: { slug: "fog-studies" },
+    update: {},
+    create: {
+      name: "Fog Studies",
+      slug: "fog-studies",
+      description: "An ongoing exploration of landscapes disappearing into themselves, where the visible dissolves into the atmospheric.",
+      coverImage: "/design-exports/9VXDc.png",
+      photoCount: 4,
+    },
+  });
+
+  const urbanSilence = await prisma.photoSeries.upsert({
+    where: { slug: "urban-silence" },
+    update: {},
+    create: {
+      name: "Urban Silence",
+      slug: "urban-silence",
+      description: "Quiet moments in loud cities. The spaces between footsteps, the pauses between trains.",
+      coverImage: "/design-exports/Id78B.png",
+      photoCount: 3,
+    },
+  });
+
+  const photoData = [
+    { title: "Morning Ritual, Carpathians", slug: "morning-ritual-carpathians", imageUrl: "/design-exports/9VXDc.png", seriesId: fogStudies.id, description: "Dawn light filtering through mountain fog.", width: 1200, height: 800 },
+    { title: "Empty Platform, Gara de Nord", slug: "empty-platform-gara-de-nord", imageUrl: "/design-exports/Id78B.png", seriesId: urbanSilence.id, description: "The silence of an empty train platform at 4 AM.", width: 1200, height: 800 },
+    { title: "Self-Portrait with Algorithms", slug: "self-portrait-with-algorithms", imageUrl: "/design-exports/qks6p.png", seriesId: null, description: "A reflection on identity in the age of machine learning.", width: 800, height: 1200 },
+    { title: "The Weight of Snow", slug: "the-weight-of-snow", imageUrl: "/design-exports/5gKT7.png", seriesId: fogStudies.id, description: "Snow accumulating on branches in the Carpathian Mountains.", width: 1200, height: 800 },
+    { title: "Vienna, 4 AM", slug: "vienna-4-am", imageUrl: "/design-exports/pX7Gr.png", seriesId: urbanSilence.id, description: "A deserted Vienna street in the small hours.", width: 1200, height: 800 },
+    { title: "Breath Study No. 7", slug: "breath-study-no-7", imageUrl: "/design-exports/6MHe3.png", seriesId: fogStudies.id, description: "Fog rising from a lake at first light.", width: 800, height: 1200 },
+    { title: "The Last Light, Maramures", slug: "the-last-light-maramures", imageUrl: "/design-exports/fCze7.png", seriesId: urbanSilence.id, description: "Golden hour in the villages of Maramures.", width: 1200, height: 800 },
+  ];
+
+  const photos = await Promise.all(
+    photoData.map((p, i) =>
+      prisma.photo.upsert({
+        where: { slug: p.slug },
+        update: {},
+        create: {
+          title: p.title,
+          slug: p.slug,
+          imageUrl: p.imageUrl,
+          seriesId: p.seriesId,
+          description: p.description,
+          width: p.width,
+          height: p.height,
+          accessTier: "FREE",
+          publishedAt: new Date(`2024-${String(i + 1).padStart(2, "0")}-15`),
+        },
+      })
+    )
+  );
+  console.log(`Seeded ${photos.length} photos in 2 series`);
+
+  // ──────────────────────────────────────────────
   // Quotes (for interludes)
   // ──────────────────────────────────────────────
+  // Clear and re-create quotes (no unique field to upsert on)
+  await prisma.quote.deleteMany({});
   const quotes = await Promise.all([
     prisma.quote.create({
       data: {

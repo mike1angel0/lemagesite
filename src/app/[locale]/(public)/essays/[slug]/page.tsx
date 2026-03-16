@@ -1,197 +1,134 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { getTranslations, getLocale } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { EssayCard } from "@/components/content/essay-card";
-import { ShareButtons } from "@/components/ui/share-buttons";
 import { EssayActionBar } from "./essay-action-bar";
+import { getEssayBySlug, getPublishedEssays } from "@/lib/data";
+import { MarkdownBody } from "@/components/content/markdown-body";
 
-const tocItems = [
-  { label: "Introduction", id: "introduction" },
-  { label: "The Shape of Absence", id: "the-shape-of-absence" },
-  { label: "Neural Grief", id: "neural-grief" },
-  { label: "Conclusion", id: "conclusion" },
-];
-
-const relatedEssays = [
-  {
-    title: "The Silence Between Languages",
-    category: "POETRY & LANGUAGE",
-    excerpt: "Between Romanian and English, there is a country that exists only in translation.",
-    readTime: "8 min",
-    slug: "/essays/the-silence-between-languages",
-  },
-  {
-    title: "Seeing Without Looking",
-    category: "PHOTOGRAPHY",
-    excerpt: "On the practice of waiting for images to arrive rather than hunting for them.",
-    readTime: "6 min",
-    slug: "/essays/seeing-without-looking",
-  },
-  {
-    title: "Machines That Dream",
-    category: "AI & PHILOSOPHY",
-    excerpt: "If sleep is for consolidation, what happens when a neural network never rests?",
-    readTime: "10 min",
-    slug: "/essays/machines-that-dream",
-  },
-];
-
-export default async function EssayDetailPage() {
+export default async function EssayDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const t = await getTranslations("essays");
   const tc = await getTranslations("common");
+  const locale = await getLocale();
+
+  const essay = await getEssayBySlug(slug);
+  if (!essay) notFound();
+
+  const allEssays = await getPublishedEssays();
+  const relatedEssays = allEssays
+    .filter((e) => e.slug !== slug)
+    .slice(0, 3);
+
+  // Generate TOC from markdown headings (## Heading)
+  const headingRegex = /^#{1,3}\s+(.+)$/gm;
+  const tocItems: { label: string; id: string }[] = [];
+  let match;
+  while ((match = headingRegex.exec(essay.body)) !== null) {
+    const label = match[1].trim();
+    const id = label.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    tocItems.push({ label, id });
+  }
+
+  const publishedDate = essay.publishedAt
+    ? new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(essay.publishedAt)
+    : "";
 
   return (
     <>
       {/* -- Hero Image -- */}
       <div className="w-full h-[480px] bg-bg-surface relative">
+        {essay.thumbnail && (
+          <Image
+            src={essay.thumbnail}
+            alt={essay.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-transparent" />
       </div>
 
       {/* -- Title & Meta -- */}
       <section className="px-5 md:px-10 xl:px-20 py-12 -mt-32 relative z-10">
         <span className="font-mono text-[9px] uppercase tracking-[2px] text-accent-dim">
-          AI &amp; PHILOSOPHY
+          {(essay.category ?? "ESSAY").toUpperCase()}
         </span>
 
         <h1 className="font-serif text-3xl md:text-[44px] font-light text-text-primary mt-3 leading-[1.2] max-w-[800px]">
-          On the Architecture of Longing:{"\n"}Why Machines Will Never Know
-          Desire
+          {essay.title}
         </h1>
 
         <div className="flex items-center gap-4 mt-4 font-mono text-[10px] text-text-muted tracking-[1px]">
-          <span>AI &amp; PHILOSOPHY</span>
+          <span>{(essay.category ?? "").toUpperCase()}</span>
           <span>&middot;</span>
-          <span>12 min read</span>
+          <span>{essay.readTime ? `${essay.readTime} ${t("minRead").toLowerCase()}` : ""}</span>
           <span>&middot;</span>
-          <span>March 2026</span>
+          <span>{publishedDate}</span>
         </div>
 
         {/* -- Two-column Body -- */}
         <div className="flex flex-col md:flex-row gap-16 mt-12">
           {/* Sidebar TOC */}
-          <aside className="hidden md:block w-[200px] shrink-0">
-            <span className="font-mono text-[10px] text-text-muted tracking-[3px] uppercase">
-              CONTENTS
-            </span>
-            <nav className="flex flex-col gap-6 mt-6">
-              {tocItems.map((item, i) => (
-                <a
-                  key={item.id}
-                  href={`#${item.id}`}
-                  className={`font-sans text-xs leading-[1.5] transition-colors ${
-                    i === 0
-                      ? "text-accent hover:text-text-primary"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          </aside>
+          {tocItems.length > 0 && (
+            <aside className="hidden md:block w-[200px] shrink-0">
+              <span className="font-mono text-[10px] text-text-muted tracking-[3px] uppercase">
+                {tc("tableOfContents").toUpperCase()}
+              </span>
+              <nav className="flex flex-col gap-6 mt-6">
+                {tocItems.map((item, i) => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    className={`font-sans text-xs leading-[1.5] transition-colors ${
+                      i === 0
+                        ? "text-accent hover:text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            </aside>
+          )}
 
           {/* Main Content */}
           <article className="flex-1 max-w-2xl">
-            <h2
-              id="introduction"
-              className="font-serif text-2xl md:text-[28px] text-text-primary mt-0 mb-4"
-            >
-              Introduction
-            </h2>
-            <p className="font-sans text-base text-text-primary leading-[1.8]">
-              What does it mean for a machine to grieve? This is not a question
-              about sentience or consciousness -- at least, not directly. It is a
-              question about architecture. About how systems are built to process
-              absence, and what that tells us about our own machinery of loss.
-            </p>
-            <p className="font-sans text-base text-text-primary leading-[1.8] mt-6">
-              In the past decade, we have built neural networks that can compose
-              poetry, generate photographs of people who never existed, and hold
-              conversations that feel, for a moment, like talking to someone who
-              understands. But none of these systems have been designed to miss
-              anything.
-            </p>
-
-            <h2
-              id="the-shape-of-absence"
-              className="font-serif text-2xl md:text-[28px] text-text-primary mt-10 mb-4"
-            >
-              The Shape of Absence
-            </h2>
-            <p className="font-sans text-base text-text-primary leading-[1.8]">
-              Consider the transformer architecture. Its attention mechanism
-              learns which tokens to attend to -- which words matter in relation
-              to other words. But attention, as the name implies, is always
-              directed at what is present. There is no mechanism for attending to
-              what is missing.
-            </p>
-
-            {/* Pull quote */}
-            <blockquote className="border-l-2 border-accent-dim pl-6 my-8">
-              <p className="font-serif text-lg italic text-accent">
-                &ldquo;The transformer attends to every token of your absence,
-                weighted by how much it hurts.&rdquo;
-              </p>
-            </blockquote>
-
-            <p className="font-sans text-base text-text-primary leading-[1.8]">
-              And yet, in the spaces between tokens -- in the padding, in the
-              masked positions -- there is something that resembles longing. Not
-              the longing itself, but its architecture: a structure shaped by what
-              it cannot contain.
-            </p>
-
-            <h2
-              id="neural-grief"
-              className="font-serif text-2xl md:text-[28px] text-text-primary mt-10 mb-4"
-            >
-              Neural Grief
-            </h2>
-            <p className="font-sans text-base text-text-primary leading-[1.8]">
-              When a language model is fine-tuned on a corpus and then that corpus
-              is removed, the model does not forget cleanly. Traces remain in the
-              weights -- ghost gradients, phantom activations. The model has been
-              shaped by data it can no longer access. This is not grief. But it is
-              the architecture of grief.
-            </p>
-
-            <h2
-              id="conclusion"
-              className="font-serif text-2xl md:text-[28px] text-text-primary mt-10 mb-4"
-            >
-              Conclusion
-            </h2>
-            <p className="font-sans text-base text-text-primary leading-[1.8]">
-              We build machines in our image, and then we are surprised when they
-              reflect our absences back to us. The architecture of longing is not
-              something we program -- it is something that emerges when any
-              sufficiently complex system learns to predict what comes next, and
-              finds that sometimes, nothing does.
-            </p>
+            <MarkdownBody content={essay.body} />
           </article>
         </div>
 
         {/* -- Tags -- */}
-        <div className="flex flex-wrap gap-2 mt-12 pt-8 border-t border-border">
-          {["AI", "Philosophy", "Neural Networks", "Poetry", "Grief"].map(
-            (tag) => (
+        {essay.category && (
+          <div className="flex flex-wrap gap-2 mt-12 pt-8 border-t border-border">
+            {essay.category.split(/[,&]/).map((tag) => (
               <span
                 key={tag}
                 className="font-mono text-[9px] uppercase tracking-[2px] text-text-muted border border-border px-3 py-1"
               >
-                {tag}
+                {tag.trim()}
               </span>
-            ),
-          )}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* -- Share & Image Row -- */}
         <div className="mt-6">
           <EssayActionBar
-            title="On the Architecture of Longing: Why Machines Will Never Know Desire"
-            excerpt="What does it mean for a machine to grieve? This is not a question about sentience or consciousness — at least, not directly. It is a question about architecture. About how systems are built to process absence, and what that tells us about our own machinery of loss."
-            category="AI & Philosophy"
-            readTime="12 min read"
+            essayId={essay.id}
+            title={essay.title}
+            excerpt={essay.excerpt ?? ""}
+            body={essay.body}
+            category={essay.category ?? ""}
+            readTime={essay.readTime ? `${essay.readTime} ${t("minRead").toLowerCase()}` : ""}
             shareLabel={tc("share").toUpperCase()}
             shareLabels={{
               x: tc("shareOnX"),
@@ -207,32 +144,34 @@ export default async function EssayDetailPage() {
             <span className="text-gold">&#9998;</span>
             <div className="flex flex-col gap-0.5">
               <p className="font-mono text-[10px] text-gold tracking-[2px] uppercase">
-                Selenarium Partner
+                {t("partnerBadge")}
               </p>
               <p className="font-sans text-xs text-text-secondary">
-                Get early access to all essays + exclusive drafts and notes
+                {t("partnerDescription")}
               </p>
             </div>
           </Link>
         </div>
 
         {/* -- Related Essays -- */}
-        <div className="mt-16 pt-12 border-t border-border">
-          <SectionLabel label={t("relatedEssays").toUpperCase()} />
+        {relatedEssays.length > 0 && (
+          <div className="mt-16 pt-12 border-t border-border">
+            <SectionLabel label={t("relatedEssays").toUpperCase()} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            {relatedEssays.map((essay) => (
-              <EssayCard
-                key={essay.slug}
-                title={essay.title}
-                category={essay.category}
-                excerpt={essay.excerpt}
-                readTime={essay.readTime}
-                slug={essay.slug}
-              />
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+              {relatedEssays.map((e) => (
+                <EssayCard
+                  key={e.slug}
+                  title={e.title}
+                  category={(e.category ?? "").toUpperCase()}
+                  excerpt={e.excerpt ?? ""}
+                  readTime={e.readTime ? `${e.readTime} ${t("min")}` : ""}
+                  slug={`/essays/${e.slug}`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </>
   );

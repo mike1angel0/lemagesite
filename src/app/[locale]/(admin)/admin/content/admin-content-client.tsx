@@ -2,7 +2,7 @@
 
 import { useState, useActionState } from "react";
 import Link from "next/link";
-import { Search, Plus, Trash2 } from "lucide-react";
+import { Search, Plus, Trash2, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { deleteContentAction } from "@/lib/actions/content";
 import type { AuthState } from "@/lib/actions/auth";
@@ -138,7 +138,9 @@ export function AdminContentClient({ rows: initialRows }: { rows: ContentRow[] }
             {filtered.map((row) => (
               <tr key={`${row.type}-${row.id}`} className="border-b border-border">
                 <td className="font-sans text-[13px] text-text-primary px-4 py-3.5">
-                  {row.title}
+                  <Link href={`/admin/editor/${row.id}`} className="hover:text-accent transition-colors">
+                    {row.title}
+                  </Link>
                 </td>
                 <td className="px-4 py-3.5">
                   <span className={cn("font-mono text-[10px] tracking-[1px] rounded-sm px-2 py-0.5", typeBadgeColors[row.type])}>
@@ -158,6 +160,13 @@ export function AdminContentClient({ rows: initialRows }: { rows: ContentRow[] }
                 </td>
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-3">
+                    <Link
+                      href={`/admin/editor/${row.id}`}
+                      className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-accent transition-colors"
+                    >
+                      <Pencil size={12} />
+                      Edit
+                    </Link>
                     <button
                       onClick={() => handleDelete(row)}
                       className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-red-400 transition-colors"

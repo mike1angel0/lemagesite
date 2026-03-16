@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check, Heart } from "lucide-react";
 import { SectionLabel } from "@/components/ui/section-label";
 import { useTranslations } from "next-intl";
 import { createCheckoutSessionAction } from "@/lib/actions/stripe";
@@ -73,22 +73,7 @@ export default function MembershipPaymentPage() {
   const price = billingCycle === "monthly" ? config.monthlyPrice : config.yearlyPrice;
 
   if (config.isDonation) {
-    return (
-      <section className="px-5 md:px-10 xl:px-20 py-16">
-        <div className="flex flex-col items-center gap-8 max-w-md mx-auto">
-          <SectionLabel label={t("sectionLabel")} />
-          <h1 className="font-serif text-3xl md:text-[38px] font-light text-warm-ivory leading-tight text-center">
-            {t("donationTitle")}
-          </h1>
-          <p className="font-sans text-sm text-text-secondary leading-relaxed text-center">
-            {t("donationDescription")}
-          </p>
-          <p className="font-sans text-sm text-text-muted text-center">
-            Donation support coming soon.
-          </p>
-        </div>
-      </section>
-    );
+    return <DonationSection t={t} />;
   }
 
   return (
@@ -178,6 +163,106 @@ export default function MembershipPaymentPage() {
             {t("securedNote")}
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+const DONATION_AMOUNTS = [5, 10, 25, 50];
+
+function DonationSection({ t }: { t: (key: string) => string }) {
+  const [amount, setAmount] = useState(10);
+  const [customAmount, setCustomAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const selectedAmount = customAmount ? parseFloat(customAmount) : amount;
+
+  async function handleDonate() {
+    if (!selectedAmount || selectedAmount < 1) return;
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [
+            {
+              productId: "donation",
+              title: `Donation — €${selectedAmount}`,
+              price: selectedAmount,
+              quantity: 1,
+            },
+          ],
+        }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <section className="px-5 md:px-10 xl:px-20 py-16">
+      <div className="flex flex-col items-center gap-8 max-w-md mx-auto">
+        <SectionLabel label={t("sectionLabel")} />
+        <h1 className="font-serif text-3xl md:text-[38px] font-light text-warm-ivory leading-tight text-center">
+          {t("donationTitle")}
+        </h1>
+        <p className="font-sans text-sm text-text-secondary leading-relaxed text-center">
+          {t("donationDescription")}
+        </p>
+
+        {/* Amount selector */}
+        <div className="flex gap-3">
+          {DONATION_AMOUNTS.map((a) => (
+            <button
+              key={a}
+              type="button"
+              onClick={() => { setAmount(a); setCustomAmount(""); }}
+              className={`px-5 py-2.5 rounded-md font-mono text-sm transition-colors ${
+                amount === a && !customAmount
+                  ? "bg-accent text-bg"
+                  : "border border-border text-text-secondary hover:border-accent-dim"
+              }`}
+            >
+              &euro;{a}
+            </button>
+          ))}
+        </div>
+
+        {/* Custom amount */}
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-sm text-text-muted">&euro;</span>
+          <input
+            type="number"
+            min="1"
+            value={customAmount}
+            onChange={(e) => setCustomAmount(e.target.value)}
+            placeholder={t("customAmount") || "Custom amount"}
+            className="w-32 bg-bg-elevated border border-border rounded-md px-3 py-2 font-sans text-sm text-text-primary focus:outline-none focus:border-accent-dim text-center"
+          />
+        </div>
+
+        {/* Donate button */}
+        <button
+          onClick={handleDonate}
+          disabled={loading || !selectedAmount || selectedAmount < 1}
+          className="inline-flex items-center gap-2 bg-gold text-bg font-sans text-sm font-medium rounded-md px-8 py-3 hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          <Heart size={14} />
+          {loading ? t("processing") || "Processing..." : `${t("donateCta") || "Donate"} €${selectedAmount || 0}`}
+        </button>
+
+        <p className="font-mono text-[10px] text-text-muted text-center tracking-[1px]">
+          {t("securedNote")}
+        </p>
       </div>
     </section>
   );

@@ -4,7 +4,6 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const exploreLinks = [
   { href: "/poetry", labelKey: "poetry" },
@@ -22,26 +21,44 @@ const knowledgeLinks = [
 
 const connectLinks = [
   { href: "/membership", labelKey: "membership" },
-  { href: "/newsletter", labelKey: "newsletter" },
   { href: "/contact", labelKey: "contact" },
 ] as const;
 
-const socialPlatforms = [
-  { label: "Instagram", href: "https://instagram.com/lemagepoet" },
-  { label: "YouTube", href: "https://youtube.com/@lemagepoet" },
-  { label: "TikTok", href: "https://tiktok.com/@lemagepoet" },
-] as const;
+const SOCIAL_LABEL_MAP: Record<string, string> = {
+  instagram: "Instagram",
+  youtube: "YouTube",
+  tiktok: "TikTok",
+  facebook: "Facebook",
+  twitter: "X",
+  bluesky: "Bluesky",
+  threads: "Threads",
+  mastodon: "Mastodon",
+  medium: "Medium",
+  substack: "Substack",
+  spotify: "Spotify",
+  soundcloud: "SoundCloud",
+  bandcamp: "Bandcamp",
+  appleMusic: "Apple Music",
+  github: "GitHub",
+  linkedin: "LinkedIn",
+  pinterest: "Pinterest",
+  tumblr: "Tumblr",
+  patreon: "Patreon",
+  kofi: "Ko-fi",
+  discord: "Discord",
+  telegram: "Telegram",
+  whatsapp: "WhatsApp",
+  vimeo: "Vimeo",
+  twitch: "Twitch",
+  behance: "Behance",
+  dribbble: "Dribbble",
+  flickr: "Flickr",
+  goodreads: "Goodreads",
+  website: "Website",
+};
 
-const socialLinksBottom = [
-  { label: "Substack", href: "https://lemagepoet.substack.com" },
-  { label: "Medium", href: "https://medium.com/@lemagepoet" },
-  { label: "Spotify", href: "https://open.spotify.com/artist/lemagepoet" },
-  { label: "GitHub", href: "https://github.com/lemagepoet" },
-  { label: "Instagram", href: "https://instagram.com/lemagepoet" },
-  { label: "Facebook", href: "https://facebook.com/lemagepoet" },
-  { label: "TikTok", href: "https://tiktok.com/@lemagepoet" },
-  { label: "YouTube", href: "https://youtube.com/@lemagepoet" },
-] as const;
+// Platforms shown in the Connect column (top 3 with URLs)
+const CONNECT_SOCIAL_KEYS = ["instagram", "youtube", "tiktok", "facebook", "twitter", "bluesky", "threads"];
 
 interface FooterColumnProps {
   title: string;
@@ -69,12 +86,13 @@ function FooterColumn({ title, links }: FooterColumnProps) {
   );
 }
 
-export function Footer() {
+export function Footer({ socialLinks }: { socialLinks?: Record<string, string> }) {
   const t = useTranslations("footer");
   const locale = useLocale();
 
   const localePath = locale === "ro" ? "" : `/${locale}`;
   const currentYear = new Date().getFullYear();
+  const socials = socialLinks || {};
 
   const resolvedExplore = exploreLinks.map((l) => ({
     href: `${localePath}${l.href}`,
@@ -86,16 +104,24 @@ export function Footer() {
     label: t(`knowledgeLinks.${l.labelKey}`),
   }));
 
+  // Connect column: site links + top social platforms that have URLs
+  const connectSocials = CONNECT_SOCIAL_KEYS
+    .filter((k) => socials[k])
+    .slice(0, 3)
+    .map((k) => ({ href: socials[k], label: SOCIAL_LABEL_MAP[k] || k }));
+
   const resolvedConnect = [
     ...connectLinks.map((l) => ({
       href: `${localePath}${l.href}`,
       label: t(`connectLinks.${l.labelKey}`),
     })),
-    ...socialPlatforms.map((s) => ({
-      href: s.href,
-      label: s.label,
-    })),
+    ...connectSocials,
   ];
+
+  // Bottom bar: all social platforms that have URLs
+  const allSocialLinks = Object.entries(socials)
+    .filter(([, url]) => url)
+    .map(([key, url]) => ({ label: SOCIAL_LABEL_MAP[key] || key, href: url }));
 
   return (
     <footer className="w-full bg-[#101828] border-t border-[#243050]">
@@ -136,7 +162,7 @@ export function Footer() {
             {t("copyright", { year: currentYear })}
           </p>
           <div className="flex flex-wrap items-center gap-5">
-            {socialLinksBottom.map((social) => (
+            {allSocialLinks.map((social) => (
               <a
                 key={social.label}
                 href={social.href}

@@ -1,0 +1,68 @@
+/**
+ * Simple in-memory rate limiter for API routes.
+ * Uses a sliding window approach with IP-based tracking.
+ */
+
+interface RateLimitEntry {
+  timestamps: number[];
+}
+
+const store = new Map<string, RateLimitEntry>();
+
+// Clean up old entries every 5 minutes
+const CLEANUP_INTERVAL = 5 * 60 * 1000;
+let lastCleanup = Date.now();
+
+function cleanup(windowMs: number) {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL) return;
+  lastCleanup = now;
+
+  for (const [key, entry] of store) {
+    entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs);
+    if (entry.timestamps.length === 0) store.delete(key);
+  }
+}
+
+export function rateLimit(opts: {
+  windowMs?: number;
+  maxRequests?: number;
+} = {}) {
+  const windowMs = opts.windowMs ?? 60_000; // 1 minute default
+  const maxRequests = opts.maxRequests ?? 5;
+
+  return {
+    check(ip: string): { success: boolean; remaining: number; resetMs: number } {
+      cleanup(windowMs);
+
+      const now = Date.now();
+      const key = ip;
+      const entry = store.get(key) ?? { timestamps: [] };
+
+      // Remove expired timestamps
+      entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs);
+
+      if (entry.timestamps.length >= maxRequests) {
+        const oldestInWindow = entry.timestamps[0];
+        return {
+          success: false,
+          remaining: 0,
+          resetMs: oldestInWindow + windowMs - now,
+        };
+      }
+
+      entry.timestamps.push(now);
+      store.set(key, entry);
+
+      return {
+        success: true,
+        remaining: maxRequests - entry.timestamps.length,
+        resetMs: windowMs,
+      };
+    },
+  };
+}
+
+/** Pre-configured rate limiters */
+export const contactLimiter = rateLimit({ windowMs: 60_000, maxRequests: 3 });
+export const newsletterLimiter = rateLimit({ windowMs: 60_000, maxRequests: 5 });

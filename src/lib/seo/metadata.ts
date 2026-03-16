@@ -12,9 +12,9 @@
  */
 
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site-config";
 
 const SITE_NAME = "Selenarium";
-const SITE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
 const AUTHOR = "Mihai Gavrilescu";
 const LOCALES = ["en", "ro"] as const;
 

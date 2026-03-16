@@ -1,9 +1,23 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 
-export default async function ThankYouPage() {
+export default async function ThankYouPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ amount?: string; ref?: string }>;
+}) {
   const t = await getTranslations("thankYou");
+  const locale = await getLocale();
+  const { amount, ref } = await searchParams;
+
+  const displayAmount = amount ? `€${parseFloat(amount).toFixed(2)}` : "€25.00";
+  const displayDate = new Intl.DateTimeFormat(locale, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date());
+  const displayRef = ref || `DON-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
 
   return (
     <section className="px-5 md:px-10 xl:px-20 py-16">
@@ -38,7 +52,7 @@ export default async function ThankYouPage() {
                 {t("amount")}
               </span>
               <span className="font-sans text-[13px] font-medium text-text-primary">
-                &euro;25.00
+                {displayAmount}
               </span>
             </div>
             <div className="flex justify-between items-center">
@@ -46,7 +60,7 @@ export default async function ThankYouPage() {
                 {t("date")}
               </span>
               <span className="font-sans text-[13px] font-medium text-text-primary">
-                March 4, 2026
+                {displayDate}
               </span>
             </div>
             <div className="flex justify-between items-center">
@@ -54,7 +68,7 @@ export default async function ThankYouPage() {
                 {t("reference")}
               </span>
               <span className="font-mono text-xs font-medium text-text-primary">
-                DON-2026-0342
+                {displayRef}
               </span>
             </div>
           </div>

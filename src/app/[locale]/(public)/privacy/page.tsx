@@ -13,7 +13,7 @@ export default async function PrivacyPage() {
       </h1>
 
       <p className="font-mono text-[10px] text-text-muted mt-4 tracking-[1px]">
-        {t("lastUpdated").toUpperCase()}: MARCH 1, 2026
+        {t("lastUpdated").toUpperCase()}: {t("lastUpdatedDate")}
       </p>
 
       <div className="max-w-3xl mx-auto mt-12">

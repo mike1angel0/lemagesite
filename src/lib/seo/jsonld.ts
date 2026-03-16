@@ -9,8 +9,9 @@
 import type { ReactElement } from "react";
 import React from "react";
 
+import { SITE_URL } from "@/lib/site-config";
+
 const SITE_NAME = "Selenarium";
-const SITE_URL = process.env.NEXTAUTH_URL || "https://theselenarium.art";
 
 const AUTHOR = {
   "@type": "Person" as const,

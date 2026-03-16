@@ -125,7 +125,19 @@
     "newsletterSubscribe": "Abonează-te",
     "newsletterFootnote": "Oferit prin Substack · Disponibil și pe Medium",
     "partnersLabel": "TOVARĂȘI DE DRUM",
-    "partners": "Parteneri"
+    "partners": "Parteneri",
+    "latestPoemLabel": "CEL MAI RECENT POEM",
+    "latestResearchLabel": "ULTIMA CERCETARE",
+    "featuredPhotoLabel": "FOTOGRAFIE RECOMANDATĂ",
+    "latestEssayLabel": "CEL MAI RECENT ESEU",
+    "fromSeries": "Din seria",
+    "eventDetails": "Detalii",
+    "aboutLabel": "ASTRONOMUL",
+    "aboutBio1": "Poet, fotograf, cântăreț-compozitor și cercetător. Fost magician de profesie, acum un vrăjitor al cuvintelor. Trăiesc între limbi — română și engleză — și între lumi: precizia arhitecturilor neurale și tăcerea versului.",
+    "aboutBio2": "Acest selenarium este locul unde aceste lumi se întâlnesc. Vino, privește prin telescop.",
+    "aboutQuote": "Fiecare poem este un mic act de magie — face invizibilul să apară.",
+    "partnersDescription": "Selenarium este susținut prin parteneriate creative cu edituri, galerii și instituții culturale în care credem.",
+    "partnersContact": "Interesat de un parteneriat? Contactează-ne"
   },
   "poetry": {
     "title": "Poezie",
@@ -144,7 +156,15 @@
     "filterSilence": "Tăcere și spațiu",
     "filterIntelligence": "Inteligență",
     "filterLonging": "Dor",
-    "filterRomanian": "Română"
+    "filterRomanian": "Română",
+    "listenAudio": "Ascultă lectura audio",
+    "pauseAudio": "Pauză audio",
+    "tipJarPrompt": "Te-a mișcat acest poem? Fiecare vulpe îmblânzită merită un dar.",
+    "previousPoem": "Poemul anterior",
+    "nextPoem": "Poemul următor",
+    "partnerBadge": "Partener Selenarium",
+    "partnerDescription": "Acces anticipat la toate poemele + lecturi audio exclusive",
+    "moreFromCollection": "MAI MULTE DIN ACEASTĂ COLECȚIE"
   },
   "photography": {
     "title": "Fotografie",
@@ -158,7 +178,16 @@
     "filterFogStudies": "Studii în ceață",
     "filterUrbanSilence": "Tăcere urbană",
     "filterPortraits": "Portrete",
-    "filterRomania": "România"
+    "filterRomania": "România",
+    "uncategorized": "Necategorizat",
+    "availableLimited": "Disponibil (Ediție limitată)",
+    "seriesLabel": "SERIE FOTOGRAFICĂ",
+    "fogStudiesTitle": "Studii în ceață",
+    "fogStudiesDescription": "O explorare continuă a ceții ca metaforă — tăcerea făcută vizibilă, orașul dizolvându-se în propria respirație.",
+    "fogStudiesCount": "12 fotografii",
+    "fogStudiesYears": "2023 – 2026",
+    "fogStudiesLocation": "Munții Carpați",
+    "fogStudiesNote": "Ceața este cel mai aproape de tăcere pe care o poți fotografia. Șterge contextul, reduce familiarul la forme și lumină. În aceste imagini caut ceea ce rămâne când tot restul dispare."
   },
   "music": {
     "title": "Muzică",
@@ -175,6 +204,8 @@
     "streamSpotify": "Spotify",
     "streamBandcamp": "Bandcamp",
     "streamSoundCloud": "SoundCloud",
+    "tracks": "piese",
+    "creditsDescription": "Compus, interpretat și produs de {handle} ({name}).",
     "embeddedPlayer": "PLAYER ÎNCORPORAT"
   },
   "books": {
@@ -187,7 +218,12 @@
     "signedEditions": "Ediții semnate",
     "publisherDirect": "Direct de la editură",
     "freeShipping": "Livrare gratuită",
-    "heroDescription": "Colecții de poezie, eseuri și ediții limitate din Selenarium."
+    "heroDescription": "Colecții de poezie, eseuri și ediții limitate din Selenarium.",
+    "whereToFind": "UNDE GĂSEȘTI ACESTE CĂRȚI",
+    "partnersDescription": "Comandă de la aceste librării de încredere pentru ediții semnate, livrare gratuită și semne de carte exclusive Selenarium.",
+    "bookCoverAlt": "Copertă carte",
+    "firstEdition": "PRIMA EDIȚIE",
+    "byAuthor": "de {handle}"
   },
   "research": {
     "title": "Cercetare",
@@ -199,7 +235,8 @@
     "filterNlp": "NLP",
     "filterAttention": "Atenție",
     "filterPhilosophyAi": "Filosofia IA",
-    "filterPoeticsMl": "Poetica și ML"
+    "filterPoeticsMl": "Poetica și ML",
+    "researchPaperLabel": "LUCRARE DE CERCETARE"
   },
   "essays": {
     "title": "Eseuri",
@@ -209,11 +246,18 @@
     "relatedEssays": "Eseuri similare",
     "sectionLabel": "ESEURI",
     "heroTitle": "Note de pe\npuntea de observație",
+    "heroDescription": "Eseuri, reflecții și note de teren despre AI, limbaj, artă și spațiile dintre ele — transmisiuni de pe asteroidul B612.",
     "newsletterLabel": "TRANSMISIUNI DIN OBSERVATOR",
     "newsletterHeadline": "Rămâi în lumină",
-    "newsletterDescription": "Transmisiuni lunare despre poezie, fotografie, cercetare în AI și arta liniștită a atenției.",
+    "newsletterDescription": "Abonează-te pentru a primi eseuri noi direct.",
     "newsletterSubscribe": "Abonează-te",
-    "newsletterFootnote": "Oferit prin Substack · Flux RSS disponibil"
+    "newsletterFootnote": "Oferit prin Substack · Flux RSS disponibil",
+    "minRead": "MIN LECTURĂ",
+    "min": "min",
+    "alsoOnSubstack": "Și pe Substack",
+    "alsoOnMedium": "Și pe Medium",
+    "partnerBadge": "Partener Selenarium",
+    "partnerDescription": "Acces anticipat la toate eseurile + ciorne și note exclusive"
   },
   "membership": {
     "title": "Abonament",
@@ -248,10 +292,16 @@
     "featureQuarterlySession": "Sesiune trimestrială 1:1",
     "featureEarlyBookAccess": "Acces anticipat la cărți",
     "featureNameInCredits": "Numele în credite",
+    "freeDescription": "Selenariumul public.",
+    "supporterTagline": "Privirea mai adâncă.",
+    "patronTagline": "Acces complet la Selenarium.",
+    "innerCircleTagline": "Camerele private.",
     "donationLabel": "SPRIJIN UNIC",
     "donationTitle": "Nu ești pregătit pentru un abonament?",
     "donationDescription": "Poți susține în continuare această creație cu o donație unică. Fiecare contribuție ajută Selenarium să rămână deschis.",
     "customAmount": "Sumă personalizată",
+    "donateCta": "Donează",
+    "processing": "Se procesează...",
     "quoteText": "Singura cale de a face lucruri mărețe este să iubești ceea ce faci.",
     "quoteAuthor": "Steve Jobs",
     "supporterTier": "Nivel Susținător",
@@ -284,7 +334,11 @@
     "supportTitle": "Menține Selenarium deschis",
     "supportDescription": "Dacă această creație rezonează cu tine, ia în considerare să devii patron sau să faci o contribuție unică.",
     "ctaBecomePatron": "Devino Patron",
-    "ctaDonation": "Donație unică"
+    "ctaDonation": "Donație unică",
+    "astronomerLabel": "ASTRONOMUL",
+    "academicCvLabel": "CV ACADEMIC",
+    "achievementsLabel": "REALIZĂRI",
+    "downloadsLabel": "DESCĂRCĂRI"
   },
   "contact": {
     "title": "Contact",
@@ -302,7 +356,20 @@
     "formEmailPlaceholder": "adresa@email.com",
     "formMessageLabel": "MESAJ",
     "formMessagePlaceholder": "Mesajul tău...",
-    "sendMessage": "Trimite mesajul"
+    "sendMessage": "Trimite mesajul",
+    "sending": "Se trimite...",
+    "successTitle": "Mesaj trimis",
+    "successMessage": "Mulțumesc că ai scris. Voi răspunde cât de curând posibil.",
+    "errorMessage": "Ceva nu a funcționat. Te rog încearcă din nou."
+  },
+  "newsletter": {
+    "subscribe": "Abonează-te",
+    "subscribing": "Se procesează...",
+    "success": "Te-ai abonat! Verifică inbox-ul pentru email-ul de bun venit.",
+    "error": "Ceva nu a funcționat. Te rog încearcă din nou.",
+    "unsubscribedTitle": "Te-ai dezabonat",
+    "unsubscribedDescription": "Nu vei mai primi emailuri newsletter de la Selenarium. Dacă a fost o greșeală, te poți re-abona oricând.",
+    "backToHome": "Înapoi acasă"
   },
   "events": {
     "title": "Evenimente",
@@ -313,7 +380,14 @@
     "liveEvent": "Eveniment live",
     "sectionLabel": "EVENIMENTE",
     "heroTitle": "Lecturi, discuții și\nconferințe",
-    "pastEventsLabel": "EVENIMENTE TRECUTE"
+    "heroDescription": "Lecturi de poezie live, prezentări de cercetare AI și conversații la intersecția dintre artă și tehnologie.",
+    "pastEventsLabel": "EVENIMENTE TRECUTE",
+    "rsvp": "CONFIRMĂ",
+    "noUpcoming": "Nu sunt evenimente în curând. Revino mai târziu.",
+    "upcomingEvent": "EVENIMENT ÎN CURÂND",
+    "pastEvent": "EVENIMENT TRECUT",
+    "reserveSpot": "Rezervă-ți locul",
+    "shareEvent": "Distribuie acest eveniment"
   },
   "shop": {
     "title": "Magazin",
@@ -322,6 +396,7 @@
     "youMightAlsoLike": "S-ar putea să-ți placă",
     "sectionLabel": "MAGAZIN",
     "heroTitle": "Obiecte de contemplare",
+    "heroDescription": "Cărți, printuri și artefacte din Selenarium. Fiecare obiect lucrat manual sau selectat cu grijă pentru a-ți însoți viața interioară.",
     "filterAll": "Toate",
     "filterBooks": "Cărți",
     "filterPrints": "Printuri",
@@ -329,7 +404,11 @@
     "filterObjects": "Obiecte",
     "filterDigital": "Digital",
     "featuredLabel": "RECOMANDAT",
-    "addToCart": "Adaugă în coș"
+    "addToCart": "Adaugă în coș",
+    "newLabel": "NOU",
+    "viewDetails": "Vezi detalii",
+    "allItems": "TOATE PRODUSELE",
+    "inStock": "{count} în stoc"
   },
   "checkout": {
     "title": "Finalizare comandă",
@@ -356,7 +435,10 @@
     "paymentLabel": "PLATĂ",
     "paymentPlaceholder": "Element de plată Stripe",
     "placeOrder": "PLASEAZĂ COMANDA",
-    "securedNote": "Securizat de Stripe · Livrare gratuită în UE"
+    "processing": "Se procesează...",
+    "securedNote": "Securizat de Stripe · Livrare gratuită în UE",
+    "emptyCart": "Coșul tău este gol",
+    "continueShopping": "Continuă cumpărăturile"
   },
   "legal": {
     "terms": "Termeni și condiții",
@@ -364,6 +446,7 @@
     "cookies": "Politica de cookie-uri",
     "label": "Juridic",
     "lastUpdated": "Ultima actualizare",
+    "lastUpdatedDate": "1 martie 2026",
     "termsTitle": "Termeni și condiții",
     "privacyTitle": "Politica de confidențialitate",
     "cookiesTitle": "Politica de cookie-uri",
@@ -524,5 +607,21 @@
     "shopDiscount": "Reducere magazin",
     "newForPatrons": "Noutăți pentru patroni",
     "readingHistory": "Istoric de lectură"
+  },
+  "search": {
+    "title": "Caută",
+    "placeholder": "Caută poeme, eseuri, cercetare...",
+    "resultCount": "{count} rezultate pentru \"{query}\"",
+    "noResults": "Nu s-au găsit rezultate pentru \"{query}\""
+  },
+  "thankYou": {
+    "title": "Mulțumim",
+    "description": "Generozitatea ta menține Selenarium deschis. Fiecare contribuție contează.",
+    "quote": "Nu vezi bine decât cu inima. Esențialul este invizibil pentru ochi.",
+    "receiptTitle": "CHITANȚĂ DONAȚIE",
+    "amount": "Sumă",
+    "date": "Dată",
+    "reference": "Referință",
+    "returnHome": "Înapoi acasă"
   }
 }

@@ -453,7 +453,7 @@ export default function AdminSEOPage() {
     const report = {
       ...audit,
       exportedAt: new Date().toISOString(),
-      site: "theselenarium.art",
+      site: typeof window !== "undefined" ? window.location.host : "selenarium",
     };
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);

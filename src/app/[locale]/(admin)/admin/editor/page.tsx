@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Markdown from "react-markdown";
 import {
   ArrowLeft,
   Bold,
@@ -17,6 +18,10 @@ import {
   Check,
   Upload,
   X,
+  Sparkles,
+  Eye,
+  PenLine,
+  Heading2,
 } from "lucide-react";
 import {
   savePoemAction,
@@ -62,12 +67,16 @@ export default function AdminEditorNewPage() {
   const [audioUrl, setAudioUrl] = useState("");
   const [status, setStatus] = useState<Status>("draft");
   const [errorMsg, setErrorMsg] = useState("");
+  const [editorMode, setEditorMode] = useState<"write" | "preview">("write");
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
 
   const [featuredImage, setFeaturedImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [generating, setGenerating] = useState(false);
+  const [showPromptEditor, setShowPromptEditor] = useState(false);
+  const [imagePrompt, setImagePrompt] = useState("");
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
@@ -91,6 +100,68 @@ export default function AdminEditorNewPage() {
       setStatus("error");
     } finally {
       setLoading(false);
+    }
+  }
+
+  const SITE_COLORS = "Use a color palette inspired by: deep navy (#0B0E13), muted steel blue (#A8B4C8), warm gold (#C9A962), honey (#C8944A), and warm ivory (#F5EED8). The overall mood should be dark and atmospheric.";
+
+  const defaultPrompts: Record<string, string> = {
+    Poetry: `Create an atmospheric, artistic illustration for a poem titled "{TITLE}".\n\n{SUMMARY}\n\n${SITE_COLORS}`,
+    Essay: `Create a conceptual editorial illustration for an essay titled "{TITLE}".\n\n{SUMMARY}\n\n${SITE_COLORS}`,
+    Research: `Create an abstract scientific visualization for a research paper titled "{TITLE}".\n\n{SUMMARY}\n\n${SITE_COLORS}`,
+  };
+
+  const [summarizing, setSummarizing] = useState(false);
+
+  async function openPromptEditor() {
+    const template = defaultPrompts[category] || defaultPrompts.Essay;
+    const contentTypeMap: Record<string, string> = { Poetry: "poem", Essay: "essay", Research: "research paper" };
+
+    // Show modal immediately with a loading state
+    setImagePrompt(template.replace("{TITLE}", title || "Untitled").replace("{SUMMARY}", "Summarizing..."));
+    setShowPromptEditor(true);
+
+    if (!body?.trim()) {
+      setImagePrompt(template.replace("{TITLE}", title || "Untitled").replace("{SUMMARY}", title));
+      return;
+    }
+
+    setSummarizing(true);
+    try {
+      const res = await fetch("/api/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: body, contentType: contentTypeMap[category] }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setImagePrompt(template.replace("{TITLE}", title || "Untitled").replace("{SUMMARY}", data.summary));
+    } catch {
+      // Fallback: use title only
+      setImagePrompt(template.replace("{TITLE}", title || "Untitled").replace("{SUMMARY}", title));
+    } finally {
+      setSummarizing(false);
+    }
+  }
+
+  async function handleGenerateImage() {
+    setShowPromptEditor(false);
+    setGenerating(true);
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: imagePrompt }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setFeaturedImage(data.url);
+    } catch {
+      setErrorMsg("Image generation failed. Please try again.");
+      setStatus("error");
+    } finally {
+      setGenerating(false);
     }
   }
 
@@ -119,12 +190,14 @@ export default function AdminEditorNewPage() {
     let result: AuthState;
 
     if (category === "Poetry") {
+      if (featuredImage) formData.set("coverImage", featuredImage);
       result = await savePoemAction({} as AuthState, formData);
     } else if (category === "Research") {
       formData.set("abstract", abstract);
       formData.set("doi", doi);
       formData.set("year", year);
       formData.set("pdfUrl", pdfUrl);
+      if (featuredImage) formData.set("coverImage", featuredImage);
       result = await saveResearchAction({} as AuthState, formData);
     } else if (category === "Photography") {
       formData.set("imageUrl", imageUrl || featuredImage);
@@ -132,6 +205,7 @@ export default function AdminEditorNewPage() {
     } else if (category === "Essay") {
       formData.set("readTime", readTime);
       formData.set("essayCategory", essayCategory);
+      if (featuredImage) formData.set("thumbnail", featuredImage);
       result = await saveEssayAction({} as AuthState, formData);
     } else if (category === "Music") {
       formData.set("duration", duration);
@@ -157,6 +231,7 @@ export default function AdminEditorNewPage() {
   }
 
   const toolbarActions = [
+    { icon: Heading2, label: "Heading", action: () => insertMarkdown("## ") },
     { icon: Bold, label: "Bold", action: () => insertMarkdown("**", "**") },
     { icon: Italic, label: "Italic", action: () => insertMarkdown("*", "*") },
     { icon: Underline, label: "Underline", action: () => insertMarkdown("<u>", "</u>") },
@@ -207,22 +282,71 @@ export default function AdminEditorNewPage() {
             </div>
           )}
 
-          {/* Rich text toolbar */}
+          {/* Toolbar + Write/Preview toggle */}
           <div className="flex items-center gap-1 bg-bg-card rounded border border-border px-2 py-1.5">
             {toolbarActions.map(({ icon: Icon, label, action }) => (
-              <button key={label} title={label} onClick={action} className="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors">
+              <button key={label} title={label} onClick={() => { setEditorMode("write"); action(); }} className="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors">
                 <Icon size={16} />
               </button>
             ))}
+            <div className="ml-auto flex items-center border-l border-border pl-2 gap-1">
+              <button
+                title="Write"
+                onClick={() => setEditorMode("write")}
+                className={`p-1.5 rounded transition-colors ${editorMode === "write" ? "text-accent bg-accent/10" : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"}`}
+              >
+                <PenLine size={16} />
+              </button>
+              <button
+                title="Preview"
+                onClick={() => setEditorMode("preview")}
+                className={`p-1.5 rounded transition-colors ${editorMode === "preview" ? "text-accent bg-accent/10" : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"}`}
+              >
+                <Eye size={16} />
+              </button>
+            </div>
           </div>
 
-          <textarea
-            id="editor-body"
-            placeholder={category === "Research" ? "Full paper body (optional)..." : "Begin writing..."}
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full font-serif text-base leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y"
-          />
+          {editorMode === "write" ? (
+            <textarea
+              id="editor-body"
+              placeholder={category === "Research" ? "Full paper body (optional)...\n\nUse ## for chapter headings" : "Begin writing...\n\nUse ## for chapter headings, **bold**, *italic*"}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full font-mono text-sm leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y"
+            />
+          ) : (
+            <div className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full overflow-y-auto prose-editor">
+              {body ? (
+                <Markdown
+                  components={{
+                    h1: ({ children }) => <h1 className="font-serif text-3xl font-semibold text-text-primary mt-8 mb-4">{children}</h1>,
+                    h2: ({ children }) => <h2 className="font-serif text-2xl font-semibold text-text-primary mt-8 mb-3">{children}</h2>,
+                    h3: ({ children }) => <h3 className="font-serif text-xl font-semibold text-text-primary mt-6 mb-2">{children}</h3>,
+                    p: ({ children }) => <p className="font-sans text-base text-text-secondary leading-[1.8] mb-4">{children}</p>,
+                    strong: ({ children }) => <strong className="font-semibold text-text-primary">{children}</strong>,
+                    em: ({ children }) => <em className="italic text-text-secondary">{children}</em>,
+                    blockquote: ({ children }) => <blockquote className="border-l-2 border-accent pl-4 my-4 italic text-text-muted">{children}</blockquote>,
+                    ul: ({ children }) => <ul className="list-disc list-inside mb-4 text-text-secondary space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal list-inside mb-4 text-text-secondary space-y-1">{children}</ol>,
+                    code: ({ children, className }) => {
+                      const isBlock = className?.includes("language-");
+                      return isBlock
+                        ? <pre className="bg-bg-elevated rounded p-4 my-4 overflow-x-auto"><code className="font-mono text-sm text-text-secondary">{children}</code></pre>
+                        : <code className="font-mono text-sm bg-bg-elevated rounded px-1.5 py-0.5 text-accent">{children}</code>;
+                    },
+                    a: ({ children, href }) => <a href={href} className="text-accent underline hover:text-text-primary transition-colors">{children}</a>,
+                    hr: () => <hr className="border-border my-8" />,
+                    img: ({ src, alt }) => <img src={src} alt={alt ?? ""} className="rounded max-w-full my-4" />,
+                  }}
+                >
+                  {body}
+                </Markdown>
+              ) : (
+                <p className="font-sans text-base text-text-muted">Nothing to preview yet...</p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Right: Sidebar */}
@@ -357,6 +481,23 @@ export default function AdminEditorNewPage() {
                 {uploading ? <span className="font-sans text-xs text-text-muted">Uploading...</span> : <><Upload size={16} className="text-text-muted mb-1" /><span className="font-sans text-xs text-text-muted">Click to upload image</span></>}
               </button>
             )}
+            {["Poetry", "Essay", "Research"].includes(category) && !featuredImage && (
+              <button
+                type="button"
+                onClick={generating ? undefined : openPromptEditor}
+                disabled={generating || (!title.trim() && !body.trim())}
+                className="w-full h-[40px] mt-2 border border-dashed border-accent-dim rounded flex items-center justify-center gap-2 cursor-pointer hover:bg-accent/10 transition-colors disabled:opacity-50"
+              >
+                {generating ? (
+                  <span className="font-sans text-xs text-accent">Generating...</span>
+                ) : (
+                  <>
+                    <Sparkles size={14} className="text-accent" />
+                    <span className="font-sans text-xs text-accent">Generate with AI</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           {/* Schedule */}
@@ -373,6 +514,49 @@ export default function AdminEditorNewPage() {
           </div>
         </div>
       </div>
+
+      {/* Prompt Editor Modal */}
+      {showPromptEditor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-bg-card border border-border rounded-lg w-full max-w-lg mx-4 p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-sans text-base font-semibold text-text-primary flex items-center gap-2">
+                <Sparkles size={16} className="text-accent" />
+                Image Generation Prompt
+              </h2>
+              <button onClick={() => setShowPromptEditor(false)} className="text-text-muted hover:text-text-primary transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <p className="font-sans text-xs text-text-muted">
+              {summarizing ? "Summarizing your content with AI..." : "Edit the prompt below to control what image DALL-E generates."}
+            </p>
+            <textarea
+              value={imagePrompt}
+              onChange={(e) => setImagePrompt(e.target.value)}
+              disabled={summarizing}
+              rows={8}
+              className="w-full bg-bg-surface border border-border rounded p-4 font-sans text-sm leading-relaxed text-text-secondary focus:outline-none focus:border-accent-dim resize-y disabled:opacity-50"
+            />
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowPromptEditor(false)}
+                className="font-sans text-sm text-text-muted hover:text-text-primary px-4 py-2 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGenerateImage}
+                disabled={!imagePrompt.trim() || summarizing}
+                className="bg-accent rounded-md px-4 py-2 font-sans text-sm text-bg font-medium disabled:opacity-50 transition-colors flex items-center gap-2"
+              >
+                <Sparkles size={14} />
+                Generate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

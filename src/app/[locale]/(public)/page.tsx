@@ -3,18 +3,52 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NewsletterForm } from "@/components/ui/newsletter-form";
 import { LockBadge } from "@/components/ui/lock-badge";
+import {
+  getFeaturedContent,
+  getUpcomingEvents,
+  getPartners,
+  getRandomQuote,
+  getAboutContent,
+  getSocialLinks,
+  getSiteImages,
+} from "@/lib/data";
+import { PLACEHOLDER, BLUR_DATA_URL } from "@/lib/placeholders";
+
+const SOCIAL_LABELS: Record<string, string> = {
+  instagram: "Instagram", youtube: "YouTube", tiktok: "TikTok", facebook: "Facebook",
+  twitter: "X", bluesky: "Bluesky", threads: "Threads", mastodon: "Mastodon",
+  medium: "Medium", substack: "Substack", spotify: "Spotify", soundcloud: "SoundCloud",
+  bandcamp: "Bandcamp", appleMusic: "Apple Music", github: "GitHub", linkedin: "LinkedIn",
+  pinterest: "Pinterest", tumblr: "Tumblr", patreon: "Patreon", kofi: "Ko-fi",
+  discord: "Discord", telegram: "Telegram", whatsapp: "WhatsApp", vimeo: "Vimeo",
+  twitch: "Twitch", behance: "Behance", dribbble: "Dribbble", flickr: "Flickr",
+  goodreads: "Goodreads", website: "Website",
+};
+import { getSiteConfig } from "@/lib/site-config";
 
 export default async function HomePage() {
   const t = await getTranslations("home");
+  const [featured, upcomingEvents, partners, quote, aboutContent, config, socialLinks, siteImages] = await Promise.all([
+    getFeaturedContent(),
+    getUpcomingEvents(),
+    getPartners(),
+    getRandomQuote(),
+    getAboutContent(),
+    getSiteConfig(),
+    getSocialLinks(),
+    getSiteImages(),
+  ]);
+
+  const nextEvent = upcomingEvents[0] ?? null;
 
   return (
     <>
       {/* ── Hero ── */}
       <section className="relative h-[900px] overflow-hidden">
         {/* Background */}
-        <Image src="/design-exports/kiJeb.png" alt="" fill className="object-cover" priority />
+        <Image src={siteImages.hero} alt="" fill className="object-cover" priority />
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% via-bg/15 via-30% to-bg/60 to-65%" />
@@ -61,42 +95,44 @@ export default async function HomePage() {
             <div className="h-[340px] bg-bg-card border border-border rounded-sm p-10 flex flex-col justify-between">
               <div className="flex flex-col gap-4">
                 <span className="font-mono text-[9px] text-accent-dim tracking-[3px] font-medium uppercase">
-                  LATEST POEM
+                  {t("latestPoemLabel")}
                 </span>
                 <h3 className="font-serif text-4xl text-text-primary leading-[1.15]">
-                  The Cartographers{"\n"}of Silence
+                  {featured.latestPoem?.title ?? "Coming soon"}
                 </h3>
                 <p className="font-serif text-base italic text-text-secondary leading-relaxed max-w-[450px]">
-                  We are the cartographers of silence,
-                  mapping the space between heartbeats,
-                  tracing constellations on the dust...
+                  {featured.latestPoem?.excerpt ?? ""}
                 </p>
               </div>
-              <Link
-                href="/poetry/the-cartographers-of-silence"
-                className="font-sans text-xs text-starlight tracking-[1px] inline-flex items-center gap-1"
-              >
-                {t("readPoem")} &rarr;
-              </Link>
+              {featured.latestPoem && (
+                <Link
+                  href={`/poetry/${featured.latestPoem.slug}`}
+                  className="font-sans text-xs text-starlight tracking-[1px] inline-flex items-center gap-1"
+                >
+                  {t("readPoem")} &rarr;
+                </Link>
+              )}
             </div>
 
             {/* Recent Research card */}
             <div className="h-[200px] bg-bg-card border border-border rounded-sm p-10 flex flex-col justify-between">
               <div className="flex flex-col gap-3">
                 <span className="font-mono text-[9px] text-accent-dim tracking-[3px] font-medium uppercase">
-                  LATEST RESEARCH
+                  {t("latestResearchLabel")}
                 </span>
                 <h3 className="font-serif text-2xl text-text-primary leading-[1.2] max-w-[500px]">
-                  Neural Architectures and the Poetics of Attention
+                  {featured.latestResearch?.title ?? "Coming soon"}
                 </h3>
-                <LockBadge />
+                {featured.latestResearch?.accessTier !== "FREE" && <LockBadge />}
               </div>
-              <Link
-                href="/research/neural-architectures-poetics-attention"
-                className="font-sans text-xs text-starlight tracking-[1px] inline-flex items-center gap-1"
-              >
-                {t("viewPaper")} &rarr;
-              </Link>
+              {featured.latestResearch && (
+                <Link
+                  href={`/research/${featured.latestResearch.slug}`}
+                  className="font-sans text-xs text-starlight tracking-[1px] inline-flex items-center gap-1"
+                >
+                  {t("viewPaper")} &rarr;
+                </Link>
+              )}
             </div>
           </div>
 
@@ -104,18 +140,25 @@ export default async function HomePage() {
           <div className="flex flex-col gap-6">
             {/* Featured Photo card */}
             <div className="h-[340px] bg-bg-card border border-border rounded-sm overflow-hidden relative">
-              <Image src="/design-exports/UyNEO.png" alt="" fill className="object-cover" />
+              <Image
+                src={featured.latestPhoto?.imageUrl ?? PLACEHOLDER.photo}
+                alt=""
+                fill
+                className="object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-bg/85 to-transparent" />
               <div className="relative h-full flex flex-col justify-end p-8 gap-2">
                 <span className="font-mono text-[9px] text-accent-dim tracking-[3px] font-medium uppercase">
-                  FEATURED PHOTOGRAPH
+                  {t("featuredPhotoLabel")}
                 </span>
                 <h3 className="font-serif text-[28px] text-text-primary">
-                  Still Life with Fog
+                  {featured.latestPhoto?.title ?? "Coming soon"}
                 </h3>
-                <p className="font-sans text-xs text-text-secondary">
-                  From the series: Silence Between Things
-                </p>
+                {featured.latestPhoto?.series && (
+                  <p className="font-sans text-xs text-text-secondary">
+                    {t("fromSeries")}: {featured.latestPhoto.series.name}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -123,21 +166,28 @@ export default async function HomePage() {
             <div className="h-[200px] bg-bg-card border border-border rounded-sm p-10 flex flex-col justify-between">
               <div className="flex flex-col gap-3">
                 <span className="font-mono text-[9px] text-accent-dim tracking-[3px] font-medium uppercase">
-                  LATEST ESSAY
+                  {t("latestEssayLabel")}
                 </span>
                 <h3 className="font-serif text-2xl text-text-primary leading-[1.2] max-w-[500px]">
-                  On the Architecture of Longing:{"\n"}Why Machines Will Never Grieve
+                  {featured.latestEssay?.title ?? "Coming soon"}
                 </h3>
-                <p className="font-sans text-[11px] text-text-muted">
-                  12 min read &middot; Published February 2026
-                </p>
+                {featured.latestEssay && (
+                  <p className="font-sans text-[11px] text-text-muted">
+                    {featured.latestEssay.readTime ? `${featured.latestEssay.readTime} min read` : ""}
+                    {featured.latestEssay.publishedAt
+                      ? ` \u00B7 Published ${new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(featured.latestEssay.publishedAt)}`
+                      : ""}
+                  </p>
+                )}
               </div>
-              <Link
-                href="/essays/on-the-architecture-of-longing"
-                className="font-sans text-xs text-starlight tracking-[1px] inline-flex items-center gap-1"
-              >
-                {t("readEssay")} &rarr;
-              </Link>
+              {featured.latestEssay && (
+                <Link
+                  href={`/essays/${featured.latestEssay.slug}`}
+                  className="font-sans text-xs text-starlight tracking-[1px] inline-flex items-center gap-1"
+                >
+                  {t("readEssay")} &rarr;
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -146,18 +196,16 @@ export default async function HomePage() {
       {/* ── Quote Interlude ── */}
       <section className="h-[360px] relative overflow-hidden">
         {/* Background image */}
-        <Image src="/design-exports/Wxrvq.png" alt="" fill className="object-cover" />
+        <Image src={PLACEHOLDER.generic} alt="" fill className="object-cover" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-bg/90 via-bg/50 to-bg/90" />
 
         <div className="relative flex h-full flex-col items-center justify-center gap-6 px-5 md:px-[200px] text-center">
           <blockquote className="font-serif text-xl md:text-2xl font-light text-warm-ivory leading-[1.8] max-w-[600px]">
-            &ldquo;And in the end, we found that silence
-            had its own geography &mdash; vast, uncharted, beautiful,
-            like the dark side of a familiar moon.&rdquo;
+            &ldquo;{quote?.text ?? "And in the end, we found that silence had its own geography."}&rdquo;
           </blockquote>
           <p className="font-mono text-[10px] tracking-[2px] text-accent-dim">
-            &mdash; From Nocturnal Echoes
+            &mdash; {quote?.attribution ?? "From Nocturnal Echoes"}
           </p>
           <div className="flex items-center gap-1.5">
             <span className="block w-1.5 h-1.5 rounded-full bg-accent-dim" />
@@ -168,58 +216,91 @@ export default async function HomePage() {
       </section>
 
       {/* ── Upcoming Event Bar ── */}
-      <section className="bg-bg-surface border-y border-border">
-        <div className="flex items-center justify-between gap-10 py-8 px-5 md:px-10 xl:px-20">
-          <div className="flex items-center gap-6">
-            {/* Date block */}
-            <div className="flex flex-col items-center shrink-0">
-              <span className="font-mono text-[10px] text-accent-dim tracking-[2px]">
-                MAR
-              </span>
-              <span className="font-serif text-3xl text-text-primary">15</span>
+      {nextEvent && (
+        <section className="bg-bg-surface border-y border-border">
+          <div className="flex items-center justify-between gap-10 py-8 px-5 md:px-10 xl:px-20">
+            <div className="flex items-center gap-6">
+              {/* Date block */}
+              <div className="flex flex-col items-center shrink-0">
+                <span className="font-mono text-[10px] text-accent-dim tracking-[2px]">
+                  {new Date(nextEvent.date).toLocaleString("en", { month: "short" }).toUpperCase()}
+                </span>
+                <span className="font-serif text-3xl text-text-primary">
+                  {new Date(nextEvent.date).getDate()}
+                </span>
+              </div>
+
+              {/* Event info */}
+              <div className="flex flex-col gap-1">
+                <h3 className="font-serif text-xl text-text-primary">
+                  {nextEvent.title}
+                </h3>
+                <p className="font-sans text-xs text-text-secondary">
+                  {nextEvent.location}
+                </p>
+              </div>
             </div>
 
-            {/* Event info */}
-            <div className="flex flex-col gap-1">
-              <h3 className="font-serif text-xl text-text-primary">
-                Poetry &amp; AI: A Live Reading + Conversation
-              </h3>
-              <p className="font-sans text-xs text-text-secondary">
-                National Library, Bucharest &middot; 19:00 EET
-              </p>
-            </div>
+            {/* RSVP button */}
+            {nextEvent.rsvpUrl ? (
+              <a
+                href={nextEvent.rsvpUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-accent-dim px-6 py-2.5 font-sans text-[11px] text-starlight tracking-[2px] shrink-0"
+              >
+                RSVP &rarr;
+              </a>
+            ) : (
+              <Link
+                href={`/events/${nextEvent.slug}`}
+                className="border border-accent-dim px-6 py-2.5 font-sans text-[11px] text-starlight tracking-[2px] shrink-0"
+              >
+                {t("eventDetails")} &rarr;
+              </Link>
+            )}
           </div>
-
-          {/* RSVP button */}
-          <span className="border border-accent-dim px-6 py-2.5 font-sans text-[11px] text-starlight tracking-[2px] shrink-0">
-            RSVP &rarr;
-          </span>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── About Preview ── */}
       <section className="py-[100px] px-5 md:px-10 xl:px-20">
         <div className="flex flex-col md:flex-row gap-12 md:gap-20 items-center">
           {/* Portrait */}
           <div className="w-full md:w-[360px] h-[450px] rounded-sm border border-border shrink-0 relative overflow-hidden">
-            <Image src="/design-exports/tlHhS.png" alt="Portrait" fill className="object-cover" />
+            <Image src={siteImages.portrait} alt="Portrait" fill className="object-cover" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
           </div>
 
           {/* Bio content */}
           <div className="flex-1 flex flex-col gap-6">
-            <SectionLabel label="THE ASTRONOMER" />
+            <SectionLabel label={t("aboutLabel")} />
 
             <h2 className="font-serif text-3xl md:text-[42px] font-light text-warm-ivory leading-tight">
-              Mihai Gavrilescu
+              {aboutContent.about_displayName || config.authorName}
             </h2>
             <p className="font-mono text-sm text-accent tracking-[1px]">
-              @lemagepoet
+              {aboutContent.about_handle || config.authorHandle}
+            </p>
+            {Object.keys(socialLinks).length > 0 && (
+              <div className="flex flex-wrap items-center gap-3">
+                {Object.entries(socialLinks).slice(0, 5).map(([key, url]) => (
+                  <a
+                    key={key}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[11px] text-text-muted hover:text-accent transition-colors tracking-[1px]"
+                  >
+                    {SOCIAL_LABELS[key] ?? key}
+                  </a>
+                ))}
+              </div>
+            )}
+            <p className="font-sans text-[15px] text-text-secondary leading-[1.8] max-w-[520px]">
+              {aboutContent.about_bio?.split("\n\n")[0] || t("aboutBio1")}
             </p>
             <p className="font-sans text-[15px] text-text-secondary leading-[1.8] max-w-[520px]">
-              Poet, photographer, singer-songwriter, and researcher. Once a magician by trade, now a conjurer of words. I live between languages &mdash; Romanian and English &mdash; and between worlds: the precision of neural architectures and the silence of verse.
-            </p>
-            <p className="font-sans text-[15px] text-text-secondary leading-[1.8] max-w-[520px]">
-              This selenarium is where those worlds meet. Come, look through the telescope.
+              {aboutContent.about_bio?.split("\n\n")[1] || t("aboutBio2")}
             </p>
 
             {/* Sparkle divider */}
@@ -230,8 +311,7 @@ export default async function HomePage() {
             </div>
 
             <p className="font-serif text-xl md:text-[22px] italic text-starlight leading-[1.5]">
-              &ldquo;Every poem is a small act of magic &mdash;
-              making the invisible appear.&rdquo;
+              &ldquo;{aboutContent.about_personalQuote || t("aboutQuote")}&rdquo;
             </p>
             <Link
               href="/about"
@@ -258,16 +338,7 @@ export default async function HomePage() {
             {t("newsletterDescription")}
           </p>
 
-          <form className="flex items-center gap-0">
-            <Input
-              type="email"
-              placeholder="your@email.com"
-              className="w-[320px]"
-            />
-            <Button variant="filled" size="md">
-              {t("newsletterSubscribe")}
-            </Button>
-          </form>
+          <NewsletterForm source="homepage" />
 
           <p className="font-mono text-[10px] text-text-muted tracking-[1px]">
             {t("newsletterFootnote")}
@@ -281,28 +352,36 @@ export default async function HomePage() {
           <SectionLabel label={t("partnersLabel")} className="justify-center" />
 
           <p className="font-sans text-sm text-text-secondary text-center max-w-[520px] leading-relaxed">
-            Selenarium is sustained through creative partnerships
-            with publishers, galleries, and cultural institutions we believe in.
+            {t("partnersDescription")}
           </p>
 
           <div className="flex flex-wrap justify-center gap-12">
-            {["NEMIRA", "CARTURESTI", "MNAC", "DILEMA", "SUBSTACK"].map(
-              (partner) => (
-                <div
-                  key={partner}
-                  className="flex flex-col items-center gap-2"
-                >
+            {partners.map((partner) => (
+              <div
+                key={partner.id}
+                className="flex flex-col items-center gap-2"
+              >
+                {partner.url ? (
+                  <a
+                    href={partner.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[11px] text-text-muted tracking-[1px] hover:text-text-secondary transition-colors"
+                  >
+                    {partner.name}
+                  </a>
+                ) : (
                   <span className="font-mono text-[11px] text-text-muted tracking-[1px]">
-                    {partner}
+                    {partner.name}
                   </span>
-                </div>
-              ),
-            )}
+                )}
+              </div>
+            ))}
           </div>
 
-          <p className="font-sans text-xs text-starlight">
-            Interested in partnering?  Contact us &rarr;
-          </p>
+          <Link href="/contact" className="font-sans text-xs text-starlight">
+            {t("partnersContact")} &rarr;
+          </Link>
         </div>
       </section>
     </>

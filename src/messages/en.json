@@ -125,7 +125,19 @@
     "newsletterSubscribe": "Subscribe",
     "newsletterFootnote": "Powered by Substack · Also available on Medium",
     "partnersLabel": "FELLOW TRAVELLERS",
-    "partners": "Partners"
+    "partners": "Partners",
+    "latestPoemLabel": "LATEST POEM",
+    "latestResearchLabel": "LATEST RESEARCH",
+    "featuredPhotoLabel": "FEATURED PHOTOGRAPH",
+    "latestEssayLabel": "LATEST ESSAY",
+    "fromSeries": "From the series",
+    "eventDetails": "Details",
+    "aboutLabel": "THE ASTRONOMER",
+    "aboutBio1": "Poet, photographer, singer-songwriter, and researcher. Once a magician by trade, now a conjurer of words. I live between languages — Romanian and English — and between worlds: the precision of neural architectures and the silence of verse.",
+    "aboutBio2": "This selenarium is where those worlds meet. Come, look through the telescope.",
+    "aboutQuote": "Every poem is a small act of magic — making the invisible appear.",
+    "partnersDescription": "Selenarium is sustained through creative partnerships with publishers, galleries, and cultural institutions we believe in.",
+    "partnersContact": "Interested in partnering? Contact us"
   },
   "poetry": {
     "title": "Poetry",
@@ -144,7 +156,15 @@
     "filterSilence": "Silence & Space",
     "filterIntelligence": "Intelligence",
     "filterLonging": "Longing",
-    "filterRomanian": "Romanian"
+    "filterRomanian": "Romanian",
+    "listenAudio": "Listen to audio reading",
+    "pauseAudio": "Pause audio",
+    "tipJarPrompt": "Did this poem move you? Every tamed fox deserves a gift.",
+    "previousPoem": "Previous Poem",
+    "nextPoem": "Next Poem",
+    "partnerBadge": "Selenarium Partner",
+    "partnerDescription": "Get early access to all poems + exclusive audio readings",
+    "moreFromCollection": "MORE FROM THIS COLLECTION"
   },
   "photography": {
     "title": "Photography",
@@ -158,7 +178,16 @@
     "filterFogStudies": "Fog Studies",
     "filterUrbanSilence": "Urban Silence",
     "filterPortraits": "Portraits",
-    "filterRomania": "Romania"
+    "filterRomania": "Romania",
+    "uncategorized": "Uncategorized",
+    "availableLimited": "Available (Limited Edition)",
+    "seriesLabel": "PHOTOGRAPHY SERIES",
+    "fogStudiesTitle": "Fog Studies",
+    "fogStudiesDescription": "An ongoing exploration of fog as metaphor — silence made visible, the city dissolving into its own breath.",
+    "fogStudiesCount": "12 photographs",
+    "fogStudiesYears": "2023 – 2026",
+    "fogStudiesLocation": "Carpathian Mountains",
+    "fogStudiesNote": "Fog is the closest thing to silence you can photograph. It erases context, strips the familiar down to shapes and light. In these images I'm searching for what remains when everything else disappears."
   },
   "music": {
     "title": "Music",
@@ -175,6 +204,8 @@
     "streamSpotify": "Spotify",
     "streamBandcamp": "Bandcamp",
     "streamSoundCloud": "SoundCloud",
+    "tracks": "tracks",
+    "creditsDescription": "Composed, performed, and produced by {handle} ({name}).",
     "embeddedPlayer": "EMBEDDED PLAYER"
   },
   "books": {
@@ -187,7 +218,12 @@
     "signedEditions": "Signed Editions",
     "publisherDirect": "Publisher Direct",
     "freeShipping": "Free Shipping",
-    "heroDescription": "Poetry collections, essays, and limited-edition prints from the Selenarium."
+    "heroDescription": "Poetry collections, essays, and limited-edition prints from the Selenarium.",
+    "whereToFind": "WHERE TO FIND THESE BOOKS",
+    "partnersDescription": "Order from these trusted bookstores for signed editions, free shipping, and exclusive selenarium bookmarks.",
+    "bookCoverAlt": "Book cover",
+    "firstEdition": "FIRST EDITION",
+    "byAuthor": "by {handle}"
   },
   "research": {
     "title": "Research",
@@ -199,7 +235,8 @@
     "filterNlp": "NLP",
     "filterAttention": "Attention",
     "filterPhilosophyAi": "Philosophy of AI",
-    "filterPoeticsMl": "Poetics & ML"
+    "filterPoeticsMl": "Poetics & ML",
+    "researchPaperLabel": "RESEARCH PAPER"
   },
   "essays": {
     "title": "Essays",
@@ -214,7 +251,13 @@
     "newsletterHeadline": "Stay in the glow",
     "newsletterDescription": "Subscribe to receive new essays directly.",
     "newsletterSubscribe": "Subscribe",
-    "newsletterFootnote": "Powered by Substack  ·  RSS feed available"
+    "newsletterFootnote": "Powered by Substack  ·  RSS feed available",
+    "minRead": "MIN READ",
+    "min": "min",
+    "alsoOnSubstack": "Also on Substack",
+    "alsoOnMedium": "Also on Medium",
+    "partnerBadge": "Selenarium Partner",
+    "partnerDescription": "Get early access to all essays + exclusive drafts and notes"
   },
   "membership": {
     "title": "Membership",
@@ -249,10 +292,16 @@
     "featureQuarterlySession": "Quarterly 1:1 session",
     "featureEarlyBookAccess": "Early book access",
     "featureNameInCredits": "Name in credits",
+    "freeDescription": "The public selenarium.",
+    "supporterTagline": "The deeper view.",
+    "patronTagline": "Full selenarium access.",
+    "innerCircleTagline": "The private quarters.",
     "donationLabel": "ONE-TIME SUPPORT",
     "donationTitle": "Not ready for a subscription?",
     "donationDescription": "You can still support this work with a one-time donation. Every contribution helps keep the Selenarium open.",
-    "customAmount": "Custom Amount",
+    "customAmount": "Custom amount",
+    "donateCta": "Donate",
+    "processing": "Processing...",
     "quoteText": "The only way to do great work is to love what you do.",
     "quoteAuthor": "Steve Jobs",
     "supporterTier": "Supporter Tier",
@@ -285,7 +334,11 @@
     "supportTitle": "Keep the Selenarium Open",
     "supportDescription": "If this work resonates, consider becoming a patron or making a one-time contribution.",
     "ctaBecomePatron": "Become a Patron",
-    "ctaDonation": "One-time Donation"
+    "ctaDonation": "One-time Donation",
+    "astronomerLabel": "THE ASTRONOMER",
+    "academicCvLabel": "ACADEMIC CV",
+    "achievementsLabel": "ACHIEVEMENTS",
+    "downloadsLabel": "DOWNLOADS"
   },
   "contact": {
     "title": "Contact",
@@ -303,7 +356,20 @@
     "formEmailPlaceholder": "your@email.com",
     "formMessageLabel": "MESSAGE",
     "formMessagePlaceholder": "Your message...",
-    "sendMessage": "Send Message"
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "successTitle": "Message Sent",
+    "successMessage": "Thank you for reaching out. I'll respond as soon as I can.",
+    "errorMessage": "Something went wrong. Please try again."
+  },
+  "newsletter": {
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
+    "success": "You're subscribed! Check your inbox for a welcome email.",
+    "error": "Something went wrong. Please try again.",
+    "unsubscribedTitle": "You've been unsubscribed",
+    "unsubscribedDescription": "You will no longer receive newsletter emails from Selenarium. If this was a mistake, you can re-subscribe at any time.",
+    "backToHome": "Back to home"
   },
   "events": {
     "title": "Events",
@@ -314,7 +380,14 @@
     "liveEvent": "Live Event",
     "sectionLabel": "EVENTS",
     "heroTitle": "Readings, Talks &\nConferences",
-    "pastEventsLabel": "PAST EVENTS"
+    "heroDescription": "Live poetry readings, AI research presentations, and conversations at the intersection of art and technology.",
+    "pastEventsLabel": "PAST EVENTS",
+    "rsvp": "RSVP",
+    "noUpcoming": "No upcoming events at the moment. Check back soon.",
+    "upcomingEvent": "UPCOMING EVENT",
+    "pastEvent": "PAST EVENT",
+    "reserveSpot": "Reserve Your Spot",
+    "shareEvent": "Share This Event"
   },
   "shop": {
     "title": "Shop",
@@ -323,6 +396,7 @@
     "youMightAlsoLike": "You Might Also Like",
     "sectionLabel": "THE SCRIPTORIUM",
     "heroTitle": "Objects of\nContemplation",
+    "heroDescription": "Books, prints, and artifacts from the Selenarium. Each object handmade or carefully selected to accompany your inner life.",
     "filterAll": "All",
     "filterBooks": "Books",
     "filterPrints": "Prints",
@@ -330,7 +404,11 @@
     "filterObjects": "Objects",
     "filterDigital": "Digital",
     "featuredLabel": "FEATURED",
-    "addToCart": "Add to Cart"
+    "addToCart": "Add to Cart",
+    "newLabel": "NEW",
+    "viewDetails": "View Details",
+    "allItems": "ALL ITEMS",
+    "inStock": "{count} in stock"
   },
   "checkout": {
     "title": "Checkout",
@@ -357,7 +435,10 @@
     "paymentLabel": "PAYMENT",
     "paymentPlaceholder": "Stripe Payment Element",
     "placeOrder": "PLACE ORDER",
-    "securedNote": "Secured by Stripe · Free shipping within EU"
+    "processing": "Processing...",
+    "securedNote": "Secured by Stripe · Free shipping within EU",
+    "emptyCart": "Your cart is empty",
+    "continueShopping": "Continue shopping"
   },
   "legal": {
     "terms": "Terms and conditions",
@@ -365,6 +446,7 @@
     "cookies": "Cookie policy",
     "label": "Legal",
     "lastUpdated": "Last Updated",
+    "lastUpdatedDate": "March 1, 2026",
     "termsTitle": "Terms of Service",
     "privacyTitle": "Privacy Policy",
     "cookiesTitle": "Cookie Policy",
@@ -525,5 +607,21 @@
     "shopDiscount": "Shop Discount",
     "newForPatrons": "New for Patrons",
     "readingHistory": "Reading History"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search poems, essays, research...",
+    "resultCount": "{count} results for \"{query}\"",
+    "noResults": "No results found for \"{query}\""
+  },
+  "thankYou": {
+    "title": "Thank You",
+    "description": "Your generosity keeps the Selenarium open. Every contribution makes a difference.",
+    "quote": "One sees clearly only with the heart. What is essential is invisible to the eye.",
+    "receiptTitle": "DONATION RECEIPT",
+    "amount": "Amount",
+    "date": "Date",
+    "reference": "Reference",
+    "returnHome": "Return Home"
   }
 }

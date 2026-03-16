@@ -1,0 +1,388 @@
+import { prisma } from "@/lib/prisma";
+import { PLACEHOLDER } from "@/lib/placeholders";
+import { unstable_cache } from "next/cache";
+
+// ──────────────────────────────────────────────
+// Caching helpers
+// ──────────────────────────────────────────────
+
+const CACHE_SHORT = 60; // 1 minute
+const CACHE_MEDIUM = 300; // 5 minutes
+const CACHE_LONG = 3600; // 1 hour
+
+// ──────────────────────────────────────────────
+// Page Content (DB overrides for hero sections)
+// ──────────────────────────────────────────────
+
+export async function getPageContent(
+  namespace: string,
+  keys: string[],
+  locale: string,
+  t: (key: string) => string
+): Promise<Record<string, string>> {
+  const dbKeys = keys.map((k) => `${locale}:${namespace}.${k}`);
+  const settings = await prisma.siteSetting.findMany({
+    where: { key: { in: dbKeys } },
+  });
+  const map = new Map(settings.map((s) => [s.key, s.value]));
+  const result: Record<string, string> = {};
+  for (const k of keys) {
+    result[k] = map.get(`${locale}:${namespace}.${k}`) || t(k);
+  }
+  return result;
+}
+
+// ──────────────────────────────────────────────
+// Social Links (for footer)
+// ──────────────────────────────────────────────
+
+const SOCIAL_KEYS = [
+  "instagram", "youtube", "tiktok", "facebook", "twitter", "bluesky",
+  "threads", "mastodon", "medium", "substack", "spotify", "soundcloud",
+  "bandcamp", "appleMusic", "github", "linkedin", "pinterest", "tumblr",
+  "patreon", "kofi", "discord", "telegram", "whatsapp", "vimeo", "twitch",
+  "behance", "dribbble", "flickr", "goodreads", "website",
+];
+
+export const getSocialLinks = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    const settings = await prisma.siteSetting.findMany({
+      where: { key: { in: SOCIAL_KEYS } },
+    });
+    const result: Record<string, string> = {};
+    for (const s of settings) {
+      if (s.value) result[s.key] = s.value;
+    }
+    return result;
+  },
+  ["social-links"],
+  { revalidate: CACHE_LONG }
+);
+
+// ──────────────────────────────────────────────
+// About Content (from admin About editor)
+// ──────────────────────────────────────────────
+
+export const getAboutContent = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    const settings = await prisma.siteSetting.findMany({
+      where: { key: { startsWith: "about_" } },
+    });
+    const result: Record<string, string> = {};
+    for (const s of settings) {
+      if (s.value) result[s.key] = s.value;
+    }
+    return result;
+  },
+  ["about-content"],
+  { revalidate: CACHE_MEDIUM }
+);
+
+// ──────────────────────────────────────────────
+// Poetry
+// ──────────────────────────────────────────────
+
+export async function getPublishedPoems(collection?: string) {
+  return prisma.poem.findMany({
+    where: {
+      publishedAt: { lte: new Date() },
+      ...(collection ? { collection } : {}),
+    },
+    orderBy: { publishedAt: "desc" },
+  });
+}
+
+export async function getPoemBySlug(slug: string) {
+  return prisma.poem.findUnique({ where: { slug } });
+}
+
+// ──────────────────────────────────────────────
+// Photography
+// ──────────────────────────────────────────────
+
+export async function getPublishedPhotos(seriesSlug?: string) {
+  return prisma.photo.findMany({
+    where: {
+      publishedAt: { lte: new Date() },
+      ...(seriesSlug ? { series: { slug: seriesSlug } } : {}),
+    },
+    include: { series: true },
+    orderBy: { publishedAt: "desc" },
+  });
+}
+
+export async function getPhotoBySlug(slug: string) {
+  return prisma.photo.findUnique({
+    where: { slug },
+    include: { series: true },
+  });
+}
+
+export async function getPhotoSeries() {
+  return prisma.photoSeries.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getSeriesBySlug(slug: string) {
+  return prisma.photoSeries.findUnique({
+    where: { slug },
+    include: { photos: { where: { publishedAt: { lte: new Date() } }, orderBy: { publishedAt: "desc" } } },
+  });
+}
+
+// ──────────────────────────────────────────────
+// Essays
+// ──────────────────────────────────────────────
+
+export async function getPublishedEssays() {
+  return prisma.essay.findMany({
+    where: { publishedAt: { lte: new Date() } },
+    orderBy: { publishedAt: "desc" },
+  });
+}
+
+export async function getEssayBySlug(slug: string) {
+  return prisma.essay.findUnique({ where: { slug } });
+}
+
+// ──────────────────────────────────────────────
+// Research
+// ──────────────────────────────────────────────
+
+export async function getPublishedResearch() {
+  return prisma.researchPaper.findMany({
+    where: { publishedAt: { lte: new Date() } },
+    orderBy: { publishedAt: "desc" },
+  });
+}
+
+export async function getResearchBySlug(slug: string) {
+  return prisma.researchPaper.findUnique({ where: { slug } });
+}
+
+// ──────────────────────────────────────────────
+// Books
+// ──────────────────────────────────────────────
+
+export async function getPublishedBooks() {
+  return prisma.book.findMany({
+    where: { publishedAt: { lte: new Date() } },
+    orderBy: { publishedAt: "desc" },
+  });
+}
+
+export async function getBookBySlug(slug: string) {
+  return prisma.book.findUnique({ where: { slug } });
+}
+
+// ──────────────────────────────────────────────
+// Music
+// ──────────────────────────────────────────────
+
+export async function getAlbumsWithTracks() {
+  return prisma.album.findMany({
+    include: { tracks: { orderBy: { order: "asc" } } },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getAlbumBySlug(slug: string) {
+  return prisma.album.findUnique({
+    where: { slug },
+    include: { tracks: { orderBy: { order: "asc" } } },
+  });
+}
+
+// ──────────────────────────────────────────────
+// Events
+// ──────────────────────────────────────────────
+
+export async function getUpcomingEvents() {
+  return prisma.event.findMany({
+    where: { date: { gte: new Date() } },
+    orderBy: { date: "asc" },
+  });
+}
+
+export async function getPastEvents() {
+  return prisma.event.findMany({
+    where: { date: { lt: new Date() } },
+    orderBy: { date: "desc" },
+  });
+}
+
+export async function getEventBySlug(slug: string) {
+  return prisma.event.findUnique({ where: { slug } });
+}
+
+// ──────────────────────────────────────────────
+// Shop
+// ──────────────────────────────────────────────
+
+export async function getPublishedProducts(category?: string) {
+  return prisma.product.findMany({
+    where: category ? { category: category as any } : {},
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getProductBySlug(slug: string) {
+  return prisma.product.findUnique({ where: { slug } });
+}
+
+// ──────────────────────────────────────────────
+// Homepage / Featured
+// ──────────────────────────────────────────────
+
+export const getFeaturedContent = unstable_cache(
+  async () => {
+    const now = new Date();
+    const [latestPoem, latestEssay, latestPhoto, latestResearch] =
+      await Promise.all([
+        prisma.poem.findFirst({
+          where: { publishedAt: { lte: now } },
+          orderBy: { publishedAt: "desc" },
+        }),
+        prisma.essay.findFirst({
+          where: { publishedAt: { lte: now } },
+          orderBy: { publishedAt: "desc" },
+        }),
+        prisma.photo.findFirst({
+          where: { publishedAt: { lte: now } },
+          include: { series: true },
+          orderBy: { publishedAt: "desc" },
+        }),
+        prisma.researchPaper.findFirst({
+          where: { publishedAt: { lte: now } },
+          orderBy: { publishedAt: "desc" },
+        }),
+      ]);
+
+    return { latestPoem, latestEssay, latestPhoto, latestResearch };
+  },
+  ["featured-content"],
+  { revalidate: CACHE_SHORT }
+);
+
+export const getPartners = unstable_cache(
+  async () => {
+    return prisma.partner.findMany({ orderBy: { createdAt: "asc" } });
+  },
+  ["partners"],
+  { revalidate: CACHE_LONG }
+);
+
+export async function getRandomQuote() {
+  const count = await prisma.quote.count();
+  if (count === 0) return null;
+  const skip = Math.floor(Math.random() * count);
+  const quotes = await prisma.quote.findMany({ take: 1, skip });
+  return quotes[0] ?? null;
+}
+
+// ──────────────────────────────────────────────
+// Search
+// ──────────────────────────────────────────────
+
+export async function searchContent(query: string) {
+  if (!query.trim()) return [];
+
+  const [poems, essays, research, books] = await Promise.all([
+    prisma.poem.findMany({
+      where: {
+        publishedAt: { lte: new Date() },
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { body: { contains: query, mode: "insensitive" } },
+          { excerpt: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { title: true, slug: true, excerpt: true },
+    }),
+    prisma.essay.findMany({
+      where: {
+        publishedAt: { lte: new Date() },
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { body: { contains: query, mode: "insensitive" } },
+          { excerpt: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { title: true, slug: true, excerpt: true },
+    }),
+    prisma.researchPaper.findMany({
+      where: {
+        publishedAt: { lte: new Date() },
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { abstract: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { title: true, slug: true, abstract: true },
+    }),
+    prisma.book.findMany({
+      where: {
+        publishedAt: { lte: new Date() },
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { title: true, slug: true, description: true },
+    }),
+  ]);
+
+  return [
+    ...poems.map((p) => ({
+      category: "POETRY" as const,
+      icon: "feather" as const,
+      title: p.title,
+      description: p.excerpt ?? "",
+      href: `/poetry/${p.slug}`,
+    })),
+    ...essays.map((e) => ({
+      category: "ESSAY" as const,
+      icon: "essay" as const,
+      title: e.title,
+      description: e.excerpt ?? "",
+      href: `/essays/${e.slug}`,
+    })),
+    ...research.map((r) => ({
+      category: "RESEARCH" as const,
+      icon: "research" as const,
+      title: r.title,
+      description: r.abstract ?? "",
+      href: `/research/${r.slug}`,
+    })),
+    ...books.map((b) => ({
+      category: "BOOK" as const,
+      icon: "book" as const,
+      title: b.title,
+      description: b.description ?? "",
+      href: `/books/${b.slug}`,
+    })),
+  ];
+}
+
+// ──────────────────────────────────────────────
+// Site Images (admin-uploaded hero/portrait)
+// ──────────────────────────────────────────────
+
+export const getSiteImages = unstable_cache(
+  async () => {
+    const keys = ["heroImage", "portraitImage", "ogDefaultImage"];
+    const settings = await prisma.siteSetting.findMany({
+      where: { key: { in: keys } },
+    });
+    const map = new Map(settings.map((s) => [s.key, s.value]));
+
+    return {
+      hero: map.get("heroImage") || PLACEHOLDER.generic,
+      portrait: map.get("portraitImage") || PLACEHOLDER.portrait,
+      ogDefault: map.get("ogDefaultImage") || "/og-default.jpg",
+    };
+  },
+  ["site-images"],
+  { revalidate: CACHE_MEDIUM }
+);
