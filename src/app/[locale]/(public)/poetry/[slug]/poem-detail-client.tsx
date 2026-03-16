@@ -225,7 +225,7 @@ export function PoemDetailClient({
             poemId={poem.id}
             title={displayTitle}
             stanzas={stanzas}
-            bgImage={PLACEHOLDER.poem}
+            bgImage={poem.coverImage || PLACEHOLDER.poem}
             prevSlug={prevSlug}
             nextSlug={nextSlug}
             prevLabel={t("previousPoem")}
