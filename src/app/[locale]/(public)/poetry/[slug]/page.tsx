@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getPoemBySlug, getPublishedPoems } from "@/lib/data";
+import { getPoemBySlug, getPublishedPoems, getRelatedPoems } from "@/lib/data";
 import { PoemDetailClient } from "./poem-detail-client";
 import { makeMetadata } from "@/lib/seo/metadata";
 import { JsonLd, poemJsonLd } from "@/lib/seo/jsonld";
+import { ViewTracker } from "@/components/ui/view-tracker";
 
 export async function generateMetadata({
   params,
@@ -14,9 +15,12 @@ export async function generateMetadata({
   const poem = await getPoemBySlug(slug);
   if (!poem) return {};
 
+  const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
+  const displayExcerpt = locale === "ro" && poem.excerptRo ? poem.excerptRo : (poem.excerpt ?? "");
+
   return makeMetadata({
-    title: poem.title,
-    description: poem.excerpt ?? "",
+    title: displayTitle,
+    description: displayExcerpt,
     path: `/poetry/${slug}`,
     locale,
   });
@@ -25,9 +29,9 @@ export async function generateMetadata({
 export default async function PoemDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const poem = await getPoemBySlug(slug);
   if (!poem) notFound();
 
@@ -36,13 +40,16 @@ export default async function PoemDetailPage({
   const currentIdx = allPoems.findIndex((p) => p.slug === slug);
   const prevPoem = currentIdx > 0 ? allPoems[currentIdx - 1] : null;
   const nextPoem = currentIdx < allPoems.length - 1 ? allPoems[currentIdx + 1] : null;
-  const relatedPoems = allPoems
-    .filter((p) => p.slug !== slug)
-    .slice(0, 3)
-    .map((p) => ({ title: p.title, collection: p.collection ?? "", slug: `/poetry/${p.slug}` }));
+  const related = await getRelatedPoems(slug, poem.collection);
+  const relatedPoems = related.map((p) => ({
+    title: p.title,
+    collection: p.collection ?? "",
+    slug: `/poetry/${p.slug}`,
+  }));
 
   return (
     <>
+      <ViewTracker contentType="POEM" contentId={poem.id} />
       <JsonLd
         data={poemJsonLd({
           title: poem.title,
@@ -58,6 +65,8 @@ export default async function PoemDetailPage({
           id: poem.id,
           title: poem.title,
           body: poem.body,
+          titleRo: poem.titleRo,
+          bodyRo: poem.bodyRo,
           collection: poem.collection,
           language: poem.language,
           audioUrl: poem.audioUrl,
@@ -68,6 +77,7 @@ export default async function PoemDetailPage({
         prevSlug={prevPoem ? `/poetry/${prevPoem.slug}` : null}
         nextSlug={nextPoem ? `/poetry/${nextPoem.slug}` : null}
         relatedPoems={relatedPoems}
+        locale={locale}
       />
     </>
   );

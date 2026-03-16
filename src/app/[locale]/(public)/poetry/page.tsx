@@ -35,18 +35,22 @@ export default async function PoetryPage() {
 
       {/* ── Poems List ── */}
       <section className="px-5 md:px-10 xl:px-20 pb-20">
-        {poems.map((poem) => (
-          <PoemCard
-            key={poem.slug}
-            title={poem.title}
-            collection={(poem.collection ?? "").toUpperCase()}
-            language={(poem.language ?? "EN").toUpperCase()}
-            excerpt={poem.excerpt ?? ""}
-            accessTier={poem.accessTier !== "FREE" ? poem.accessTier : undefined}
-            hasAudio={!!poem.audioUrl}
-            slug={`/poetry/${poem.slug}`}
-          />
-        ))}
+        {poems.map((poem) => {
+          const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
+          const displayExcerpt = locale === "ro" && poem.excerptRo ? poem.excerptRo : (poem.excerpt ?? "");
+          return (
+            <PoemCard
+              key={poem.slug}
+              title={displayTitle}
+              collection={(poem.collection ?? "").toUpperCase()}
+              language={(poem.language ?? "EN").toUpperCase()}
+              excerpt={displayExcerpt}
+              accessTier={poem.accessTier !== "FREE" ? poem.accessTier : undefined}
+              hasAudio={!!poem.audioUrl}
+              slug={`/poetry/${poem.slug}`}
+            />
+          );
+        })}
       </section>
 
       {/* ── Quote Interlude ── */}

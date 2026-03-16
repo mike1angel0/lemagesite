@@ -16,6 +16,8 @@ type PoemData = {
   id: string;
   title: string;
   body: string;
+  titleRo: string | null;
+  bodyRo: string | null;
   collection: string | null;
   language: string | null;
   audioUrl: string | null;
@@ -36,24 +38,30 @@ export function PoemDetailClient({
   nextSlug,
   relatedPoems,
   authorHandle,
+  locale,
 }: {
   poem: PoemData;
   prevSlug: string | null;
   nextSlug: string | null;
   relatedPoems: RelatedPoem[];
   authorHandle?: string;
+  locale?: string;
 }) {
   const t = useTranslations("poetry");
   const { data: session } = useSession();
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const stanzas = poem.body.split("\n\n").filter(Boolean);
+  // Locale-aware title and body
+  const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
+  const displayBody = locale === "ro" && poem.bodyRo ? poem.bodyRo : poem.body;
+
+  const stanzas = displayBody.split("\n\n").filter(Boolean);
   const userTier = (session?.user as unknown as Record<string, unknown>)?.tier as string | undefined;
   const canAccess = hasAccess(userTier, poem.accessTier);
 
   // Poems read slower (~200 wpm vs 250 for prose)
-  const readTime = Math.max(1, Math.ceil(poem.body.split(/\s+/).length / 200));
+  const readTime = Math.max(1, Math.ceil(displayBody.split(/\s+/).length / 200));
 
   const publishedDate = poem.publishedAt
     ? new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(
@@ -91,7 +99,7 @@ export function PoemDetailClient({
 
         {/* Title */}
         <h1 className="font-serif text-4xl md:text-[52px] font-light text-text-primary text-center leading-[1.2] max-w-[600px]">
-          {poem.title}
+          {displayTitle}
         </h1>
 
         {/* Audio row */}
@@ -207,7 +215,7 @@ export function PoemDetailClient({
           {/* -- Action bar -- */}
           <PoemActionBar
             poemId={poem.id}
-            title={poem.title}
+            title={displayTitle}
             stanzas={stanzas}
             bgImage={PLACEHOLDER.poem}
             prevSlug={prevSlug}

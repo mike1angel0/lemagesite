@@ -34,15 +34,39 @@ export async function savePoemAction(
   const admin = await requireAdmin();
   if (!admin) return { error: "Not authorized" };
 
-  const title = (formData.get("title") as string)?.trim();
-  const body = (formData.get("body") as string)?.trim();
+  const rawTitle = (formData.get("title") as string)?.trim();
+  const rawBody = (formData.get("body") as string)?.trim();
   const tier = (formData.get("tier") as string) || "Free";
   const tags = (formData.get("tags") as string)?.trim();
   const coverImage = (formData.get("coverImage") as string)?.trim();
   const publish = formData.get("publish") === "true";
+  const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
+  const language = (formData.get("language") as string)?.trim() || "en";
+  const titleTranslation = (formData.get("titleTranslation") as string)?.trim();
+  const bodyTranslation = (formData.get("bodyTranslation") as string)?.trim();
 
-  if (!title) return { error: "Title is required" };
-  if (!body) return { error: "Body is required" };
+  if (!rawTitle) return { error: "Title is required" };
+  if (!rawBody) return { error: "Body is required" };
+
+  // Schema: title/body = EN, titleRo/bodyRo = RO
+  let title: string;
+  let body: string;
+  let titleRo: string | null = null;
+  let bodyRo: string | null = null;
+
+  if (language === "ro") {
+    // Author wrote in Romanian — original goes to Ro fields, translation to EN fields
+    titleRo = rawTitle;
+    bodyRo = rawBody;
+    title = titleTranslation || rawTitle;
+    body = bodyTranslation || rawBody;
+  } else {
+    // Author wrote in English
+    title = rawTitle;
+    body = rawBody;
+    titleRo = titleTranslation || null;
+    bodyRo = bodyTranslation || null;
+  }
 
   const slug = slugify(title);
   const existing = await prisma.poem.findUnique({ where: { slug } });
@@ -53,10 +77,13 @@ export async function savePoemAction(
       title,
       slug,
       body,
+      titleRo,
+      bodyRo,
+      language,
       collection: tags || null,
       coverImage: coverImage || null,
       accessTier: tierMap[tier] || "FREE",
-      publishedAt: publish ? new Date() : null,
+      publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
   });
 
@@ -82,6 +109,7 @@ export async function saveResearchAction(
   const pdfUrl = (formData.get("pdfUrl") as string)?.trim();
   const coverImage = (formData.get("coverImage") as string)?.trim();
   const publish = formData.get("publish") === "true";
+  const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
 
   if (!title) return { error: "Title is required" };
 
@@ -105,7 +133,7 @@ export async function saveResearchAction(
       coverImage: coverImage || null,
       pdfUrl: pdfUrl || null,
       accessTier: tierMap[tier] || "FREE",
-      publishedAt: publish ? new Date() : null,
+      publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
   });
 
@@ -126,6 +154,7 @@ export async function savePhotoAction(
   const description = (formData.get("body") as string)?.trim();
   const tier = (formData.get("tier") as string) || "Free";
   const publish = formData.get("publish") === "true";
+  const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
 
   if (!title) return { error: "Title is required" };
   if (!imageUrl) return { error: "Photo URL is required" };
@@ -141,7 +170,7 @@ export async function savePhotoAction(
       imageUrl,
       description: description || null,
       accessTier: tierMap[tier] || "FREE",
-      publishedAt: publish ? new Date() : null,
+      publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
   });
 
@@ -165,6 +194,7 @@ export async function saveEssayAction(
   const essayCategory = (formData.get("essayCategory") as string)?.trim();
   const thumbnail = (formData.get("thumbnail") as string)?.trim();
   const publish = formData.get("publish") === "true";
+  const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
 
   if (!title) return { error: "Title is required" };
   if (!body) return { error: "Body is required" };
@@ -182,7 +212,7 @@ export async function saveEssayAction(
       readTime: readTimeStr ? parseInt(readTimeStr) : null,
       thumbnail: thumbnail || null,
       accessTier: tierMap[tier] || "FREE",
-      publishedAt: publish ? new Date() : null,
+      publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
   });
 

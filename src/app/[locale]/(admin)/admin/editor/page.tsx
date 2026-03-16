@@ -22,6 +22,9 @@ import {
   Eye,
   PenLine,
   Heading2,
+  Languages,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   savePoemAction,
@@ -79,6 +82,13 @@ export default function AdminEditorNewPage() {
   const [imagePrompt, setImagePrompt] = useState("");
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const pdfInputRef = useRef<HTMLInputElement>(null);
+
+  // Translation state (Poetry only)
+  const [language, setLanguage] = useState<"ro" | "en">("ro");
+  const [titleTranslation, setTitleTranslation] = useState("");
+  const [bodyTranslation, setBodyTranslation] = useState("");
+  const [translating, setTranslating] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(false);
 
   const isBusy = status === "saving";
 
@@ -165,6 +175,38 @@ export default function AdminEditorNewPage() {
     }
   }
 
+  async function handleTranslate() {
+    if (!title.trim() && !body.trim()) return;
+    setTranslating(true);
+    setShowTranslation(true);
+    const targetLang = language === "ro" ? "en" : "ro";
+    try {
+      const [titleRes, bodyRes] = await Promise.all([
+        title.trim()
+          ? fetch("/api/translate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: title, from: language, to: targetLang, field: "title" }),
+            }).then((r) => r.json())
+          : Promise.resolve({ translation: "" }),
+        body.trim()
+          ? fetch("/api/translate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: body, from: language, to: targetLang, field: "body" }),
+            }).then((r) => r.json())
+          : Promise.resolve({ translation: "" }),
+      ]);
+      setTitleTranslation(titleRes.translation || "");
+      setBodyTranslation(bodyRes.translation || "");
+    } catch {
+      setErrorMsg("Translation failed. Please try again.");
+      setStatus("error");
+    } finally {
+      setTranslating(false);
+    }
+  }
+
   function insertMarkdown(prefix: string, suffix: string = "") {
     const textarea = document.querySelector<HTMLTextAreaElement>("#editor-body");
     if (!textarea) return;
@@ -186,11 +228,17 @@ export default function AdminEditorNewPage() {
     formData.set("tier", tier);
     formData.set("tags", tags);
     formData.set("publish", String(publish));
+    if (scheduleEnabled && scheduleDate) {
+      formData.set("scheduleDate", scheduleDate);
+    }
 
     let result: AuthState;
 
     if (category === "Poetry") {
       if (featuredImage) formData.set("coverImage", featuredImage);
+      formData.set("language", language);
+      if (titleTranslation) formData.set("titleTranslation", titleTranslation);
+      if (bodyTranslation) formData.set("bodyTranslation", bodyTranslation);
       result = await savePoemAction({} as AuthState, formData);
     } else if (category === "Research") {
       formData.set("abstract", abstract);
@@ -376,6 +424,86 @@ export default function AdminEditorNewPage() {
             <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Tags</label>
             <input type="text" placeholder="Add tags, separated by commas" value={tags} onChange={(e) => setTags(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
           </div>
+
+          {/* Poetry: Language & Translation */}
+          {category === "Poetry" && (
+            <>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Original Language</label>
+                <div className="flex gap-2">
+                  {(["ro", "en"] as const).map((lang) => (
+                    <button
+                      key={lang}
+                      type="button"
+                      onClick={() => setLanguage(lang)}
+                      className={`flex-1 py-2 rounded font-mono text-xs uppercase tracking-[1px] transition-colors ${
+                        language === lang
+                          ? "bg-accent text-bg font-medium"
+                          : "bg-bg-card border border-border text-text-muted hover:text-text-primary"
+                      }`}
+                    >
+                      {lang === "ro" ? "Romana" : "English"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleTranslate}
+                disabled={translating || (!title.trim() && !body.trim())}
+                className="w-full h-[40px] border border-dashed border-accent-dim rounded flex items-center justify-center gap-2 cursor-pointer hover:bg-accent/10 transition-colors disabled:opacity-50"
+              >
+                {translating ? (
+                  <span className="font-sans text-xs text-accent">Translating...</span>
+                ) : (
+                  <>
+                    <Languages size={14} className="text-accent" />
+                    <span className="font-sans text-xs text-accent">
+                      Translate to {language === "ro" ? "English" : "Romanian"}
+                    </span>
+                  </>
+                )}
+              </button>
+
+              {(titleTranslation || bodyTranslation) && (
+                <div className="border border-border rounded overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowTranslation(!showTranslation)}
+                    className="w-full flex items-center justify-between px-3 py-2 bg-bg-card hover:bg-bg-elevated transition-colors"
+                  >
+                    <span className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">
+                      Translation ({language === "ro" ? "EN" : "RO"})
+                    </span>
+                    {showTranslation ? <ChevronUp size={14} className="text-text-muted" /> : <ChevronDown size={14} className="text-text-muted" />}
+                  </button>
+                  {showTranslation && (
+                    <div className="p-3 flex flex-col gap-3">
+                      <div>
+                        <label className="font-mono text-[9px] uppercase tracking-[1px] text-text-muted mb-1 block">Title</label>
+                        <input
+                          type="text"
+                          value={titleTranslation}
+                          onChange={(e) => setTitleTranslation(e.target.value)}
+                          className="w-full border border-border bg-transparent rounded py-2 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim"
+                        />
+                      </div>
+                      <div>
+                        <label className="font-mono text-[9px] uppercase tracking-[1px] text-text-muted mb-1 block">Body</label>
+                        <textarea
+                          value={bodyTranslation}
+                          onChange={(e) => setBodyTranslation(e.target.value)}
+                          rows={8}
+                          className="w-full border border-border bg-transparent rounded py-2 px-3 text-text-primary font-mono text-xs leading-relaxed focus:outline-none focus:border-accent-dim resize-y"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
 
           {/* Research-specific */}
           {category === "Research" && (
