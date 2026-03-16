@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock unstable_cache to just pass through the function
 vi.mock("next/cache", () => ({
-  unstable_cache: (fn: Function) => fn,
+  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
 vi.mock("@/lib/prisma", () => ({

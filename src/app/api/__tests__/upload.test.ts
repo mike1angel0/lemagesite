@@ -35,7 +35,7 @@ function makeRequest() {
 
 describe("POST /api/upload", () => {
   it("returns 401 when not authenticated", async () => {
-    vi.mocked(auth).mockResolvedValue(null as any);
+    vi.mocked(auth).mockResolvedValue(null as unknown as Awaited<ReturnType<typeof auth>>);
     const res = await POST(makeRequest());
     expect(res.status).toBe(401);
   });
@@ -44,7 +44,7 @@ describe("POST /api/upload", () => {
     vi.mocked(auth).mockResolvedValue({
       user: { id: "1", role: "USER" },
       expires: "",
-    } as any);
+    } as unknown as Awaited<ReturnType<typeof auth>>);
     const res = await POST(makeRequest());
     expect(res.status).toBe(401);
   });

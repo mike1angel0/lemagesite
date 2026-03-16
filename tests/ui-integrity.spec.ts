@@ -201,7 +201,7 @@ test.describe("Membership pricing display", () => {
 // NOTE: Admin pages are behind auth middleware, so these tests may redirect
 // to login. We skip if we land on the login page.
 test.describe("Admin editor", () => {
-  async function gotoEditorOrSkip(page: any, t: any) {
+  async function gotoEditorOrSkip(page: import("@playwright/test").Page, t: typeof test) {
     await page.goto(`${BASE}/admin/editor`, {
       waitUntil: "domcontentloaded",
     });

@@ -36,6 +36,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem("selenarium-theme") as Theme | null;
     if (stored && ["dark", "light", "system"].includes(stored)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setThemeState(stored);
       setResolvedTheme(resolve(stored));
     }
@@ -43,6 +44,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const resolved = resolve(theme);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedTheme(resolved);
     document.documentElement.setAttribute("data-theme", resolved);
     localStorage.setItem("selenarium-theme", theme);

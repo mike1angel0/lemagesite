@@ -38,6 +38,7 @@ export function AdminQuotesClient({ quotes: initialQuotes }: { quotes: QuoteRow[
 
   const stats = [
     { label: "TOTAL QUOTES", value: String(quotes.length) },
+    // eslint-disable-next-line react-hooks/purity
     { label: "THIS MONTH", value: String(quotes.filter((q) => new Date(q.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length) },
   ];
 

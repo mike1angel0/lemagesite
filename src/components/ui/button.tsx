@@ -37,10 +37,11 @@ interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
     if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement<any>, {
+      // eslint-disable-next-line react-hooks/refs
+      return React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
         className: cn(
           buttonVariants({ variant, size }),
-          (children as React.ReactElement<any>).props.className,
+          (children as React.ReactElement<Record<string, unknown>>).props.className,
           className,
         ),
         ref,

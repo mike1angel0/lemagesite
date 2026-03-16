@@ -37,7 +37,7 @@ export function Nav() {
   const targetLocale = locale === "ro" ? "en" : "ro";
 
   const isLoggedIn = !!session?.user;
-  const userTier = (session?.user as any)?.tier;
+  const userTier = (session?.user as Record<string, unknown>)?.tier as string | undefined;
   const isPaidTier = userTier && userTier !== "FREE";
 
   return (

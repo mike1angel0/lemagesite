@@ -124,7 +124,7 @@ for (const route of routes) {
             key.startsWith("__reactProps"),
           );
           if (reactPropsKey) {
-            const props = (btn as any)[reactPropsKey];
+            const props = (btn as unknown as Record<string, Record<string, unknown>>)[reactPropsKey];
             if (props && (props.onClick || props.onChange || props.onSubmit)) {
               continue;
             }
@@ -201,7 +201,7 @@ for (const route of routes) {
           key.startsWith("__reactProps"),
         );
         if (reactPropsKey) {
-          const props = (el as any)[reactPropsKey];
+          const props = (el as unknown as Record<string, Record<string, unknown>>)[reactPropsKey];
           if (props && props.onClick) continue;
         }
 

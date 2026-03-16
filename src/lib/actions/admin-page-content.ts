@@ -58,7 +58,7 @@ export async function savePageContentAction(
   if (!admin) return { error: "Not authorized" };
 
   const namespace = formData.get("namespace") as string;
-  if (!PAGE_NAMESPACES.includes(namespace as any)) {
+  if (!PAGE_NAMESPACES.includes(namespace as (typeof PAGE_NAMESPACES)[number])) {
     return { error: "Invalid namespace" };
   }
 

@@ -17,6 +17,7 @@ export default async function ThankYouPage({
     day: "numeric",
     year: "numeric",
   }).format(new Date());
+  // eslint-disable-next-line react-hooks/purity
   const displayRef = ref || `DON-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
 
   return (

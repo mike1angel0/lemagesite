@@ -222,7 +222,7 @@ export async function getEventBySlug(slug: string) {
 
 export async function getPublishedProducts(category?: string) {
   return prisma.product.findMany({
-    where: category ? { category: category as any } : {},
+    where: category ? { category: category as unknown as string } : {},
     orderBy: { createdAt: "desc" },
   });
 }

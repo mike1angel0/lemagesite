@@ -52,7 +52,7 @@ export function PoemDetailClient({
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const stanzas = poem.body.split("\n\n").filter(Boolean);
-  const userTier = (session?.user as any)?.tier;
+  const userTier = (session?.user as Record<string, unknown>)?.tier as string | undefined;
   const canAccess = hasAccess(userTier, poem.accessTier);
 
   const publishedDate = poem.publishedAt
