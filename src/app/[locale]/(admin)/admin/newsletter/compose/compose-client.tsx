@@ -144,7 +144,7 @@ function markdownToHtml(md: string): string {
 }
 
 function EmbedCardPreview({ item }: { item: LinkedContentItem }) {
-  const hasImage = item.image && item.type === "Photo";
+  const hasImage = !!item.image;
 
   return (
     <div style={{ border: `1px solid ${C.border}`, borderRadius: 4, overflow: "hidden", marginBottom: 12 }}>

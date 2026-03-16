@@ -33,13 +33,13 @@ export async function searchContentForLinkingAction(query: string, type?: string
   if (!type || type === "Poem") {
     const poems = await prisma.poem.findMany({
       where,
-      select: { id: true, title: true, slug: true, excerpt: true, collection: true },
+      select: { id: true, title: true, slug: true, excerpt: true, collection: true, coverImage: true },
       take: 10,
       orderBy: { createdAt: "desc" },
     });
     results.push(...poems.map((p) => ({
       id: p.id, type: "Poem" as const, title: p.title, slug: `/poetry/${p.slug}`,
-      excerpt: p.excerpt, meta: p.collection,
+      excerpt: p.excerpt, image: p.coverImage, meta: p.collection,
     })));
   }
   if (!type || type === "Photo") {
@@ -69,13 +69,13 @@ export async function searchContentForLinkingAction(query: string, type?: string
   if (!type || type === "Research") {
     const research = await prisma.researchPaper.findMany({
       where,
-      select: { id: true, title: true, slug: true, abstract: true, tags: true },
+      select: { id: true, title: true, slug: true, abstract: true, tags: true, coverImage: true },
       take: 10,
       orderBy: { createdAt: "desc" },
     });
     results.push(...research.map((r) => ({
       id: r.id, type: "Research" as const, title: r.title, slug: `/research/${r.slug}`,
-      excerpt: r.abstract ? r.abstract.slice(0, 200) : null, meta: r.tags.slice(0, 3).join(", "),
+      excerpt: r.abstract ? r.abstract.slice(0, 200) : null, image: r.coverImage, meta: r.tags.slice(0, 3).join(", "),
     })));
   }
   if (!type || type === "Event") {
