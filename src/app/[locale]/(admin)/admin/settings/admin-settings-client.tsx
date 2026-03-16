@@ -67,6 +67,12 @@ export function AdminSettingsClient({ initialSettings, stripeConnected }: Props)
   const [portraitImage, setPortraitImage] = useState(initialSettings.portraitImage || "");
   const [ogDefaultImage, setOgDefaultImage] = useState(initialSettings.ogDefaultImage || "");
   const [openaiMonthlyBudget, setOpenaiMonthlyBudget] = useState(initialSettings.openai_monthly_budget || "");
+  const [vercelMonthlyCost, setVercelMonthlyCost] = useState(initialSettings.vercel_monthly_cost || "");
+  const [cloudinaryMonthlyCost, setCloudinaryMonthlyCost] = useState(initialSettings.cloudinary_monthly_cost || "");
+  const [resendMonthlyCost, setResendMonthlyCost] = useState(initialSettings.resend_monthly_cost || "");
+  const [domainMonthlyCost, setDomainMonthlyCost] = useState(initialSettings.domain_monthly_cost || "");
+  const [otherMonthlyCost, setOtherMonthlyCost] = useState(initialSettings.other_monthly_cost || "");
+  const [otherCostLabel, setOtherCostLabel] = useState(initialSettings.other_cost_label || "");
   const [saveState, saveAction, savePending] = useActionState(saveSettingsAction, {} as AuthState);
 
   return (
@@ -88,6 +94,12 @@ export function AdminSettingsClient({ initialSettings, stripeConnected }: Props)
           <input type="hidden" name="portraitImage" value={portraitImage} />
           <input type="hidden" name="ogDefaultImage" value={ogDefaultImage} />
           <input type="hidden" name="openai_monthly_budget" value={openaiMonthlyBudget} />
+          <input type="hidden" name="vercel_monthly_cost" value={vercelMonthlyCost} />
+          <input type="hidden" name="cloudinary_monthly_cost" value={cloudinaryMonthlyCost} />
+          <input type="hidden" name="resend_monthly_cost" value={resendMonthlyCost} />
+          <input type="hidden" name="domain_monthly_cost" value={domainMonthlyCost} />
+          <input type="hidden" name="other_monthly_cost" value={otherMonthlyCost} />
+          <input type="hidden" name="other_cost_label" value={otherCostLabel} />
           {SOCIAL_PLATFORMS.map((p) => (
             <input key={p.key} type="hidden" name={p.key} value={socials[p.key]} />
           ))}
@@ -234,26 +246,57 @@ export function AdminSettingsClient({ initialSettings, stripeConnected }: Props)
           <div className="bg-bg-card border border-border rounded-lg p-6">
             <h2 className="font-serif text-lg text-text-primary mb-5">Budget &amp; Expenses</h2>
             <p className="font-sans text-xs text-text-muted mb-4">
-              Set monthly spending limits for external services. These are tracked on the Dashboard.
+              Monthly costs for external services. Tracked on the Dashboard.
             </p>
             <div className="space-y-4">
-              <div>
-                <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">OpenAI Monthly Budget (USD)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-sans text-sm text-text-muted">$</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={openaiMonthlyBudget}
-                    onChange={(e) => setOpenaiMonthlyBudget(e.target.value)}
-                    placeholder="50.00"
-                    className="w-full bg-bg-elevated border border-border rounded-md pl-7 pr-3 py-2 font-sans text-sm text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-accent-dim"
-                  />
+              {[
+                { label: "OpenAI (Budget)", key: "openai", value: openaiMonthlyBudget, setter: setOpenaiMonthlyBudget, placeholder: "50.00", hint: "Auto-tracked from API usage" },
+                { label: "Vercel", key: "vercel", value: vercelMonthlyCost, setter: setVercelMonthlyCost, placeholder: "20.00" },
+                { label: "Cloudinary", key: "cloudinary", value: cloudinaryMonthlyCost, setter: setCloudinaryMonthlyCost, placeholder: "0.00" },
+                { label: "Resend", key: "resend", value: resendMonthlyCost, setter: setResendMonthlyCost, placeholder: "0.00" },
+                { label: "Domain", key: "domain", value: domainMonthlyCost, setter: setDomainMonthlyCost, placeholder: "1.00" },
+              ].map((item) => (
+                <div key={item.key}>
+                  <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">{item.label} ($/mo)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-sans text-sm text-text-muted">$</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={item.value}
+                      onChange={(e) => item.setter(e.target.value)}
+                      placeholder={item.placeholder}
+                      className="w-full bg-bg-elevated border border-border rounded-md pl-7 pr-3 py-2 font-sans text-sm text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-accent-dim"
+                    />
+                  </div>
+                  {item.hint && <p className="font-sans text-[10px] text-text-muted mt-1">{item.hint}</p>}
                 </div>
-                <p className="font-sans text-[10px] text-text-muted mt-1">
-                  Leave empty to disable budget tracking. View usage on the Dashboard.
-                </p>
+              ))}
+              {/* Custom / Other */}
+              <div>
+                <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">Other ($/mo)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={otherCostLabel}
+                    onChange={(e) => setOtherCostLabel(e.target.value)}
+                    placeholder="Label"
+                    className="w-1/2 bg-bg-elevated border border-border rounded-md px-3 py-2 font-sans text-sm text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-accent-dim"
+                  />
+                  <div className="relative w-1/2">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-sans text-sm text-text-muted">$</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={otherMonthlyCost}
+                      onChange={(e) => setOtherMonthlyCost(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full bg-bg-elevated border border-border rounded-md pl-7 pr-3 py-2 font-sans text-sm text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-accent-dim"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

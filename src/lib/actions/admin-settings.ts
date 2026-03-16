@@ -36,6 +36,9 @@ export async function saveSettingsAction(
     "contactEmail", "senderEmail", "twitterHandle",
     "heroImage", "portraitImage", "ogDefaultImage",
     "openai_monthly_budget",
+    "vercel_monthly_cost", "cloudinary_monthly_cost",
+    "resend_monthly_cost", "domain_monthly_cost",
+    "other_monthly_cost", "other_cost_label",
   ];
   const socialKeys = [
     "instagram", "youtube", "tiktok", "facebook", "twitter", "bluesky",

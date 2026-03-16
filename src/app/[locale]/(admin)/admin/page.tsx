@@ -34,14 +34,28 @@ export default async function AdminDashboardPage() {
 
   const contentCount = poemCount + photoCount + essayCount + researchCount;
 
-  // Count memberships by tier
-  const [freeCount, supporterCount, patronCount, innerCircleCount] =
+  // Count memberships by tier + fetch expense settings
+  const [freeCount, supporterCount, patronCount, innerCircleCount, expenseSettings] =
     await Promise.all([
       prisma.membership.count({ where: { tier: "FREE", status: "ACTIVE" } }),
       prisma.membership.count({ where: { tier: "SUPPORTER", status: "ACTIVE" } }),
       prisma.membership.count({ where: { tier: "PATRON", status: "ACTIVE" } }),
       prisma.membership.count({ where: { tier: "INNER_CIRCLE", status: "ACTIVE" } }),
+      prisma.siteSetting.findMany({
+        where: {
+          key: {
+            in: [
+              "openai_monthly_budget", "vercel_monthly_cost",
+              "cloudinary_monthly_cost", "resend_monthly_cost",
+              "domain_monthly_cost", "other_monthly_cost", "other_cost_label",
+            ],
+          },
+        },
+      }),
     ]);
+
+  const expenseMap: Record<string, string> = {};
+  for (const s of expenseSettings) expenseMap[s.key] = s.value;
 
   return (
     <AdminDashboardClient
@@ -62,6 +76,7 @@ export default async function AdminDashboardPage() {
         patron: patronCount,
         innerCircle: innerCircleCount,
       }}
+      expenses={expenseMap}
     />
   );
 }

@@ -22,9 +22,10 @@ type StatsProps = {
     patron: number;
     innerCircle: number;
   };
+  expenses: Record<string, string>;
 };
 
-export function AdminDashboardClient({ stats, tiers }: StatsProps) {
+export function AdminDashboardClient({ stats, tiers, expenses }: StatsProps) {
   const totalTiers = tiers.free + tiers.supporter + tiers.patron + tiers.innerCircle;
   const pct = (n: number) => (totalTiers > 0 ? Math.round((n / totalTiers) * 100) : 0);
 
@@ -197,11 +198,109 @@ export function AdminDashboardClient({ stats, tiers }: StatsProps) {
         </div>
       </div>
 
-      {/* ── OpenAI Usage ── */}
-      <div className="px-8 pb-8">
-        <OpenAIUsageCard />
+      {/* ── Expenses + OpenAI Usage ── */}
+      <div className="flex gap-4 px-8 pb-8">
+        <div className="w-[320px] shrink-0">
+          <MonthlyExpensesCard expenses={expenses} />
+        </div>
+        <div className="flex-1">
+          <OpenAIUsageCard />
+        </div>
       </div>
     </>
+  );
+}
+
+// ── Monthly Expenses Card ─────────────────────────────────
+
+function MonthlyExpensesCard({ expenses }: { expenses: Record<string, string> }) {
+  const parse = (key: string) => {
+    const v = parseFloat(expenses[key] || "");
+    return isNaN(v) ? 0 : v;
+  };
+
+  const items = [
+    { label: "OpenAI (budget)", cost: parse("openai_monthly_budget"), accent: true },
+    { label: "Vercel", cost: parse("vercel_monthly_cost") },
+    { label: "Cloudinary", cost: parse("cloudinary_monthly_cost") },
+    { label: "Resend", cost: parse("resend_monthly_cost") },
+    { label: "Domain", cost: parse("domain_monthly_cost") },
+  ];
+
+  const otherCost = parse("other_monthly_cost");
+  const otherLabel = expenses.other_cost_label || "Other";
+  if (otherCost > 0) {
+    items.push({ label: otherLabel, cost: otherCost });
+  }
+
+  const activeItems = items.filter((i) => i.cost > 0);
+  const total = activeItems.reduce((sum, i) => sum + i.cost, 0);
+
+  return (
+    <div className="rounded-lg border border-border bg-bg-card p-5 h-full">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-sans text-[14px] font-medium text-text-primary">
+          Monthly Expenses
+        </h3>
+        <Link
+          href="/admin/settings"
+          className="font-sans text-[11px] text-accent-dim hover:text-accent"
+        >
+          Edit
+        </Link>
+      </div>
+
+      {activeItems.length === 0 ? (
+        <p className="font-sans text-[11px] text-text-muted">
+          No expenses configured.{" "}
+          <Link href="/admin/settings" className="text-accent-dim hover:text-accent">
+            Set up in Settings
+          </Link>
+        </p>
+      ) : (
+        <>
+          {/* Total */}
+          <p className="font-serif text-[32px] font-light text-text-primary leading-none mb-4">
+            ${total.toFixed(2)}
+            <span className="font-sans text-[11px] text-text-muted ml-1">/mo</span>
+          </p>
+
+          {/* Breakdown */}
+          <div className="flex flex-col gap-2">
+            {activeItems.map((item) => (
+              <div key={item.label} className="flex items-center justify-between">
+                <span className="font-sans text-[12px] text-text-secondary">
+                  {item.label}
+                </span>
+                <span className="font-mono text-[12px] text-text-primary">
+                  ${item.cost.toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Visual bar */}
+          <div className="flex gap-[2px] h-2 mt-4 rounded-full overflow-hidden">
+            {activeItems.map((item) => (
+              <div
+                key={item.label}
+                className="h-full bg-accent/60 first:rounded-l-full last:rounded-r-full"
+                style={{ width: `${(item.cost / total) * 100}%` }}
+                title={`${item.label}: $${item.cost.toFixed(2)}`}
+              />
+            ))}
+          </div>
+          <div className="flex justify-between mt-1.5">
+            <span className="font-sans text-[10px] text-text-muted">
+              ${(total * 12).toFixed(0)}/year
+            </span>
+            <span className="font-sans text-[10px] text-text-muted">
+              ${(total / 30).toFixed(2)}/day
+            </span>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
