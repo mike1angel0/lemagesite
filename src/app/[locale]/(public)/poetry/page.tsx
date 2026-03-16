@@ -33,8 +33,9 @@ export default async function PoetryPage() {
         </div>
       </section>
 
-      {/* ── Poems List ── */}
+      {/* ── Poems Grid ── */}
       <section className="px-5 md:px-10 xl:px-20 pb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {poems.map((poem) => {
           const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
           const displayExcerpt = locale === "ro" && poem.excerptRo ? poem.excerptRo : (poem.excerpt ?? "");
@@ -52,6 +53,7 @@ export default async function PoetryPage() {
             />
           );
         })}
+        </div>
       </section>
 
       {/* ── Quote Interlude ── */}
