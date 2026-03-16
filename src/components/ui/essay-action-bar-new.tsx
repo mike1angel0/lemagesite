@@ -27,6 +27,10 @@ interface EssayActionBarProps {
   readTime?: string;
   bgImage?: string;
   saved?: boolean;
+  prevSlug?: string | null;
+  nextSlug?: string | null;
+  prevLabel?: string;
+  nextLabel?: string;
 }
 
 function renderEssayImage(
@@ -259,6 +263,10 @@ export function EssayActionBarNew({
   readTime = "",
   bgImage,
   saved = false,
+  prevSlug,
+  nextSlug,
+  prevLabel = "Previous",
+  nextLabel = "Next",
 }: EssayActionBarProps) {
   const [generatingImage, setGeneratingImage] = useState<{
     platform: ImagePlatform;
@@ -326,6 +334,10 @@ export function EssayActionBarNew({
       contentType="ESSAY"
       title={title}
       saved={saved}
+      prevSlug={prevSlug}
+      nextSlug={nextSlug}
+      prevLabel={prevLabel}
+      nextLabel={nextLabel}
       onGenerateImage={handleGenerateImage}
       generatingImage={generatingImage}
     />

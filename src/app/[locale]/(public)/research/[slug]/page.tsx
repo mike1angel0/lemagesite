@@ -21,6 +21,9 @@ export default async function ResearchDetailPage({
   if (!paper) notFound();
 
   const allPapers = await getPublishedResearch();
+  const currentIndex = allPapers.findIndex((p) => p.slug === slug);
+  const prevPaper = currentIndex > 0 ? allPapers[currentIndex - 1] : null;
+  const nextPaper = currentIndex < allPapers.length - 1 ? allPapers[currentIndex + 1] : null;
   const relatedPapers = allPapers
     .filter((p) => p.slug !== slug)
     .slice(0, 3);
@@ -161,6 +164,10 @@ export default async function ResearchDetailPage({
           abstract={paper.abstract ?? ""}
           year={paper.year?.toString() ?? ""}
           bgImage={paper.coverImage ?? undefined}
+          prevSlug={prevPaper ? `/research/${prevPaper.slug}` : null}
+          nextSlug={nextPaper ? `/research/${nextPaper.slug}` : null}
+          prevLabel={tc("previous")}
+          nextLabel={tc("next")}
         />
       </div>
     </section>

@@ -22,6 +22,9 @@ export default async function EssayDetailPage({
   if (!essay) notFound();
 
   const allEssays = await getPublishedEssays();
+  const currentIndex = allEssays.findIndex((e) => e.slug === slug);
+  const prevEssay = currentIndex > 0 ? allEssays[currentIndex - 1] : null;
+  const nextEssay = currentIndex < allEssays.length - 1 ? allEssays[currentIndex + 1] : null;
   const relatedEssays = allEssays
     .filter((e) => e.slug !== slug)
     .slice(0, 3);
@@ -130,6 +133,10 @@ export default async function EssayDetailPage({
             category={essay.category ?? ""}
             readTime={essay.readTime ? `${essay.readTime} ${t("minRead").toLowerCase()}` : ""}
             bgImage={essay.thumbnail ?? undefined}
+            prevSlug={prevEssay ? `/essays/${prevEssay.slug}` : null}
+            nextSlug={nextEssay ? `/essays/${nextEssay.slug}` : null}
+            prevLabel={tc("previous")}
+            nextLabel={tc("next")}
           />
         </div>
 

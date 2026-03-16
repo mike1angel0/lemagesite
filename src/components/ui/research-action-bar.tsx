@@ -25,6 +25,10 @@ interface ResearchActionBarProps {
   year?: string;
   bgImage?: string;
   saved?: boolean;
+  prevSlug?: string | null;
+  nextSlug?: string | null;
+  prevLabel?: string;
+  nextLabel?: string;
 }
 
 function renderResearchImage(
@@ -156,6 +160,10 @@ export function ResearchActionBar({
   year = "",
   bgImage,
   saved = false,
+  prevSlug,
+  nextSlug,
+  prevLabel = "Previous",
+  nextLabel = "Next",
 }: ResearchActionBarProps) {
   const [generatingImage, setGeneratingImage] = useState<{
     platform: ImagePlatform;
@@ -194,6 +202,10 @@ export function ResearchActionBar({
       contentType="RESEARCH"
       title={title}
       saved={saved}
+      prevSlug={prevSlug}
+      nextSlug={nextSlug}
+      prevLabel={prevLabel}
+      nextLabel={nextLabel}
       onGenerateImage={handleGenerateImage}
       generatingImage={generatingImage}
     />
