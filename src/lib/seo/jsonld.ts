@@ -113,6 +113,9 @@ export function poemJsonLd(opts: {
   collection?: string;
   publishedAt?: string;
   language?: string;
+  image?: string;
+  titleRo?: string;
+  slugRo?: string;
 }) {
   return {
     "@type": "CreativeWork",
@@ -122,11 +125,24 @@ export function poemJsonLd(opts: {
     author: AUTHOR,
     genre: "Poetry",
     description: opts.excerpt,
+    image: opts.image,
+    keywords: opts.collection ?? undefined,
+    alternativeHeadline: opts.titleRo ?? undefined,
     isPartOf: opts.collection
       ? { "@type": "Collection", name: opts.collection }
       : undefined,
     datePublished: opts.publishedAt,
-    inLanguage: opts.language ?? "en",
+    inLanguage: opts.language === "ro" ? ["ro", "en"] : ["en", "ro"],
+    ...(opts.slugRo && opts.slugRo !== opts.slug
+      ? {
+          workTranslation: {
+            "@type": "CreativeWork",
+            name: opts.titleRo ?? opts.title,
+            url: `${SITE_URL}/ro/poetry/${opts.slugRo}`,
+            inLanguage: "ro",
+          },
+        }
+      : {}),
   };
 }
 

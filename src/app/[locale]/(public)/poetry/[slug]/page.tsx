@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { getPoemBySlug, getPublishedPoems, getRelatedPoems } from "@/lib/data";
 import { PoemDetailClient } from "./poem-detail-client";
 import { makeMetadata } from "@/lib/seo/metadata";
-import { JsonLd, poemJsonLd } from "@/lib/seo/jsonld";
+import { SITE_URL } from "@/lib/site-config";
+import { JsonLd, poemJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { ViewTracker } from "@/components/ui/view-tracker";
 
 export async function generateMetadata({
@@ -18,12 +19,28 @@ export async function generateMetadata({
   const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
   const displayExcerpt = locale === "ro" && poem.excerptRo ? poem.excerptRo : (poem.excerpt ?? "");
 
-  return makeMetadata({
+  const meta = makeMetadata({
     title: displayTitle,
     description: displayExcerpt,
     path: `/poetry/${slug}`,
     locale,
+    image: poem.coverImage ?? undefined,
+    keywords: poem.collection ? poem.collection.split(/[,&]/).map((t: string) => t.trim()).filter(Boolean) : undefined,
   });
+
+  // Enhanced hreflang: if poem has slugRo, link RO locale to the RO slug URL
+  if (poem.slugRo && poem.slugRo !== poem.slug) {
+    meta.alternates = {
+      ...meta.alternates,
+      languages: {
+        en: `${SITE_URL}/en/poetry/${poem.slug}`,
+        ro: `${SITE_URL}/ro/poetry/${poem.slugRo}`,
+        "x-default": `${SITE_URL}/en/poetry/${poem.slug}`,
+      },
+    };
+  }
+
+  return meta;
 }
 
 export default async function PoemDetailPage({
@@ -58,7 +75,17 @@ export default async function PoemDetailPage({
           collection: poem.collection ?? undefined,
           publishedAt: poem.publishedAt?.toISOString(),
           language: poem.language ?? undefined,
+          image: poem.coverImage ?? undefined,
+          titleRo: poem.titleRo ?? undefined,
+          slugRo: poem.slugRo ?? undefined,
         })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: `/${locale}` },
+          { name: "Poetry", path: `/${locale}/poetry` },
+          { name: locale === "ro" && poem.titleRo ? poem.titleRo : poem.title, path: `/${locale}/poetry/${slug}` },
+        ])}
       />
       <PoemDetailClient
         poem={{

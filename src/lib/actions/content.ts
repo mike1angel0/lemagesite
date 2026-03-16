@@ -13,6 +13,8 @@ const tierMap: Record<string, "FREE" | "SUPPORTER" | "PATRON" | "INNER_CIRCLE"> 
 
 function slugify(text: string) {
   return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
@@ -72,10 +74,21 @@ export async function savePoemAction(
   const existing = await prisma.poem.findUnique({ where: { slug } });
   if (existing) return { error: "A poem with a similar title already exists" };
 
+  // Generate Romanian slug if we have a Romanian title
+  let slugRo: string | null = null;
+  if (titleRo) {
+    const candidate = slugify(titleRo);
+    if (candidate && candidate !== slug) {
+      const existingRo = await prisma.poem.findUnique({ where: { slugRo: candidate } });
+      if (!existingRo) slugRo = candidate;
+    }
+  }
+
   await prisma.poem.create({
     data: {
       title,
       slug,
+      slugRo,
       body,
       titleRo,
       bodyRo,

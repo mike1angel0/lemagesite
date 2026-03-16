@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     await Promise.all([
       prisma.poem.findMany({
         where: { publishedAt: { not: null } },
-        select: { slug: true, updatedAt: true },
+        select: { slug: true, slugRo: true, updatedAt: true },
       }),
       prisma.photo.findMany({
         where: { publishedAt: { not: null } },
@@ -75,7 +75,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]);
 
   const dynamicRoutes: MetadataRoute.Sitemap = [
-    ...poems.flatMap((p) => localized(`/poetry/${p.slug}`, 0.7, "monthly", p.updatedAt)),
+    ...poems.flatMap((p) => [
+      ...localized(`/poetry/${p.slug}`, 0.7, "monthly", p.updatedAt),
+      ...(p.slugRo && p.slugRo !== p.slug ? localized(`/poetry/${p.slugRo}`, 0.7, "monthly", p.updatedAt) : []),
+    ]),
     ...photos.flatMap((p) => localized(`/photography/${p.slug}`, 0.6, "monthly", p.updatedAt)),
     ...photoSeries.flatMap((s) => localized(`/photography/series/${s.slug}`, 0.7, "monthly", s.createdAt)),
     ...essays.flatMap((e) => localized(`/essays/${e.slug}`, 0.8, "monthly", e.updatedAt)),

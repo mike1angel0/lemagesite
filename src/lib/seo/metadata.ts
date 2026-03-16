@@ -29,6 +29,7 @@ export function makeMetadata(opts: {
   noIndex?: boolean;
   locale?: string;
   readTime?: number;
+  keywords?: string[];
 }): Metadata {
   const locale = opts.locale ?? "en";
   const canonicalUrl = `${SITE_URL}/${locale}${opts.path}`;
@@ -47,6 +48,7 @@ export function makeMetadata(opts: {
   return {
     title: fullTitle,
     description: opts.description,
+    ...(opts.keywords?.length && { keywords: opts.keywords }),
     authors: [{ name: AUTHOR }],
     creator: AUTHOR,
     publisher: SITE_NAME,

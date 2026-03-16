@@ -161,6 +161,7 @@ model Poem {
   title       String
   titleRo     String?
   slug        String     @unique
+  slugRo      String?    @unique
   body        String     @db.Text
   bodyRo      String?    @db.Text
   collection  String?

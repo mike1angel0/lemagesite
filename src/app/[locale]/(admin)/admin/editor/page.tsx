@@ -83,6 +83,10 @@ export default function AdminEditorNewPage() {
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
+  // Tag suggestion state
+  const [suggestingTags, setSuggestingTags] = useState(false);
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
+
   // Translation state (Poetry only)
   const [language, setLanguage] = useState<"ro" | "en">("ro");
   const [titleTranslation, setTitleTranslation] = useState("");
@@ -172,6 +176,26 @@ export default function AdminEditorNewPage() {
       setStatus("error");
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function handleSuggestTags() {
+    if (!title.trim() && !body.trim()) return;
+    setSuggestingTags(true);
+    try {
+      const res = await fetch("/api/suggest-tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, body, category }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setSuggestedTags(data.tags || []);
+    } catch {
+      setErrorMsg("Tag suggestion failed. Please try again.");
+      setStatus("error");
+    } finally {
+      setSuggestingTags(false);
     }
   }
 
@@ -421,8 +445,47 @@ export default function AdminEditorNewPage() {
           </div>
 
           <div>
-            <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Tags</label>
-            <input type="text" placeholder="Add tags, separated by commas" value={tags} onChange={(e) => setTags(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+            <div className="flex items-center justify-between mb-2">
+              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">Tags</label>
+              <button
+                type="button"
+                onClick={handleSuggestTags}
+                disabled={suggestingTags || (!title.trim() && !body.trim())}
+                className="flex items-center gap-1 font-sans text-[10px] text-accent hover:text-text-primary transition-colors disabled:opacity-50"
+              >
+                <Sparkles size={10} />
+                {suggestingTags ? "Suggesting..." : "AI Suggest"}
+              </button>
+            </div>
+            <input type="text" placeholder="Add tags, separated by commas" value={tags} onChange={(e) => { setTags(e.target.value); setSuggestedTags([]); }} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+            {suggestedTags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {suggestedTags.map((tag) => {
+                  const currentTags = tags.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean);
+                  const isSelected = currentTags.includes(tag.toLowerCase());
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          setTags(currentTags.filter((t) => t !== tag.toLowerCase()).join(", "));
+                        } else {
+                          setTags(tags ? `${tags}, ${tag}` : tag);
+                        }
+                      }}
+                      className={`font-mono text-[9px] uppercase tracking-[1px] rounded-full px-2.5 py-1 transition-colors ${
+                        isSelected
+                          ? "bg-accent text-bg"
+                          : "bg-bg-card border border-border text-text-muted hover:text-text-primary hover:border-accent-dim"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Poetry: Language & Translation */}

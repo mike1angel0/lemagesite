@@ -93,7 +93,10 @@ export async function getPublishedPoems(collection?: string) {
 }
 
 export async function getPoemBySlug(slug: string) {
-  return prisma.poem.findUnique({ where: { slug } });
+  // Try English slug first, then Romanian slug
+  const poem = await prisma.poem.findUnique({ where: { slug } });
+  if (poem) return poem;
+  return prisma.poem.findFirst({ where: { slugRo: slug } });
 }
 
 // ──────────────────────────────────────────────
