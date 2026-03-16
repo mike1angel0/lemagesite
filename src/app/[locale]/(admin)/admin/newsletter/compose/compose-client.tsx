@@ -143,14 +143,23 @@ function markdownToHtml(md: string): string {
   return html;
 }
 
+const typeAccentColors: Record<string, string> = {
+  Poem: "#8B9FD4",     // soft lavender blue
+  Photo: "#6BA8A8",    // teal
+  Essay: "#C8944A",    // warm amber
+  Research: "#5BAD78",  // emerald green
+  Event: C.gold,       // gold
+};
+
 function EmbedCardPreview({ item }: { item: LinkedContentItem }) {
   const hasImage = !!item.image;
   const isEvent = item.type === "Event";
+  const accent = typeAccentColors[item.type] || C.accentDim;
 
   return (
     <div style={{
-      border: `1px solid ${isEvent ? C.gold + "40" : C.border}`,
-      borderLeft: isEvent ? `3px solid ${C.gold}` : `1px solid ${isEvent ? C.gold + "40" : C.border}`,
+      border: `1px solid ${accent}40`,
+      borderLeft: `3px solid ${accent}`,
       borderRadius: 4,
       overflow: "hidden",
       marginBottom: 12,
@@ -165,7 +174,7 @@ function EmbedCardPreview({ item }: { item: LinkedContentItem }) {
           fontFamily: "monospace",
           fontSize: 9,
           letterSpacing: 3,
-          color: isEvent ? C.gold : C.accentDim,
+          color: accent,
           textTransform: "uppercase",
           margin: "0 0 6px",
         }}>
@@ -194,7 +203,7 @@ function EmbedCardPreview({ item }: { item: LinkedContentItem }) {
             )}
           </div>
         )}
-        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 11, color: isEvent ? C.gold : C.accent, marginTop: 12, letterSpacing: 1, textTransform: "uppercase" }}>
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 11, color: accent, marginTop: 12, letterSpacing: 1, textTransform: "uppercase" }}>
           Read more &rarr;
         </p>
       </div>
