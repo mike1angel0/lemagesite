@@ -56,18 +56,7 @@ export function ContentActionBar({
   return (
     <>
       <div className="flex flex-col gap-4 px-5 md:px-20 py-8">
-        {/* Share button — centered */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => setSheetOpen(true)}
-            className="inline-flex items-center gap-2.5 border border-border rounded-full px-6 py-2.5 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors"
-          >
-            <Share2 className="size-4" />
-            <span className="tracking-[1px] uppercase">Share</span>
-          </button>
-        </div>
-
-        {/* Nav row: Prev / Save / Next */}
+        {/* Main row: Prev / Share+Save / Next */}
         <div className="flex items-center justify-between">
           <div className="w-[120px]">
             {prevSlug && (
@@ -80,11 +69,20 @@ export function ContentActionBar({
             )}
           </div>
 
-          <SaveButton
-            contentType={contentType}
-            contentId={contentId}
-            saved={saved}
-          />
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSheetOpen(true)}
+              className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors"
+            >
+              <Share2 className="size-3.5" />
+              <span className="tracking-[1px] uppercase">Share</span>
+            </button>
+            <SaveButton
+              contentType={contentType}
+              contentId={contentId}
+              saved={saved}
+            />
+          </div>
 
           <div className="w-[120px] text-right">
             {nextSlug && (
