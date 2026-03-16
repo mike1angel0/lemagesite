@@ -175,7 +175,7 @@ export default async function HomePage() {
                   <p className="font-sans text-[11px] text-text-muted">
                     {featured.latestEssay.readTime ? `${featured.latestEssay.readTime} min read` : ""}
                     {featured.latestEssay.publishedAt
-                      ? ` \u00B7 Published ${new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(featured.latestEssay.publishedAt)}`
+                      ? ` \u00B7 Published ${new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date(featured.latestEssay.publishedAt))}`
                       : ""}
                   </p>
                 )}
