@@ -23,7 +23,7 @@ export function SaveButton({ contentType, contentId, saved }: SaveButtonProps) {
     return (
       <Link
         href="/login"
-        className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
+        className="inline-flex items-center gap-2 border border-accent-dim/50 rounded-full px-5 py-2.5 font-sans text-xs text-accent hover:text-text-primary hover:border-accent transition-colors tracking-[1px] uppercase"
         title={tc("save")}
       >
         <Bookmark className="size-3.5" />
@@ -57,7 +57,7 @@ export function SaveButton({ contentType, contentId, saved }: SaveButtonProps) {
       type="button"
       onClick={handleClick}
       disabled={pending}
-      className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase disabled:opacity-50"
+      className="inline-flex items-center gap-2 border border-accent-dim/50 rounded-full px-5 py-2.5 font-sans text-xs text-accent hover:text-text-primary hover:border-accent transition-colors tracking-[1px] uppercase disabled:opacity-50"
       title={isSaved ? tc("unsave") : tc("save")}
     >
       {isSaved ? (

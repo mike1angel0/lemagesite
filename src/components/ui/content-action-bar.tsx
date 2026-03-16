@@ -55,14 +55,14 @@ export function ContentActionBar({
 
   return (
     <>
-      <div className="flex flex-col gap-4 px-5 md:px-20 py-8">
+      <div className="flex flex-col gap-4 px-5 md:px-20 py-10 border-t border-border mt-8">
         {/* Main row: Prev / Share+Save / Next */}
-        <div className="flex items-center justify-between">
-          <div className="w-[140px]">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="min-w-[140px]">
             {prevSlug && (
               <Link
                 href={prevSlug}
-                className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
+                className="inline-flex items-center gap-2 border border-accent-dim/50 rounded-full px-5 py-2.5 font-sans text-xs text-accent hover:text-text-primary hover:border-accent transition-colors tracking-[1px] uppercase"
               >
                 ← {prevLabel}
               </Link>
@@ -72,7 +72,7 @@ export function ContentActionBar({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSheetOpen(true)}
-              className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
+              className="inline-flex items-center gap-2 border border-accent-dim/50 rounded-full px-5 py-2.5 font-sans text-xs text-accent hover:text-text-primary hover:border-accent transition-colors tracking-[1px] uppercase"
             >
               <Share2 className="size-3.5" />
               <span>Share</span>
@@ -84,11 +84,11 @@ export function ContentActionBar({
             />
           </div>
 
-          <div className="w-[140px] text-right">
+          <div className="min-w-[140px] text-right">
             {nextSlug && (
               <Link
                 href={nextSlug}
-                className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
+                className="inline-flex items-center gap-2 border border-accent-dim/50 rounded-full px-5 py-2.5 font-sans text-xs text-accent hover:text-text-primary hover:border-accent transition-colors tracking-[1px] uppercase"
               >
                 {nextLabel} →
               </Link>
