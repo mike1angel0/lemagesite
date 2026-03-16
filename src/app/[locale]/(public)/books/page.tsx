@@ -62,7 +62,7 @@ export default async function BooksPage() {
           </div>
 
           {/* Right: partner cards */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             {partnerKeys.map((partner) => (
               <div
                 key={partner.name}

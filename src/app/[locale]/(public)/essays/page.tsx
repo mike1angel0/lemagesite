@@ -42,11 +42,11 @@ export default async function EssaysPage() {
             </div>
 
             {/* Content */}
-            <div className="flex flex-1 flex-col justify-center gap-3">
+            <div className="flex flex-1 min-w-0 flex-col justify-center gap-3">
               <span className="font-mono text-[9px] font-medium uppercase tracking-[3px] text-accent-dim">
                 {(essay.category ?? "ESSAY").toUpperCase()} &middot; {essay.readTime ? `${essay.readTime} ${t("minRead")}` : ""}
               </span>
-              <h3 className="font-serif text-[28px] text-text-primary leading-[1.2] whitespace-pre-line">
+              <h3 className="font-serif text-[28px] text-text-primary leading-[1.2]">
                 {essay.title}
               </h3>
               <p className="font-sans text-[13px] text-text-secondary leading-[1.6] max-w-[600px]">

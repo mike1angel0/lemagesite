@@ -46,7 +46,7 @@ export function NewsletterForm({ source = "footer", className }: NewsletterFormP
 
   return (
     <form onSubmit={handleSubmit} className={className}>
-      <div className="flex items-center gap-0">
+      <div className="flex flex-wrap items-center gap-0">
         <Input
           type="email"
           placeholder="your@email.com"
@@ -54,7 +54,7 @@ export function NewsletterForm({ source = "footer", className }: NewsletterFormP
           onChange={(e) => setEmail(e.target.value)}
           required
           aria-label={t("subscribe")}
-          className="w-[320px]"
+          className="w-full max-w-[320px]"
         />
         <Button type="submit" variant="filled" size="md" disabled={status === "loading"}>
           {status === "loading" ? t("subscribing") : t("subscribe")}

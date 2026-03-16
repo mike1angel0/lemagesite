@@ -57,7 +57,7 @@ export function Nav() {
           </Link>
 
           {/* Center: Desktop nav links */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.labelKey}
@@ -75,7 +75,7 @@ export function Nav() {
           </div>
 
           {/* Right: Language toggle + Auth (desktop) */}
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden lg:flex items-center gap-5">
             <ThemeToggle />
             <IntlLink
               href={pathnameWithoutLocale}
@@ -113,7 +113,7 @@ export function Nav() {
 
           {/* Mobile: Hamburger */}
           <button
-            className="md:hidden p-2 text-text-secondary hover:text-text-primary transition-colors"
+            className="lg:hidden p-2 text-text-secondary hover:text-text-primary transition-colors"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >

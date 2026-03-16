@@ -65,7 +65,7 @@ export function ShopClient({ products, heroContent }: { products: Product[]; her
       </section>
 
       {/* ── Category Filter ── */}
-      <section className="flex justify-center items-center gap-6 px-5 md:px-10 xl:px-20">
+      <section className="flex flex-wrap justify-center items-center gap-3 md:gap-6 px-5 md:px-10 xl:px-20">
         {categoryKeys.map((cat) => (
           <button
             key={cat.labelKey}
@@ -88,14 +88,14 @@ export function ShopClient({ products, heroContent }: { products: Product[]; her
             {t("featuredLabel")}
           </span>
 
-          <div className="flex flex-col md:flex-row gap-8 mt-8 h-[420px]">
+          <div className="flex flex-col md:flex-row gap-8 mt-8 md:h-[420px]">
             {/* Featured image */}
             <div className="flex-1 h-full border border-border rounded relative overflow-hidden">
               <Image src={featuredProduct.image ?? PLACEHOLDER.product} alt={featuredProduct.title} fill className="object-cover" />
             </div>
 
             {/* Info */}
-            <div className="flex flex-col justify-center gap-5 w-full md:w-[480px]">
+            <div className="flex flex-col justify-center gap-5 w-full md:w-[480px] md:max-w-[50%]">
               <span className="font-mono text-[10px] tracking-[3px] text-gold">
                 {featuredProduct.category} &middot; {t("newLabel")}
               </span>

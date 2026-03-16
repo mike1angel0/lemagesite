@@ -196,6 +196,97 @@ test.describe("Media responsiveness", () => {
   }
 });
 
+// --- Admin pages responsive (behind auth — tests the redirected page or admin if session exists) ---
+const adminRoutes = [
+  "/admin",
+  "/admin/content",
+  "/admin/editor",
+  "/admin/newsletter",
+  "/admin/newsletter/compose",
+  "/admin/settings",
+  "/admin/seo",
+  "/admin/members",
+  "/admin/events",
+  "/admin/media",
+  "/admin/messages",
+];
+
+test.describe("Admin pages responsiveness", () => {
+  for (const route of adminRoutes) {
+    test(`no horizontal overflow on admin ${route}`, async ({ page }) => {
+      await page.goto(`${BASE}${route}`, { waitUntil: "domcontentloaded" });
+      await page.waitForTimeout(500);
+
+      const hasOverflow = await page.evaluate(() => {
+        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+      });
+
+      expect(
+        hasOverflow,
+        `Admin page ${route} has horizontal overflow`,
+      ).toBe(false);
+    });
+  }
+
+  test("admin sidebar collapses on mobile", async ({ page }) => {
+    const isMobile = test.info().project.name.startsWith("mobile");
+    test.skip(!isMobile, "Only runs on mobile viewports");
+
+    await page.goto(`${BASE}/admin`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(500);
+
+    // If redirected to login, the login page should be responsive
+    if (page.url().includes("/login")) {
+      const hasOverflow = await page.evaluate(() => {
+        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+      });
+      expect(hasOverflow, "Login page has horizontal overflow on mobile").toBe(false);
+      return;
+    }
+
+    // If on admin, check sidebar isn't overflowing
+    const hasOverflow = await page.evaluate(() => {
+      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+    });
+    expect(hasOverflow, "Admin dashboard has horizontal overflow on mobile").toBe(false);
+  });
+
+  test("admin pages have readable text on mobile", async ({ page }) => {
+    const isMobile = test.info().project.name.startsWith("mobile");
+    test.skip(!isMobile, "Only runs on mobile viewports");
+
+    await page.goto(`${BASE}/admin`, { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(500);
+
+    // Skip if redirected to login
+    if (page.url().includes("/login")) return;
+
+    const tinyText = await page.evaluate(() => {
+      const MIN_FONT_SIZE = 11; // Admin can have slightly smaller text
+      const results: string[] = [];
+      const elements = document.querySelectorAll("p, span, td, th, label, h1, h2, h3");
+      for (const el of elements) {
+        const style = window.getComputedStyle(el);
+        if (style.display === "none" || style.visibility === "hidden") continue;
+        const fontSize = parseFloat(style.fontSize);
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) continue;
+        const text = el.textContent?.trim() || "";
+        if (text.length < 10) continue;
+        if (fontSize < MIN_FONT_SIZE) {
+          results.push(`${el.tagName.toLowerCase()} (${fontSize}px): "${text.substring(0, 40)}..."`);
+        }
+      }
+      return results;
+    });
+
+    expect(
+      tinyText.length,
+      `Too many tiny text elements in admin (${tinyText.length})`,
+    ).toBeLessThanOrEqual(15);
+  });
+});
+
 // --- Text readability (font size not too small on mobile) ---
 test.describe("Text readability", () => {
   test("body text is at least 14px on mobile", async ({ page }) => {
