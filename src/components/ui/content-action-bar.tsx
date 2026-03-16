@@ -58,11 +58,11 @@ export function ContentActionBar({
       <div className="flex flex-col gap-4 px-5 md:px-20 py-8">
         {/* Main row: Prev / Share+Save / Next */}
         <div className="flex items-center justify-between">
-          <div className="w-[120px]">
+          <div className="w-[140px]">
             {prevSlug && (
               <Link
                 href={prevSlug}
-                className="font-sans text-xs text-accent-dim hover:text-accent tracking-[0.5px] transition-colors"
+                className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
               >
                 ← {prevLabel}
               </Link>
@@ -72,10 +72,10 @@ export function ContentActionBar({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSheetOpen(true)}
-              className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors"
+              className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
             >
               <Share2 className="size-3.5" />
-              <span className="tracking-[1px] uppercase">Share</span>
+              <span>Share</span>
             </button>
             <SaveButton
               contentType={contentType}
@@ -84,11 +84,11 @@ export function ContentActionBar({
             />
           </div>
 
-          <div className="w-[120px] text-right">
+          <div className="w-[140px] text-right">
             {nextSlug && (
               <Link
                 href={nextSlug}
-                className="font-sans text-xs text-accent hover:text-text-primary tracking-[0.5px] transition-colors"
+                className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2 font-sans text-xs text-text-secondary hover:text-text-primary hover:border-accent-dim transition-colors tracking-[1px] uppercase"
               >
                 {nextLabel} →
               </Link>
