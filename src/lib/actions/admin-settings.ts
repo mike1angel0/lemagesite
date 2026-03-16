@@ -35,6 +35,7 @@ export async function saveSettingsAction(
     "siteDescription", "authorName", "authorHandle",
     "contactEmail", "senderEmail", "twitterHandle",
     "heroImage", "portraitImage", "ogDefaultImage",
+    "openai_monthly_budget",
   ];
   const socialKeys = [
     "instagram", "youtube", "tiktok", "facebook", "twitter", "bluesky",

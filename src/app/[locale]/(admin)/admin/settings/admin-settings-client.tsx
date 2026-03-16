@@ -66,6 +66,7 @@ export function AdminSettingsClient({ initialSettings, stripeConnected }: Props)
   const [heroImage, setHeroImage] = useState(initialSettings.heroImage || "");
   const [portraitImage, setPortraitImage] = useState(initialSettings.portraitImage || "");
   const [ogDefaultImage, setOgDefaultImage] = useState(initialSettings.ogDefaultImage || "");
+  const [openaiMonthlyBudget, setOpenaiMonthlyBudget] = useState(initialSettings.openai_monthly_budget || "");
   const [saveState, saveAction, savePending] = useActionState(saveSettingsAction, {} as AuthState);
 
   return (
@@ -86,6 +87,7 @@ export function AdminSettingsClient({ initialSettings, stripeConnected }: Props)
           <input type="hidden" name="heroImage" value={heroImage} />
           <input type="hidden" name="portraitImage" value={portraitImage} />
           <input type="hidden" name="ogDefaultImage" value={ogDefaultImage} />
+          <input type="hidden" name="openai_monthly_budget" value={openaiMonthlyBudget} />
           {SOCIAL_PLATFORMS.map((p) => (
             <input key={p.key} type="hidden" name={p.key} value={socials[p.key]} />
           ))}
@@ -225,6 +227,34 @@ export function AdminSettingsClient({ initialSettings, stripeConnected }: Props)
                   />
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Budget & Expenses */}
+          <div className="bg-bg-card border border-border rounded-lg p-6">
+            <h2 className="font-serif text-lg text-text-primary mb-5">Budget &amp; Expenses</h2>
+            <p className="font-sans text-xs text-text-muted mb-4">
+              Set monthly spending limits for external services. These are tracked on the Dashboard.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase block mb-1.5">OpenAI Monthly Budget (USD)</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-sans text-sm text-text-muted">$</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={openaiMonthlyBudget}
+                    onChange={(e) => setOpenaiMonthlyBudget(e.target.value)}
+                    placeholder="50.00"
+                    className="w-full bg-bg-elevated border border-border rounded-md pl-7 pr-3 py-2 font-sans text-sm text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-accent-dim"
+                  />
+                </div>
+                <p className="font-sans text-[10px] text-text-muted mt-1">
+                  Leave empty to disable budget tracking. View usage on the Dashboard.
+                </p>
+              </div>
             </div>
           </div>
 
