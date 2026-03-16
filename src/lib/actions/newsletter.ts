@@ -19,6 +19,8 @@ export type LinkedContentItem = {
   image?: string | null;
   slug: string;
   meta?: string | null;
+  eventDate?: string | null;
+  eventLocation?: string | null;
 };
 
 function snippetFromBody(body: string | null): string | null {
@@ -106,6 +108,8 @@ export async function searchContentForLinkingAction(query: string, type?: string
       id: e.id, type: "Event" as const, title: e.title, slug: `/events/${e.slug}`,
       excerpt: e.description ? e.description.slice(0, 200) : null, image: e.image,
       meta: `${e.date.toLocaleDateString("en", { month: "short", day: "numeric" })}${e.location ? ` · ${e.location}` : ""}`,
+      eventDate: e.date.toLocaleDateString("en", { month: "long", day: "numeric", year: "numeric" }),
+      eventLocation: e.location,
     })));
   }
 

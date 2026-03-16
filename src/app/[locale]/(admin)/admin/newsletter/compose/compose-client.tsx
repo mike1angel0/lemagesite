@@ -145,18 +145,32 @@ function markdownToHtml(md: string): string {
 
 function EmbedCardPreview({ item }: { item: LinkedContentItem }) {
   const hasImage = !!item.image;
+  const isEvent = item.type === "Event";
 
   return (
-    <div style={{ border: `1px solid ${C.border}`, borderRadius: 4, overflow: "hidden", marginBottom: 12 }}>
+    <div style={{
+      border: `1px solid ${isEvent ? C.gold + "40" : C.border}`,
+      borderLeft: isEvent ? `3px solid ${C.gold}` : `1px solid ${isEvent ? C.gold + "40" : C.border}`,
+      borderRadius: 4,
+      overflow: "hidden",
+      marginBottom: 12,
+    }}>
       {hasImage && (
         <div style={{ height: 180, position: "relative", background: C.bgCard }}>
           <NextImage src={item.image!} alt={item.title} fill className="object-cover" />
         </div>
       )}
       <div style={{ padding: "16px 20px", background: C.bgCard }}>
-        <p style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: C.accentDim, textTransform: "uppercase", margin: "0 0 6px" }}>
+        <p style={{
+          fontFamily: "monospace",
+          fontSize: 9,
+          letterSpacing: 3,
+          color: isEvent ? C.gold : C.accentDim,
+          textTransform: "uppercase",
+          margin: "0 0 6px",
+        }}>
           {contentTypeLabels[item.type] || item.type}
-          {item.meta ? ` · ${item.meta}` : ""}
+          {!isEvent && item.meta ? ` · ${item.meta}` : ""}
         </p>
         <p style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 400, color: C.textPrimary, margin: "0 0 8px", lineHeight: 1.3 }}>
           {item.title}
@@ -166,7 +180,21 @@ function EmbedCardPreview({ item }: { item: LinkedContentItem }) {
             {item.excerpt.length > 160 ? item.excerpt.slice(0, 160) + "..." : item.excerpt}
           </p>
         )}
-        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 11, color: C.accent, marginTop: 12, letterSpacing: 1, textTransform: "uppercase" }}>
+        {isEvent && (
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 4 }}>
+            {item.eventDate && (
+              <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 12, color: C.textPrimary, margin: 0 }}>
+                &#128197; {item.eventDate}
+              </p>
+            )}
+            {item.eventLocation && (
+              <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 12, color: C.textSecondary, margin: 0 }}>
+                &#128205; {item.eventLocation}
+              </p>
+            )}
+          </div>
+        )}
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 11, color: isEvent ? C.gold : C.accent, marginTop: 12, letterSpacing: 1, textTransform: "uppercase" }}>
           Read more &rarr;
         </p>
       </div>
