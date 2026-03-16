@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type StatsProps = {
   stats: {
@@ -195,6 +196,211 @@ export function AdminDashboardClient({ stats, tiers }: StatsProps) {
           </div>
         </div>
       </div>
+
+      {/* ── OpenAI Usage ── */}
+      <div className="px-8 pb-8">
+        <OpenAIUsageCard />
+      </div>
     </>
+  );
+}
+
+// ── OpenAI Usage Card ──────────────────────────────────────
+
+type UsageData = {
+  currentMonth: {
+    totalCost: number;
+    completions: { cost: number; requests: number; inputTokens: number; outputTokens: number; avgPerRequest: number };
+    images: { cost: number; requests: number; avgPerImage: number };
+    tts: { cost: number; requests: number; avgPerAudio: number };
+    daily: { date: string; cost: number }[];
+  };
+  previousMonth: {
+    totalCost: number;
+  };
+  budget: number | null;
+  remaining: number | null;
+};
+
+function OpenAIUsageCard() {
+  const [data, setData] = useState<UsageData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/admin/openai-usage")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.error) setError(json.error);
+        else setData(json);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-border bg-bg-card p-5">
+        <h3 className="font-sans text-[14px] font-medium text-text-primary mb-3">
+          OpenAI Usage
+        </h3>
+        <p className="font-sans text-[11px] text-text-muted animate-pulse">Loading usage data...</p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rounded-lg border border-border bg-bg-card p-5">
+        <h3 className="font-sans text-[14px] font-medium text-text-primary mb-3">
+          OpenAI Usage
+        </h3>
+        <p className="font-sans text-[11px] text-red-400">{error || "Failed to load"}</p>
+      </div>
+    );
+  }
+
+  const { currentMonth, previousMonth } = data;
+  const costChange = previousMonth.totalCost > 0
+    ? ((currentMonth.totalCost - previousMonth.totalCost) / previousMonth.totalCost) * 100
+    : 0;
+  const maxDaily = Math.max(...currentMonth.daily.map((d) => d.cost), 0.01);
+
+  function formatTokens(n: number): string {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+    return String(n);
+  }
+
+  return (
+    <div className="rounded-lg border border-border bg-bg-card p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-sans text-[14px] font-medium text-text-primary">
+          OpenAI Usage
+        </h3>
+        <span className="font-mono text-[10px] tracking-[2px] text-text-muted uppercase">
+          This Month
+        </span>
+      </div>
+
+      {/* Total cost */}
+      <div className="flex items-end gap-3 mb-5">
+        <p className="font-serif text-[36px] font-light text-text-primary leading-none">
+          ${currentMonth.totalCost.toFixed(2)}
+        </p>
+        {previousMonth.totalCost > 0 && (
+          <span className={`font-sans text-[11px] mb-1 ${costChange > 0 ? "text-red-400" : "text-[#6BBF7B]"}`}>
+            {costChange > 0 ? "+" : ""}{costChange.toFixed(0)}% vs last month
+          </span>
+        )}
+      </div>
+
+      {/* Daily chart */}
+      {currentMonth.daily.length > 0 && (
+        <div className="mb-5">
+          <p className="font-mono text-[10px] tracking-[2px] text-text-muted uppercase mb-2">
+            Daily Spend
+          </p>
+          <div className="flex items-end gap-[2px] h-[48px]">
+            {currentMonth.daily.map((d) => (
+              <div
+                key={d.date}
+                className="flex-1 bg-accent/60 hover:bg-accent rounded-t transition-colors group relative"
+                style={{ height: `${Math.max((d.cost / maxDaily) * 100, 4)}%` }}
+                title={`${d.date}: $${d.cost.toFixed(2)}`}
+              />
+            ))}
+          </div>
+          <div className="flex justify-between mt-1">
+            <span className="font-mono text-[9px] text-text-muted">
+              {currentMonth.daily[0]?.date}
+            </span>
+            <span className="font-mono text-[9px] text-text-muted">
+              {currentMonth.daily[currentMonth.daily.length - 1]?.date}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Breakdown */}
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <p className="font-mono text-[10px] tracking-[2px] text-text-muted uppercase">
+            Completions
+          </p>
+          <p className="font-serif text-[18px] font-light text-text-primary leading-tight mt-1">
+            ${currentMonth.completions.cost.toFixed(2)}
+          </p>
+          <p className="font-sans text-[10px] text-text-secondary mt-0.5">
+            {currentMonth.completions.requests.toLocaleString()} reqs
+          </p>
+          <p className="font-sans text-[10px] text-text-muted">
+            {formatTokens(currentMonth.completions.inputTokens)} in / {formatTokens(currentMonth.completions.outputTokens)} out
+          </p>
+          <p className="font-sans text-[10px] text-text-muted">
+            ~${currentMonth.completions.avgPerRequest.toFixed(3)}/req
+          </p>
+        </div>
+
+        <div>
+          <p className="font-mono text-[10px] tracking-[2px] text-text-muted uppercase">
+            Images
+          </p>
+          <p className="font-serif text-[18px] font-light text-text-primary leading-tight mt-1">
+            ${currentMonth.images.cost.toFixed(2)}
+          </p>
+          <p className="font-sans text-[10px] text-text-secondary mt-0.5">
+            {currentMonth.images.requests.toLocaleString()} generated
+          </p>
+          <p className="font-sans text-[10px] text-text-muted">
+            ~${currentMonth.images.avgPerImage.toFixed(3)}/img
+          </p>
+        </div>
+
+        <div>
+          <p className="font-mono text-[10px] tracking-[2px] text-text-muted uppercase">
+            TTS Audio
+          </p>
+          <p className="font-serif text-[18px] font-light text-text-primary leading-tight mt-1">
+            ${currentMonth.tts.cost.toFixed(2)}
+          </p>
+          <p className="font-sans text-[10px] text-text-secondary mt-0.5">
+            {currentMonth.tts.requests.toLocaleString()} generated
+          </p>
+          <p className="font-sans text-[10px] text-text-muted">
+            ~${currentMonth.tts.avgPerAudio.toFixed(3)}/audio
+          </p>
+        </div>
+      </div>
+
+      {/* Previous month + Budget */}
+      <div className="mt-4 pt-3 border-t border-border flex flex-col gap-1.5">
+        <div className="flex items-center justify-between">
+          <span className="font-sans text-[11px] text-text-secondary">Last month total</span>
+          <span className="font-sans text-[11px] text-text-primary">${previousMonth.totalCost.toFixed(2)}</span>
+        </div>
+        {data.budget !== null && (
+          <>
+            <div className="flex items-center justify-between">
+              <span className="font-sans text-[11px] text-text-secondary">Monthly budget</span>
+              <span className="font-sans text-[11px] text-text-primary">${data.budget.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-sans text-[11px] text-text-secondary">Remaining</span>
+              <span className={`font-sans text-[11px] font-medium ${(data.remaining ?? 0) > 0 ? "text-[#6BBF7B]" : "text-red-400"}`}>
+                ${(data.remaining ?? 0).toFixed(2)}
+              </span>
+            </div>
+            {/* Budget usage bar */}
+            <div className="h-1.5 w-full rounded-full bg-border mt-1">
+              <div
+                className={`h-1.5 rounded-full transition-all ${(data.remaining ?? 0) > 0 ? "bg-accent" : "bg-red-400"}`}
+                style={{ width: `${Math.min((currentMonth.totalCost / data.budget) * 100, 100)}%` }}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
