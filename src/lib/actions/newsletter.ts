@@ -21,6 +21,23 @@ export type LinkedContentItem = {
   meta?: string | null;
 };
 
+function snippetFromBody(body: string | null): string | null {
+  if (!body?.trim()) return null;
+  // Strip markdown syntax and take first ~200 chars of plain text
+  const plain = body
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[(.+?)\]\(.*?\)/g, "$1")
+    .replace(/^>\s+/gm, "")
+    .replace(/^[-*]\s+/gm, "")
+    .replace(/`(.+?)`/g, "$1")
+    .trim();
+  if (!plain) return null;
+  return plain.length > 200 ? plain.slice(0, 200) + "..." : plain;
+}
+
 export async function searchContentForLinkingAction(query: string, type?: string) {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -33,13 +50,13 @@ export async function searchContentForLinkingAction(query: string, type?: string
   if (!type || type === "Poem") {
     const poems = await prisma.poem.findMany({
       where,
-      select: { id: true, title: true, slug: true, excerpt: true, collection: true, coverImage: true },
+      select: { id: true, title: true, slug: true, excerpt: true, body: true, collection: true, coverImage: true },
       take: 10,
       orderBy: { createdAt: "desc" },
     });
     results.push(...poems.map((p) => ({
       id: p.id, type: "Poem" as const, title: p.title, slug: `/poetry/${p.slug}`,
-      excerpt: p.excerpt, image: p.coverImage, meta: p.collection,
+      excerpt: p.excerpt || snippetFromBody(p.body), image: p.coverImage, meta: p.collection,
     })));
   }
   if (!type || type === "Photo") {
@@ -57,25 +74,25 @@ export async function searchContentForLinkingAction(query: string, type?: string
   if (!type || type === "Essay") {
     const essays = await prisma.essay.findMany({
       where,
-      select: { id: true, title: true, slug: true, excerpt: true, thumbnail: true, readTime: true, category: true },
+      select: { id: true, title: true, slug: true, excerpt: true, body: true, thumbnail: true, readTime: true, category: true },
       take: 10,
       orderBy: { createdAt: "desc" },
     });
     results.push(...essays.map((e) => ({
       id: e.id, type: "Essay" as const, title: e.title, slug: `/essays/${e.slug}`,
-      excerpt: e.excerpt, image: e.thumbnail, meta: e.readTime ? `${e.readTime} min read` : e.category,
+      excerpt: e.excerpt || snippetFromBody(e.body), image: e.thumbnail, meta: e.readTime ? `${e.readTime} min read` : e.category,
     })));
   }
   if (!type || type === "Research") {
     const research = await prisma.researchPaper.findMany({
       where,
-      select: { id: true, title: true, slug: true, abstract: true, tags: true, coverImage: true },
+      select: { id: true, title: true, slug: true, abstract: true, body: true, tags: true, coverImage: true },
       take: 10,
       orderBy: { createdAt: "desc" },
     });
     results.push(...research.map((r) => ({
       id: r.id, type: "Research" as const, title: r.title, slug: `/research/${r.slug}`,
-      excerpt: r.abstract ? r.abstract.slice(0, 200) : null, image: r.coverImage, meta: r.tags.slice(0, 3).join(", "),
+      excerpt: r.abstract ? r.abstract.slice(0, 200) : snippetFromBody(r.body), image: r.coverImage, meta: r.tags.slice(0, 3).join(", "),
     })));
   }
   if (!type || type === "Event") {
