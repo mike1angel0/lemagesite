@@ -102,7 +102,10 @@
     "print": "Tipar",
     "save": "Salvează",
     "saved": "Salvat",
-    "unsave": "Elimină"
+    "unsave": "Elimină",
+    "listen": "Ascultă",
+    "stopListening": "Oprește",
+    "continueReading": "Continuă de unde ai rămas"
   },
   "home": {
     "heroLabel": "BINE AI VENIT, CĂLĂTORULE",

@@ -2,8 +2,9 @@
 
 import Markdown from "react-markdown";
 
-export function MarkdownBody({ content }: { content: string }) {
+export function MarkdownBody({ content, className }: { content: string; className?: string }) {
   return (
+    <div className={className} style={{ fontSize: "var(--article-font-size, 1rem)" }}>
     <Markdown
       components={{
         h1: ({ children }) => (
@@ -32,7 +33,7 @@ export function MarkdownBody({ content }: { content: string }) {
           </h3>
         ),
         p: ({ children }) => (
-          <p className="font-sans text-base text-text-primary leading-[1.8] mt-6">
+          <p className="font-sans text-text-primary leading-[1.8] mt-6">
             {children}
           </p>
         ),
@@ -48,12 +49,12 @@ export function MarkdownBody({ content }: { content: string }) {
           </blockquote>
         ),
         ul: ({ children }) => (
-          <ul className="list-disc list-inside mt-4 text-text-primary space-y-1 leading-[1.8]">
+          <ul className="list-disc list-inside mt-4 text-text-primary space-y-1 leading-[1.8] [font-size:inherit]">
             {children}
           </ul>
         ),
         ol: ({ children }) => (
-          <ol className="list-decimal list-inside mt-4 text-text-primary space-y-1 leading-[1.8]">
+          <ol className="list-decimal list-inside mt-4 text-text-primary space-y-1 leading-[1.8] [font-size:inherit]">
             {children}
           </ol>
         ),
@@ -88,5 +89,6 @@ export function MarkdownBody({ content }: { content: string }) {
     >
       {content}
     </Markdown>
+    </div>
   );
 }

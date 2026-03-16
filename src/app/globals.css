@@ -48,6 +48,13 @@ body {
 .fade-in { animation: fadeIn 0.2s ease-out; }
 .slide-in-from-bottom { animation: slideInFromBottom 0.3s ease-out; }
 
+/* Print styles */
+@media print {
+  nav, footer, .no-print { display: none !important; }
+  body { background: white !important; color: black !important; }
+  article { max-width: 100% !important; font-size: 12pt; }
+}
+
 /* Light theme overrides */
 [data-theme="light"] {
   --color-bg: #f8f6f1;

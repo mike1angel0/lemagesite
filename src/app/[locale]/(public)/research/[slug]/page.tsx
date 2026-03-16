@@ -1,12 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { ResearchActionBar } from "@/components/ui/research-action-bar";
 import { getResearchBySlug, getPublishedResearch } from "@/lib/data";
 import { getSiteConfig } from "@/lib/site-config";
 import { MarkdownBody } from "@/components/content/markdown-body";
+import { makeMetadata } from "@/lib/seo/metadata";
+import { JsonLd, researchJsonLd } from "@/lib/seo/jsonld";
+import { ReadAloudButton } from "@/components/ui/read-aloud-button";
+import { ScrollPositionTracker } from "@/components/ui/scroll-position-tracker";
+import { NewsletterForm } from "@/components/ui/newsletter-form";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const paper = await getResearchBySlug(slug);
+  if (!paper) return {};
+
+  const readTime = paper.body
+    ? Math.max(1, Math.ceil(paper.body.split(/\s+/).length / 200))
+    : undefined;
+
+  return makeMetadata({
+    title: paper.title,
+    description: paper.abstract ?? "",
+    path: `/research/${slug}`,
+    image: paper.coverImage ?? undefined,
+    type: "article",
+    publishedAt: paper.publishedAt?.toISOString(),
+    locale,
+    readTime,
+  });
+}
 
 export default async function ResearchDetailPage({
   params,
@@ -16,6 +47,7 @@ export default async function ResearchDetailPage({
   const { slug } = await params;
   const t = await getTranslations("research");
   const tc = await getTranslations("common");
+  const te = await getTranslations("essays");
 
   const [paper, config] = await Promise.all([getResearchBySlug(slug), getSiteConfig()]);
   if (!paper) notFound();
@@ -30,6 +62,19 @@ export default async function ResearchDetailPage({
 
   return (
     <section>
+      <JsonLd
+        data={researchJsonLd({
+          title: paper.title,
+          slug: paper.slug,
+          abstract: paper.abstract ?? undefined,
+          publishedAt: paper.publishedAt?.toISOString(),
+          doi: paper.doi ?? undefined,
+          tags: paper.tags,
+        })}
+      />
+
+      <ScrollPositionTracker slug={`research-${slug}`} />
+
       {/* -- Hero Image -- */}
       {paper.coverImage && (
         <div className="w-full h-[320px] bg-bg-surface relative">
@@ -99,6 +144,9 @@ export default async function ResearchDetailPage({
             </a>
           )}
         </div>
+
+        {/* Read Aloud */}
+        <ReadAloudButton contentType="RESEARCH" contentId={paper.id} audioUrl={paper.audioUrl} />
       </div>
 
       {/* -- Two-column Body -- */}
@@ -169,6 +217,19 @@ export default async function ResearchDetailPage({
           prevLabel={tc("previous")}
           nextLabel={tc("next")}
         />
+      </div>
+
+      {/* -- Newsletter CTA -- */}
+      <div className="py-10 border-t border-border text-center px-5 md:px-20">
+        <h3 className="font-serif text-xl text-text-primary mb-2">
+          {te("newsletterHeadline")}
+        </h3>
+        <p className="font-sans text-sm text-text-secondary mb-6">
+          {te("newsletterDescription")}
+        </p>
+        <div className="flex justify-center">
+          <NewsletterForm source="research-footer" />
+        </div>
       </div>
     </section>
   );

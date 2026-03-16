@@ -220,6 +220,7 @@ model Essay {
   accessTier   AccessTier @default(FREE)
   mediumUrl    String?
   substackUrl  String?
+  audioUrl     String?
   publishedAt  DateTime?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -283,6 +284,7 @@ model ResearchPaper {
   coverImage  String?
   accessTier  AccessTier @default(FREE)
   pdfUrl      String?
+  audioUrl    String?
   publishedAt DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

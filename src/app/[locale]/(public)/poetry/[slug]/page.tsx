@@ -1,6 +1,26 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getPoemBySlug, getPublishedPoems } from "@/lib/data";
 import { PoemDetailClient } from "./poem-detail-client";
+import { makeMetadata } from "@/lib/seo/metadata";
+import { JsonLd, poemJsonLd } from "@/lib/seo/jsonld";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const poem = await getPoemBySlug(slug);
+  if (!poem) return {};
+
+  return makeMetadata({
+    title: poem.title,
+    description: poem.excerpt ?? "",
+    path: `/poetry/${slug}`,
+    locale,
+  });
+}
 
 export default async function PoemDetailPage({
   params,
@@ -22,21 +42,33 @@ export default async function PoemDetailPage({
     .map((p) => ({ title: p.title, collection: p.collection ?? "", slug: `/poetry/${p.slug}` }));
 
   return (
-    <PoemDetailClient
-      poem={{
-        id: poem.id,
-        title: poem.title,
-        body: poem.body,
-        collection: poem.collection,
-        language: poem.language,
-        audioUrl: poem.audioUrl,
-        accessTier: poem.accessTier,
-        excerpt: poem.excerpt,
-        publishedAt: poem.publishedAt?.toISOString() ?? null,
-      }}
-      prevSlug={prevPoem ? `/poetry/${prevPoem.slug}` : null}
-      nextSlug={nextPoem ? `/poetry/${nextPoem.slug}` : null}
-      relatedPoems={relatedPoems}
-    />
+    <>
+      <JsonLd
+        data={poemJsonLd({
+          title: poem.title,
+          slug: poem.slug,
+          excerpt: poem.excerpt ?? undefined,
+          collection: poem.collection ?? undefined,
+          publishedAt: poem.publishedAt?.toISOString(),
+          language: poem.language ?? undefined,
+        })}
+      />
+      <PoemDetailClient
+        poem={{
+          id: poem.id,
+          title: poem.title,
+          body: poem.body,
+          collection: poem.collection,
+          language: poem.language,
+          audioUrl: poem.audioUrl,
+          accessTier: poem.accessTier,
+          excerpt: poem.excerpt,
+          publishedAt: poem.publishedAt?.toISOString() ?? null,
+        }}
+        prevSlug={prevPoem ? `/poetry/${prevPoem.slug}` : null}
+        nextSlug={nextPoem ? `/poetry/${nextPoem.slug}` : null}
+        relatedPoems={relatedPoems}
+      />
+    </>
   );
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Share2 } from "lucide-react";
 import { ShareSheet, type ImageFormat, type ImagePlatform } from "./share-sheet";
 import { SaveButton } from "./save-button";
+import { PrintButton } from "./print-button";
 
 interface ContentActionBarProps {
   /** Content ID for the save button */
@@ -82,6 +83,7 @@ export function ContentActionBar({
               contentId={contentId}
               saved={saved}
             />
+            <PrintButton />
           </div>
 
           <div className="min-w-[140px] text-right">

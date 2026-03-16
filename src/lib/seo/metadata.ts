@@ -28,6 +28,7 @@ export function makeMetadata(opts: {
   modifiedAt?: string;
   noIndex?: boolean;
   locale?: string;
+  readTime?: number;
 }): Metadata {
   const locale = opts.locale ?? "en";
   const canonicalUrl = `${SITE_URL}/${locale}${opts.path}`;
@@ -82,6 +83,12 @@ export function makeMetadata(opts: {
       images: [ogImage],
       creator: "@lemagepoet",
     },
+    ...(opts.readTime && {
+      other: {
+        "twitter:label1": "Reading time",
+        "twitter:data1": `${opts.readTime} min read`,
+      },
+    }),
     robots: opts.noIndex
       ? { index: false, follow: false }
       : { index: true, follow: true },

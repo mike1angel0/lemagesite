@@ -102,7 +102,10 @@
     "print": "Print",
     "save": "Save",
     "saved": "Saved",
-    "unsave": "Unsave"
+    "unsave": "Unsave",
+    "listen": "Listen",
+    "stopListening": "Stop",
+    "continueReading": "Continue where you left off"
   },
   "home": {
     "heroLabel": "WELCOME, WANDERER",

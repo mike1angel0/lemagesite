@@ -1,12 +1,41 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { EssayCard } from "@/components/content/essay-card";
 import { EssayActionBarNew } from "@/components/ui/essay-action-bar-new";
 import { getEssayBySlug, getPublishedEssays } from "@/lib/data";
 import { MarkdownBody } from "@/components/content/markdown-body";
+import { makeMetadata } from "@/lib/seo/metadata";
+import { JsonLd, articleJsonLd } from "@/lib/seo/jsonld";
+import { ReadAloudButton } from "@/components/ui/read-aloud-button";
+import { FontSizeControls } from "@/components/ui/font-size-controls";
+import { ScrollPositionTracker } from "@/components/ui/scroll-position-tracker";
+import { MobileToc } from "@/components/ui/mobile-toc";
+import { NewsletterForm } from "@/components/ui/newsletter-form";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const essay = await getEssayBySlug(slug);
+  if (!essay) return {};
+
+  return makeMetadata({
+    title: essay.title,
+    description: essay.excerpt ?? "",
+    path: `/essays/${slug}`,
+    image: essay.thumbnail ?? undefined,
+    type: "article",
+    publishedAt: essay.publishedAt?.toISOString(),
+    locale,
+    readTime: essay.readTime ?? undefined,
+  });
+}
 
 export default async function EssayDetailPage({
   params,
@@ -43,8 +72,26 @@ export default async function EssayDetailPage({
     ? new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(essay.publishedAt)
     : "";
 
+  const wordCount = essay.body.split(/\s+/).length;
+
   return (
     <>
+      <JsonLd
+        data={articleJsonLd({
+          title: essay.title,
+          slug: essay.slug,
+          excerpt: essay.excerpt ?? undefined,
+          publishedAt: essay.publishedAt?.toISOString(),
+          updatedAt: essay.updatedAt?.toISOString(),
+          image: essay.thumbnail ?? undefined,
+          category: essay.category ?? undefined,
+          wordCount,
+        })}
+      />
+
+      <ScrollPositionTracker slug={`essay-${slug}`} />
+      <MobileToc items={tocItems} />
+
       {/* -- Hero Image -- */}
       <div className="w-full h-[480px] bg-bg-surface relative">
         {essay.thumbnail && (
@@ -77,6 +124,11 @@ export default async function EssayDetailPage({
           <span>{publishedDate}</span>
         </div>
 
+        {/* Read Aloud */}
+        <div className="mt-4">
+          <ReadAloudButton contentType="ESSAY" contentId={essay.id} audioUrl={essay.audioUrl} />
+        </div>
+
         {/* -- Two-column Body -- */}
         <div className="flex flex-col md:flex-row gap-16 mt-12">
           {/* Sidebar TOC */}
@@ -100,6 +152,7 @@ export default async function EssayDetailPage({
                   </a>
                 ))}
               </nav>
+              <FontSizeControls />
             </aside>
           )}
 
@@ -138,6 +191,19 @@ export default async function EssayDetailPage({
             prevLabel={tc("previous")}
             nextLabel={tc("next")}
           />
+        </div>
+
+        {/* -- Newsletter CTA -- */}
+        <div className="py-10 border-t border-border text-center">
+          <h3 className="font-serif text-xl text-text-primary mb-2">
+            {t("newsletterHeadline")}
+          </h3>
+          <p className="font-sans text-sm text-text-secondary mb-6">
+            {t("newsletterDescription")}
+          </p>
+          <div className="flex justify-center">
+            <NewsletterForm source="essay-footer" />
+          </div>
         </div>
 
         {/* -- Partner Callout -- */}

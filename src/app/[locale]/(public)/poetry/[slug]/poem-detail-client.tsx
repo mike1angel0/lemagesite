@@ -52,6 +52,9 @@ export function PoemDetailClient({
   const userTier = (session?.user as unknown as Record<string, unknown>)?.tier as string | undefined;
   const canAccess = hasAccess(userTier, poem.accessTier);
 
+  // Poems read slower (~200 wpm vs 250 for prose)
+  const readTime = Math.max(1, Math.ceil(poem.body.split(/\s+/).length / 200));
+
   const publishedDate = poem.publishedAt
     ? new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(
         new Date(poem.publishedAt)
@@ -76,6 +79,8 @@ export function PoemDetailClient({
           <span>{poem.collection ?? ""}</span>
           <span className="block w-[3px] h-[3px] rounded-full bg-accent-dim" />
           <span>{(poem.language ?? "EN").toUpperCase()}</span>
+          <span className="block w-[3px] h-[3px] rounded-full bg-accent-dim" />
+          <span>{readTime} min</span>
           {publishedDate && (
             <>
               <span className="block w-[3px] h-[3px] rounded-full bg-accent-dim" />
