@@ -22,6 +22,7 @@ interface PoemActionBarProps {
   title: string;
   stanzas: string[];
   bgImage: string;
+  coverImage?: string | null;
   saved?: boolean;
   prevSlug?: string | null;
   nextSlug?: string | null;
@@ -34,9 +35,31 @@ const STANZAS_PER_PAGE: Record<"square" | "story", number> = {
   story: 4,
 };
 
+function drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
 function renderPoemImage(
   canvas: HTMLCanvasElement,
   bgImg: HTMLImageElement | null,
+  coverImg: HTMLImageElement | null,
   logoImg: HTMLImageElement | null,
   title: string,
   pageStanzas: string[],
@@ -51,32 +74,97 @@ function renderPoemImage(
   const ctx = canvas.getContext("2d")!;
   ctx.scale(scale, scale);
 
+  const isStory = format === "story";
+  const padding = 80;
+  const contentWidth = w - padding * 2;
+
+  // ── Dark background ──
   ctx.fillStyle = "#0A0806";
   ctx.fillRect(0, 0, w, h);
 
-  if (bgImg) drawCoverFit(ctx, bgImg, w, h);
-
-  ctx.fillStyle = "rgba(10, 8, 6, 0.72)";
-  ctx.fillRect(0, 0, w, h);
+  // Subtle texture via vignette
   drawVignette(ctx, w, h);
+
+  // Decorative inset border
   drawInsetBorder(ctx, w, h);
 
-  const padding = 80;
-  const contentWidth = w - padding * 2;
-  const isStory = format === "story";
+  let contentStartY: number;
 
-  const titleSize = isStory ? 52 : 46;
-  ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
-  ctx.fillStyle = "#F5EED8";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  if (coverImg) {
+    // ── Cover image as featured element ──
+    const imgPadding = 56;
+    const imgX = imgPadding;
+    const imgW = w - imgPadding * 2;
+    const imgH = isStory ? 520 : 380;
+    const imgY = isStory ? 80 : 60;
+    const radius = 12;
 
-  const titleY = isStory ? 200 : 150;
-  ctx.fillText(title, w / 2, titleY, contentWidth);
+    // Draw rounded image
+    ctx.save();
+    drawRoundedRect(ctx, imgX, imgY, imgW, imgH, radius);
+    ctx.clip();
 
-  const dividerY = titleY + 48;
-  drawGoldDivider(ctx, w / 2, dividerY, 60);
+    // Cover-fit the image into the rounded rect
+    const imgRatio = coverImg.width / coverImg.height;
+    const rectRatio = imgW / imgH;
+    let sx = 0, sy = 0, sw = coverImg.width, sh = coverImg.height;
+    if (imgRatio > rectRatio) {
+      sw = coverImg.height * rectRatio;
+      sx = (coverImg.width - sw) / 2;
+    } else {
+      sh = coverImg.width / rectRatio;
+      sy = (coverImg.height - sh) / 2;
+    }
+    ctx.drawImage(coverImg, sx, sy, sw, sh, imgX, imgY, imgW, imgH);
 
+    // Gradient overlay on bottom half of image for title readability
+    const gradient = ctx.createLinearGradient(imgX, imgY + imgH * 0.4, imgX, imgY + imgH);
+    gradient.addColorStop(0, "rgba(10, 8, 6, 0)");
+    gradient.addColorStop(1, "rgba(10, 8, 6, 0.85)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(imgX, imgY, imgW, imgH);
+
+    ctx.restore();
+
+    // Subtle gold border around image
+    ctx.save();
+    drawRoundedRect(ctx, imgX, imgY, imgW, imgH, radius);
+    ctx.strokeStyle = "rgba(201, 169, 110, 0.3)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+
+    // ── Title overlaid on bottom of image ──
+    const titleSize = isStory ? 48 : 42;
+    ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+    ctx.fillStyle = "#F5EED8";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const titleY = imgY + imgH - 36;
+    ctx.fillText(title, w / 2, titleY, imgW - 40);
+
+    // Gold divider below image
+    const dividerY = imgY + imgH + 28;
+    drawGoldDivider(ctx, w / 2, dividerY, 60);
+
+    contentStartY = dividerY + 36;
+  } else {
+    // ── No cover image: title at top (original layout) ──
+    const titleSize = isStory ? 52 : 46;
+    ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+    ctx.fillStyle = "#F5EED8";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const titleY = isStory ? 200 : 150;
+    ctx.fillText(title, w / 2, titleY, contentWidth);
+
+    const dividerY = titleY + 48;
+    drawGoldDivider(ctx, w / 2, dividerY, 60);
+
+    contentStartY = dividerY + 40;
+  }
+
+  // ── Stanzas ──
   const fontSize = isStory ? 34 : 30;
   const lineHeight = fontSize * 1.75;
   const stanzaGap = isStory ? 44 : 36;
@@ -94,11 +182,10 @@ function renderPoemImage(
   }
   totalTextHeight += (pageStanzas.length - 1) * stanzaGap;
 
-  const textAreaTop = dividerY + 40;
   const bottomBarHeight = isStory ? 180 : 140;
   const textAreaBottom = h - bottomBarHeight;
-  const textAreaHeight = textAreaBottom - textAreaTop;
-  let y = textAreaTop + (textAreaHeight - totalTextHeight) / 2 + fontSize / 2;
+  const textAreaHeight = textAreaBottom - contentStartY;
+  let y = contentStartY + (textAreaHeight - totalTextHeight) / 2 + fontSize / 2;
 
   for (let i = 0; i < stanzaLines.length; i++) {
     for (const line of stanzaLines[i]) {
@@ -108,6 +195,7 @@ function renderPoemImage(
     if (i < stanzaLines.length - 1) y += stanzaGap;
   }
 
+  // ── Bottom bar ──
   drawBottomBar(
     ctx, w, h, padding, bottomBarHeight,
     "LEMAGEPOET",
@@ -121,6 +209,7 @@ export function PoemActionBar({
   title,
   stanzas,
   bgImage,
+  coverImage,
   saved = false,
   prevSlug,
   nextSlug,
@@ -140,8 +229,8 @@ export function PoemActionBar({
         const perPage = STANZAS_PER_PAGE[format];
         const totalPages = Math.max(1, Math.ceil(stanzas.length / perPage));
 
-        const [bgImg, logoImg] = await Promise.all([
-          bgImage ? loadImage(bgImage).catch(() => null) : Promise.resolve(null),
+        const [coverImg, logoImg] = await Promise.all([
+          coverImage ? loadImage(coverImage).catch(() => null) : Promise.resolve(null),
           loadImage("/logo.png").catch(() => null),
         ]);
 
@@ -152,7 +241,7 @@ export function PoemActionBar({
         const blobs: { blob: Blob; filename: string }[] = [];
         for (let page = 0; page < totalPages; page++) {
           const pageStanzas = stanzas.slice(page * perPage, (page + 1) * perPage);
-          renderPoemImage(canvas, bgImg, logoImg, title, pageStanzas, format, page, totalPages);
+          renderPoemImage(canvas, null, coverImg, logoImg, title, pageStanzas, format, page, totalPages);
           const blob = await canvasToBlob(canvas);
           const suffix = totalPages > 1 ? `-${page + 1}` : "";
           blobs.push({ blob, filename: `${slug}-${prefix}-${format}${suffix}.png` });
@@ -168,7 +257,7 @@ export function PoemActionBar({
         setGeneratingImage(null);
       }
     },
-    [title, stanzas, bgImage],
+    [title, stanzas, coverImage],
   );
 
   return (
