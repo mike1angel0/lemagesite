@@ -7,6 +7,7 @@ import {
   FORMATS,
   ensureFontsLoaded,
   loadImage,
+  loadImageSafe,
   canvasToBlob,
   downloadBlob,
   drawVignette,
@@ -230,7 +231,7 @@ export function PoemActionBar({
         const totalPages = Math.max(1, Math.ceil(stanzas.length / perPage));
 
         const [coverImg, logoImg] = await Promise.all([
-          coverImage ? loadImage(coverImage).catch(() => null) : Promise.resolve(null),
+          coverImage ? loadImageSafe(coverImage).catch(() => null) : Promise.resolve(null),
           loadImage("/logo.png").catch(() => null),
         ]);
 

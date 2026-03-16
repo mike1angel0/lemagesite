@@ -17,6 +17,22 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+/**
+ * Load an external image safely for canvas use by fetching it as a blob first.
+ * This avoids CORS canvas-tainting issues with cross-origin images (e.g. Cloudinary).
+ */
+export async function loadImageSafe(src: string): Promise<HTMLImageElement> {
+  const response = await fetch(src);
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  try {
+    return await loadImage(objectUrl);
+  } finally {
+    // Clean up after a short delay to ensure the image is fully drawn
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+  }
+}
+
 export async function loadFont(
   url: string,
   family: string,
