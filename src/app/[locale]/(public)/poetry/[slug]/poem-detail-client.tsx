@@ -21,6 +21,7 @@ type PoemData = {
   collection: string | null;
   language: string | null;
   audioUrl: string | null;
+  coverImage: string | null;
   accessTier: string;
   excerpt: string | null;
   publishedAt: string | null;
@@ -101,6 +102,13 @@ export function PoemDetailClient({
         <h1 className="font-serif text-4xl md:text-[52px] font-light text-text-primary text-center leading-[1.2] max-w-[600px]">
           {displayTitle}
         </h1>
+
+        {/* Cover image */}
+        {poem.coverImage && (
+          <div className="relative w-full max-w-[500px] aspect-[3/2] rounded-lg overflow-hidden">
+            <Image src={poem.coverImage} alt={displayTitle} fill className="object-cover" />
+          </div>
+        )}
 
         {/* Audio row */}
         {poem.audioUrl && (

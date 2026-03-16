@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Headphones } from "lucide-react";
 import { MemberBadge } from "@/components/ui/member-badge";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ interface PoemCardProps {
   excerpt?: string;
   accessTier?: string;
   hasAudio?: boolean;
+  coverImage?: string | null;
   slug: string;
   className?: string;
 }
@@ -21,6 +23,7 @@ export function PoemCard({
   excerpt,
   accessTier,
   hasAudio,
+  coverImage,
   slug,
   className,
 }: PoemCardProps) {
@@ -48,7 +51,14 @@ export function PoemCard({
           </p>
         )}
       </div>
-      <ArrowRight className="ml-6 size-5 shrink-0 text-text-muted" />
+      <div className="ml-6 flex items-center gap-4 shrink-0">
+        {coverImage && (
+          <div className="relative size-16 md:size-20 rounded overflow-hidden">
+            <Image src={coverImage} alt={title} fill className="object-cover" />
+          </div>
+        )}
+        <ArrowRight className="size-5 text-text-muted" />
+      </div>
     </Link>
   );
 }

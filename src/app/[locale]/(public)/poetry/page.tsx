@@ -47,6 +47,7 @@ export default async function PoetryPage() {
               excerpt={displayExcerpt}
               accessTier={poem.accessTier !== "FREE" ? poem.accessTier : undefined}
               hasAudio={!!poem.audioUrl}
+              coverImage={poem.coverImage}
               slug={`/poetry/${poem.slug}`}
             />
           );

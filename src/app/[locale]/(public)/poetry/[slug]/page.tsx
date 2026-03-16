@@ -70,6 +70,7 @@ export default async function PoemDetailPage({
           collection: poem.collection,
           language: poem.language,
           audioUrl: poem.audioUrl,
+          coverImage: poem.coverImage,
           accessTier: poem.accessTier,
           excerpt: poem.excerpt,
           publishedAt: poem.publishedAt?.toISOString() ?? null,
