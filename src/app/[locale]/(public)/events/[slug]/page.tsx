@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShareButtons } from "@/components/ui/share-buttons";
+import { ContentActionBar } from "@/components/ui/content-action-bar";
 import { getEventBySlug } from "@/lib/data";
 import { PLACEHOLDER } from "@/lib/placeholders";
 
@@ -95,15 +95,17 @@ export default async function EventDetailPage({
             )}
           </Card>
 
-          <Card padding="p-5">
-            <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-              {t("shareEvent")}
-            </span>
-            <div className="flex items-center gap-4 mt-3">
-              <ShareButtons />
-            </div>
-          </Card>
         </aside>
+      </div>
+
+      {/* -- Action bar -- */}
+      <div className="border-t border-border">
+        <ContentActionBar
+          contentId={event.id}
+          contentType="EVENT"
+          title={event.title}
+          showImageGen={false}
+        />
       </div>
     </>
   );

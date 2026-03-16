@@ -6,11 +6,9 @@ import { Play, Pause } from "lucide-react";
 import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
-import { ShareButtons } from "@/components/ui/share-buttons";
-import { PoemImageGenerator } from "@/components/ui/poem-image-generator";
+import { PoemActionBar } from "@/components/ui/poem-action-bar";
 import { GatedOverlay } from "@/components/content/gated-overlay";
 import { PLACEHOLDER } from "@/lib/placeholders";
-import { SaveButton } from "@/components/ui/save-button";
 import { useSession } from "next-auth/react";
 import { hasAccess } from "@/lib/access";
 
@@ -46,7 +44,6 @@ export function PoemDetailClient({
   authorHandle?: string;
 }) {
   const t = useTranslations("poetry");
-  const tc = useTranslations("common");
   const { data: session } = useSession();
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -203,44 +200,16 @@ export function PoemDetailClient({
           </div>
 
           {/* -- Action bar -- */}
-          <div className="flex justify-between items-center px-5 md:px-[200px] py-10">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-                  {tc("share")}
-                </span>
-                <ShareButtons />
-              </div>
-              <PoemImageGenerator
-                title={poem.title}
-                stanzas={stanzas}
-                bgImage={PLACEHOLDER.poem}
-              />
-              <SaveButton
-                contentType="POEM"
-                contentId={poem.id}
-                saved={false}
-              />
-            </div>
-            <div className="flex items-center gap-6">
-              {prevSlug && (
-                <Link
-                  href={prevSlug}
-                  className="font-sans text-xs text-accent-dim hover:text-accent tracking-[0.5px] transition-colors"
-                >
-                  ← {t("previousPoem")}
-                </Link>
-              )}
-              {nextSlug && (
-                <Link
-                  href={nextSlug}
-                  className="font-sans text-xs text-accent hover:text-text-primary tracking-[0.5px] transition-colors"
-                >
-                  {t("nextPoem")} →
-                </Link>
-              )}
-            </div>
-          </div>
+          <PoemActionBar
+            poemId={poem.id}
+            title={poem.title}
+            stanzas={stanzas}
+            bgImage={PLACEHOLDER.poem}
+            prevSlug={prevSlug}
+            nextSlug={nextSlug}
+            prevLabel={t("previousPoem")}
+            nextLabel={t("nextPoem")}
+          />
         </>
       )}
 

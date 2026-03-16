@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
-import { ShareButtons } from "@/components/ui/share-buttons";
+import { ResearchActionBar } from "@/components/ui/research-action-bar";
 import { getResearchBySlug, getPublishedResearch } from "@/lib/data";
 import { getSiteConfig } from "@/lib/site-config";
 import { MarkdownBody } from "@/components/content/markdown-body";
@@ -154,13 +154,14 @@ export default async function ResearchDetailPage({
       </div>
 
       {/* -- Action bar -- */}
-      <div className="flex items-center px-5 md:px-20 py-10 border-t border-border">
-        <div className="flex items-center gap-4">
-          <span className="font-mono text-[10px] text-text-muted tracking-[2px] uppercase">
-            {tc("share")}
-          </span>
-          <ShareButtons />
-        </div>
+      <div className="border-t border-border">
+        <ResearchActionBar
+          paperId={paper.id}
+          title={paper.title}
+          abstract={paper.abstract ?? ""}
+          year={paper.year?.toString() ?? ""}
+          bgImage={paper.coverImage ?? undefined}
+        />
       </div>
     </section>
   );

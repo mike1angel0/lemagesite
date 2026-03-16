@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { EssayCard } from "@/components/content/essay-card";
-import { EssayActionBar } from "./essay-action-bar";
+import { EssayActionBarNew } from "@/components/ui/essay-action-bar-new";
 import { getEssayBySlug, getPublishedEssays } from "@/lib/data";
 import { MarkdownBody } from "@/components/content/markdown-body";
 
@@ -122,19 +122,14 @@ export default async function EssayDetailPage({
 
         {/* -- Share & Image Row -- */}
         <div className="mt-6">
-          <EssayActionBar
+          <EssayActionBarNew
             essayId={essay.id}
             title={essay.title}
             excerpt={essay.excerpt ?? ""}
             body={essay.body}
             category={essay.category ?? ""}
             readTime={essay.readTime ? `${essay.readTime} ${t("minRead").toLowerCase()}` : ""}
-            shareLabel={tc("share").toUpperCase()}
-            shareLabels={{
-              x: tc("shareOnX"),
-              facebook: tc("facebook"),
-              copyLink: tc("copyLink"),
-            }}
+            bgImage={essay.thumbnail ?? undefined}
           />
         </div>
 
