@@ -177,6 +177,81 @@ export function AdminAnalyticsClient({ data }: { data: AnalyticsData }) {
           </div>
         </div>
       </div>
+
+      {/* View Stats */}
+      {data.viewStats && (
+        <>
+          {/* Top Viewed Content */}
+          <div className="px-8 mt-6">
+            <div className="rounded-lg border border-border bg-bg-card p-5">
+              <h2 className="font-sans text-[14px] font-medium text-text-primary mb-4">Top Viewed Content</h2>
+              {data.viewStats.topContent.length === 0 ? (
+                <p className="font-sans text-sm text-text-muted">No view data yet.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {data.viewStats.topContent.map((item, i) => (
+                    <div key={`${item.contentType}-${item.contentId}`} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
+                      <span className="font-mono text-[10px] text-text-muted w-6">{i + 1}.</span>
+                      <span className="font-mono text-[9px] text-gold tracking-[1px] uppercase w-20">{item.contentType}</span>
+                      <span className="font-sans text-[13px] text-text-primary flex-1 truncate">{item.title}</span>
+                      <span className="font-serif text-[16px] text-text-primary">{item.views}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Views Over Time + Views by Type */}
+          <div className="grid grid-cols-2 gap-4 px-8 mt-6 pb-8">
+            <div className="rounded-lg border border-border bg-bg-card p-5">
+              <h2 className="font-sans text-[14px] font-medium text-text-primary mb-4">Views Over Time (30 days)</h2>
+              {data.viewStats.viewsPerDay.length === 0 ? (
+                <p className="font-sans text-sm text-text-muted">No view data yet.</p>
+              ) : (
+                <div className="flex items-end gap-[2px] h-[120px]">
+                  {(() => {
+                    const maxCount = Math.max(...data.viewStats.viewsPerDay.map((d) => d.count), 1);
+                    return data.viewStats.viewsPerDay.map((d) => (
+                      <div
+                        key={d.date}
+                        className="flex-1 bg-accent rounded-t-sm min-w-[4px]"
+                        style={{ height: `${(d.count / maxCount) * 100}%` }}
+                        title={`${d.date}: ${d.count} views`}
+                      />
+                    ));
+                  })()}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-lg border border-border bg-bg-card p-5">
+              <h2 className="font-sans text-[14px] font-medium text-text-primary mb-4">Views by Type</h2>
+              {data.viewStats.viewsByType.length === 0 ? (
+                <p className="font-sans text-sm text-text-muted">No view data yet.</p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {data.viewStats.viewsByType.map((vt) => {
+                    const total = data.viewStats.viewsByType.reduce((s, v) => s + v.count, 0);
+                    const pct = total > 0 ? Math.round((vt.count / total) * 100) : 0;
+                    return (
+                      <div key={vt.type}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-sans text-[12px] text-text-secondary">{vt.type}</span>
+                          <span className="font-mono text-[10px] text-text-muted">{vt.count} ({pct}%)</span>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-border">
+                          <div className="h-2 rounded-full bg-gold" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

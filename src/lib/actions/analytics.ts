@@ -41,6 +41,11 @@ export type AnalyticsData = {
     drafts: number;
     scheduled: number;
   };
+  viewStats: {
+    topContent: { contentType: string; contentId: string; title: string; views: number }[];
+    viewsPerDay: { date: string; count: number }[];
+    viewsByType: { type: string; count: number }[];
+  };
 };
 
 export async function getAnalyticsAction(): Promise<AnalyticsData | null> {
@@ -99,6 +104,74 @@ export async function getAnalyticsAction(): Promise<AnalyticsData | null> {
     newsletterCounts[n.status] = n._count;
   }
 
+  // View stats (wrapped in try/catch — table may not exist if migration not deployed)
+  let topContent: { contentType: string; contentId: string; title: string; views: number }[] = [];
+  let viewsPerDay: { date: string; count: number }[] = [];
+  let viewsByType: { type: string; count: number }[] = [];
+
+  try {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const [topViewed, allViews] = await Promise.all([
+      prisma.contentView.groupBy({
+        by: ["contentType", "contentId"],
+        _count: true,
+        orderBy: { _count: { contentId: "desc" } },
+        take: 10,
+      }),
+      prisma.contentView.findMany({
+        where: { viewedAt: { gte: thirtyDaysAgo } },
+        select: { contentType: true, viewedAt: true },
+      }),
+    ]);
+
+    // Resolve titles for top viewed
+    topContent = await Promise.all(
+      topViewed.map(async (v) => {
+        let title = "";
+        switch (v.contentType) {
+          case "POEM": {
+            const p = await prisma.poem.findUnique({ where: { id: v.contentId }, select: { title: true } });
+            title = p?.title ?? "Unknown";
+            break;
+          }
+          case "ESSAY": {
+            const e = await prisma.essay.findUnique({ where: { id: v.contentId }, select: { title: true } });
+            title = e?.title ?? "Unknown";
+            break;
+          }
+          case "RESEARCH": {
+            const r = await prisma.researchPaper.findUnique({ where: { id: v.contentId }, select: { title: true } });
+            title = r?.title ?? "Unknown";
+            break;
+          }
+          default:
+            title = v.contentId;
+        }
+        return { contentType: v.contentType, contentId: v.contentId, title, views: v._count };
+      })
+    );
+
+    // Views per day (last 30 days)
+    const viewsPerDayMap: Record<string, number> = {};
+    const viewsByTypeMap: Record<string, number> = {};
+    for (const v of allViews) {
+      const day = v.viewedAt.toISOString().split("T")[0];
+      viewsPerDayMap[day] = (viewsPerDayMap[day] || 0) + 1;
+      viewsByTypeMap[v.contentType] = (viewsByTypeMap[v.contentType] || 0) + 1;
+    }
+
+    viewsPerDay = Object.entries(viewsPerDayMap)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    viewsByType = Object.entries(viewsByTypeMap)
+      .map(([type, count]) => ({ type, count }));
+  } catch {
+    // ContentView table may not exist yet — return empty view stats
+  }
+
   return {
     contentCounts: {
       poems,
@@ -130,5 +203,6 @@ export async function getAnalyticsAction(): Promise<AnalyticsData | null> {
       drafts: newsletterCounts.DRAFT || 0,
       scheduled: newsletterCounts.SCHEDULED || 0,
     },
+    viewStats: { topContent, viewsPerDay, viewsByType },
   };
 }

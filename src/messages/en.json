@@ -615,7 +615,28 @@
     "title": "Search",
     "placeholder": "Search poems, essays, research...",
     "resultCount": "{count} results for \"{query}\"",
-    "noResults": "No results found for \"{query}\""
+    "noResults": "No results found for \"{query}\"",
+    "recentSearches": "Recent Searches",
+    "clearRecent": "Clear",
+    "nextPage": "Next",
+    "prevPage": "Previous"
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Share your thoughts...",
+    "submit": "Comment",
+    "delete": "Delete",
+    "loginToComment": "Sign in to join the conversation",
+    "reply": "Reply",
+    "noComments": "No comments yet. Be the first to share your thoughts."
+  },
+  "readingList": {
+    "title": "Reading List",
+    "empty": "Your reading list is empty. Save articles, poems, and papers to read later.",
+    "progress": "{percent}% read"
+  },
+  "editor": {
+    "scheduledFor": "Scheduled for"
   },
   "thankYou": {
     "title": "Thank You",

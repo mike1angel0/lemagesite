@@ -283,20 +283,92 @@ export async function getRandomQuote() {
 }
 
 // ──────────────────────────────────────────────
+// Related Content (tag-based)
+// ──────────────────────────────────────────────
+
+export async function getRelatedEssays(slug: string, category: string | null, limit = 3) {
+  if (category) {
+    const tags = category.split(/[,&]/).map((t) => t.trim()).filter(Boolean);
+    if (tags.length > 0) {
+      const related = await prisma.essay.findMany({
+        where: {
+          slug: { not: slug },
+          publishedAt: { lte: new Date() },
+          OR: tags.map((tag) => ({ category: { contains: tag, mode: "insensitive" as const } })),
+        },
+        orderBy: { publishedAt: "desc" },
+        take: limit,
+      });
+      if (related.length > 0) return related;
+    }
+  }
+  // Fallback: latest essays excluding current
+  return prisma.essay.findMany({
+    where: { slug: { not: slug }, publishedAt: { lte: new Date() } },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function getRelatedResearch(slug: string, tags: string[], limit = 3) {
+  if (tags.length > 0) {
+    const related = await prisma.researchPaper.findMany({
+      where: {
+        slug: { not: slug },
+        publishedAt: { lte: new Date() },
+        tags: { hasSome: tags },
+      },
+      orderBy: { publishedAt: "desc" },
+      take: limit,
+    });
+    if (related.length > 0) return related;
+  }
+  // Fallback: latest papers excluding current
+  return prisma.researchPaper.findMany({
+    where: { slug: { not: slug }, publishedAt: { lte: new Date() } },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function getRelatedPoems(slug: string, collection: string | null, limit = 3) {
+  if (collection) {
+    const related = await prisma.poem.findMany({
+      where: {
+        slug: { not: slug },
+        publishedAt: { lte: new Date() },
+        collection,
+      },
+      orderBy: { publishedAt: "desc" },
+      take: limit,
+    });
+    if (related.length > 0) return related;
+  }
+  // Fallback: latest poems excluding current
+  return prisma.poem.findMany({
+    where: { slug: { not: slug }, publishedAt: { lte: new Date() } },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+}
+
+// ──────────────────────────────────────────────
 // Search
 // ──────────────────────────────────────────────
 
-export async function searchContent(query: string) {
-  if (!query.trim()) return [];
+export async function searchContent(query: string, page = 1, pageSize = 20) {
+  if (!query.trim()) return { results: [], total: 0, page: 1 };
 
-  const [poems, essays, research, books] = await Promise.all([
+  const q = query.trim();
+
+  const [poems, essays, research, books, photos] = await Promise.all([
     prisma.poem.findMany({
       where: {
         publishedAt: { lte: new Date() },
         OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { body: { contains: query, mode: "insensitive" } },
-          { excerpt: { contains: query, mode: "insensitive" } },
+          { title: { contains: q, mode: "insensitive" } },
+          { body: { contains: q, mode: "insensitive" } },
+          { excerpt: { contains: q, mode: "insensitive" } },
         ],
       },
       select: { title: true, slug: true, excerpt: true },
@@ -305,9 +377,9 @@ export async function searchContent(query: string) {
       where: {
         publishedAt: { lte: new Date() },
         OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { body: { contains: query, mode: "insensitive" } },
-          { excerpt: { contains: query, mode: "insensitive" } },
+          { title: { contains: q, mode: "insensitive" } },
+          { body: { contains: q, mode: "insensitive" } },
+          { excerpt: { contains: q, mode: "insensitive" } },
         ],
       },
       select: { title: true, slug: true, excerpt: true },
@@ -316,8 +388,8 @@ export async function searchContent(query: string) {
       where: {
         publishedAt: { lte: new Date() },
         OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { abstract: { contains: query, mode: "insensitive" } },
+          { title: { contains: q, mode: "insensitive" } },
+          { abstract: { contains: q, mode: "insensitive" } },
         ],
       },
       select: { title: true, slug: true, abstract: true },
@@ -326,21 +398,34 @@ export async function searchContent(query: string) {
       where: {
         publishedAt: { lte: new Date() },
         OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
+          { title: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
+        ],
+      },
+      select: { title: true, slug: true, description: true },
+    }),
+    prisma.photo.findMany({
+      where: {
+        publishedAt: { lte: new Date() },
+        OR: [
+          { title: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
         ],
       },
       select: { title: true, slug: true, description: true },
     }),
   ]);
 
-  return [
+  const qLower = q.toLowerCase();
+
+  const allResults = [
     ...poems.map((p) => ({
       category: "POETRY" as const,
       icon: "feather" as const,
       title: p.title,
       description: p.excerpt ?? "",
       href: `/poetry/${p.slug}`,
+      titleMatch: p.title.toLowerCase().includes(qLower),
     })),
     ...essays.map((e) => ({
       category: "ESSAY" as const,
@@ -348,6 +433,7 @@ export async function searchContent(query: string) {
       title: e.title,
       description: e.excerpt ?? "",
       href: `/essays/${e.slug}`,
+      titleMatch: e.title.toLowerCase().includes(qLower),
     })),
     ...research.map((r) => ({
       category: "RESEARCH" as const,
@@ -355,6 +441,7 @@ export async function searchContent(query: string) {
       title: r.title,
       description: r.abstract ?? "",
       href: `/research/${r.slug}`,
+      titleMatch: r.title.toLowerCase().includes(qLower),
     })),
     ...books.map((b) => ({
       category: "BOOK" as const,
@@ -362,8 +449,26 @@ export async function searchContent(query: string) {
       title: b.title,
       description: b.description ?? "",
       href: `/books/${b.slug}`,
+      titleMatch: b.title.toLowerCase().includes(qLower),
+    })),
+    ...photos.map((p) => ({
+      category: "PHOTOGRAPHY" as const,
+      icon: "feather" as const,
+      title: p.title,
+      description: p.description ?? "",
+      href: `/photography/${p.slug}`,
+      titleMatch: p.title.toLowerCase().includes(qLower),
     })),
   ];
+
+  // Sort: title matches first
+  allResults.sort((a, b) => (a.titleMatch === b.titleMatch ? 0 : a.titleMatch ? -1 : 1));
+
+  const total = allResults.length;
+  const start = (page - 1) * pageSize;
+  const results = allResults.slice(start, start + pageSize).map(({ titleMatch: _, ...rest }) => rest);
+
+  return { results, total, page };
 }
 
 // ──────────────────────────────────────────────

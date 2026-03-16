@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/site-config";
+import { buildRssFeed, rssResponse } from "@/lib/feed";
 
 export async function GET() {
   const now = new Date();
@@ -25,9 +26,7 @@ export async function GET() {
     }),
   ]);
 
-  type FeedItem = { title: string; link: string; description: string; pubDate: string; category: string };
-
-  const items: FeedItem[] = [
+  const items = [
     ...poems.map((p) => ({
       title: p.title,
       link: `${SITE_URL}/en/poetry/${p.slug}`,
@@ -51,37 +50,11 @@ export async function GET() {
     })),
   ].sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
 
-  const escXml = (s: string) =>
-    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-  <title>Selenarium</title>
-  <link>${SITE_URL}</link>
-  <description>Poetry, photography, music, and research from the Selenarium.</description>
-  <language>en</language>
-  <lastBuildDate>${now.toUTCString()}</lastBuildDate>
-  <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
-${items
-  .map(
-    (item) => `  <item>
-    <title>${escXml(item.title)}</title>
-    <link>${item.link}</link>
-    <guid isPermaLink="true">${item.link}</guid>
-    <description>${escXml(item.description)}</description>
-    <pubDate>${item.pubDate}</pubDate>
-    <category>${item.category}</category>
-  </item>`
-  )
-  .join("\n")}
-</channel>
-</rss>`;
-
-  return new Response(xml, {
-    headers: {
-      "Content-Type": "application/rss+xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
-    },
-  });
+  return rssResponse(
+    buildRssFeed(items, {
+      title: "Selenarium",
+      description: "Poetry, photography, music, and research from the Selenarium.",
+      feedPath: "/feed.xml",
+    })
+  );
 }

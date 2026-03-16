@@ -93,6 +93,7 @@ model User {
   orders     Order[]
   savedItems SavedItem[]
   messages   Message[]
+  comments   Comment[]
 }
 
 model Account {
@@ -461,4 +462,40 @@ model MediaFile {
   size         Int
   cloudinaryId String?
   createdAt    DateTime @default(now())
+}
+
+// ──────────────────────────────────────────────
+// Content Views (analytics)
+// ──────────────────────────────────────────────
+
+model ContentView {
+  id          String      @id @default(cuid())
+  contentType ContentType
+  contentId   String
+  sessionId   String
+  viewedAt    DateTime    @default(now())
+
+  @@index([contentType, contentId])
+  @@index([viewedAt])
+}
+
+// ──────────────────────────────────────────────
+// Comments
+// ──────────────────────────────────────────────
+
+model Comment {
+  id          String      @id @default(cuid())
+  userId      String
+  contentType ContentType
+  contentId   String
+  body        String      @db.Text
+  parentId    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([contentType, contentId])
 }

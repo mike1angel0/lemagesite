@@ -615,7 +615,28 @@
     "title": "Caută",
     "placeholder": "Caută poeme, eseuri, cercetare...",
     "resultCount": "{count} rezultate pentru \"{query}\"",
-    "noResults": "Nu s-au găsit rezultate pentru \"{query}\""
+    "noResults": "Nu s-au găsit rezultate pentru \"{query}\"",
+    "recentSearches": "Căutări recente",
+    "clearRecent": "Șterge",
+    "nextPage": "Următoarea",
+    "prevPage": "Anterioară"
+  },
+  "comments": {
+    "title": "Comentarii",
+    "placeholder": "Împărtășește-ți gândurile...",
+    "submit": "Comentează",
+    "delete": "Șterge",
+    "loginToComment": "Autentifică-te pentru a participa la conversație",
+    "reply": "Răspunde",
+    "noComments": "Niciun comentariu încă. Fii primul care își împărtășește gândurile."
+  },
+  "readingList": {
+    "title": "Listă de lectură",
+    "empty": "Lista ta de lectură este goală. Salvează articole, poeme și lucrări pentru mai târziu.",
+    "progress": "{percent}% citit"
+  },
+  "editor": {
+    "scheduledFor": "Programat pentru"
   },
   "thankYou": {
     "title": "Mulțumim",

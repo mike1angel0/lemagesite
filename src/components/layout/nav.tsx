@@ -89,6 +89,12 @@ export function Nav() {
               <div className="flex items-center gap-4">
                 {isPaidTier && <MemberBadge tier={userTier} />}
                 <Link
+                  href={`${localePath}/reading-list`}
+                  className="font-sans text-[10px] font-medium text-text-muted tracking-[2px] uppercase hover:text-text-secondary transition-colors"
+                >
+                  &#9733;
+                </Link>
+                <Link
                   href={`${localePath}/account`}
                   className="font-sans text-[10px] font-medium text-starlight tracking-[2px] uppercase hover:text-accent-glow transition-colors"
                 >

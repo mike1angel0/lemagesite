@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { ResearchActionBar } from "@/components/ui/research-action-bar";
-import { getResearchBySlug, getPublishedResearch } from "@/lib/data";
+import { getResearchBySlug, getPublishedResearch, getRelatedResearch } from "@/lib/data";
 import { getSiteConfig } from "@/lib/site-config";
 import { MarkdownBody } from "@/components/content/markdown-body";
 import { makeMetadata } from "@/lib/seo/metadata";
@@ -13,6 +13,8 @@ import { JsonLd, researchJsonLd } from "@/lib/seo/jsonld";
 import { ReadAloudButton } from "@/components/ui/read-aloud-button";
 import { ScrollPositionTracker } from "@/components/ui/scroll-position-tracker";
 import { NewsletterForm } from "@/components/ui/newsletter-form";
+import { ViewTracker } from "@/components/ui/view-tracker";
+import { CommentsSection } from "@/components/content/comments-section";
 
 export async function generateMetadata({
   params,
@@ -56,9 +58,7 @@ export default async function ResearchDetailPage({
   const currentIndex = allPapers.findIndex((p) => p.slug === slug);
   const prevPaper = currentIndex > 0 ? allPapers[currentIndex - 1] : null;
   const nextPaper = currentIndex < allPapers.length - 1 ? allPapers[currentIndex + 1] : null;
-  const relatedPapers = allPapers
-    .filter((p) => p.slug !== slug)
-    .slice(0, 3);
+  const relatedPapers = await getRelatedResearch(slug, paper.tags);
 
   return (
     <section>
@@ -73,6 +73,7 @@ export default async function ResearchDetailPage({
         })}
       />
 
+      <ViewTracker contentType="RESEARCH" contentId={paper.id} />
       <ScrollPositionTracker slug={`research-${slug}`} />
 
       {/* -- Hero Image -- */}
@@ -217,6 +218,11 @@ export default async function ResearchDetailPage({
           prevLabel={tc("previous")}
           nextLabel={tc("next")}
         />
+      </div>
+
+      {/* -- Comments -- */}
+      <div className="px-5 md:px-20">
+        <CommentsSection contentType="RESEARCH" contentId={paper.id} />
       </div>
 
       {/* -- Newsletter CTA -- */}

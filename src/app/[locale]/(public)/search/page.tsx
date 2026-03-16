@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Search, Feather, Music, ShoppingBag, BookOpen, FileText, FlaskConical } from "lucide-react";
+import { Search, Feather, Music, ShoppingBag, BookOpen, FileText, FlaskConical, Camera } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { searchContent } from "@/lib/data";
+import { SearchSuggestions } from "@/components/ui/search-suggestions";
+import { SearchTracker } from "@/components/ui/search-tracker";
 
 const categoryIcons: Record<string, React.ElementType> = {
   feather: Feather,
@@ -10,16 +12,20 @@ const categoryIcons: Record<string, React.ElementType> = {
   book: BookOpen,
   essay: FileText,
   research: FlaskConical,
+  camera: Camera,
 };
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
   const t = await getTranslations("search");
-  const { q: query = "" } = await searchParams;
-  const results = query ? await searchContent(query) : [];
+  const { q: query = "", page: pageStr } = await searchParams;
+  const page = Math.max(1, parseInt(pageStr || "1"));
+  const pageSize = 20;
+  const { results, total } = query ? await searchContent(query, page, pageSize) : { results: [], total: 0 };
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <section className="px-5 md:px-10 xl:px-20 py-16">
@@ -41,9 +47,12 @@ export default async function SearchPage({
           />
         </form>
 
+        {query && <SearchTracker query={query} />}
+        {!query && <SearchSuggestions />}
+
         {query && (
           <p className="font-mono text-xs text-text-muted">
-            {t("resultCount", { count: results.length, query })}
+            {t("resultCount", { count: total, query })}
           </p>
         )}
       </div>
@@ -79,6 +88,31 @@ export default async function SearchPage({
           <p className="font-sans text-sm text-text-muted text-center py-12">
             {t("noResults", { query })}
           </p>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-8">
+            {page > 1 && (
+              <Link
+                href={`?q=${encodeURIComponent(query)}&page=${page - 1}`}
+                className="font-sans text-sm text-accent hover:text-text-primary transition-colors"
+              >
+                {t("prevPage")}
+              </Link>
+            )}
+            <span className="font-mono text-xs text-text-muted">
+              {page} / {totalPages}
+            </span>
+            {page < totalPages && (
+              <Link
+                href={`?q=${encodeURIComponent(query)}&page=${page + 1}`}
+                className="font-sans text-sm text-accent hover:text-text-primary transition-colors"
+              >
+                {t("nextPage")}
+              </Link>
+            )}
+          </div>
         )}
       </div>
     </section>

@@ -144,14 +144,14 @@ describe("data helpers", () => {
   });
 
   describe("searchContent", () => {
-    it("returns empty array for empty query", async () => {
+    it("returns empty results for empty query", async () => {
       const result = await searchContent("");
-      expect(result).toEqual([]);
+      expect(result).toEqual({ results: [], total: 0, page: 1 });
     });
 
-    it("returns empty array for whitespace query", async () => {
+    it("returns empty results for whitespace query", async () => {
       const result = await searchContent("   ");
-      expect(result).toEqual([]);
+      expect(result).toEqual({ results: [], total: 0, page: 1 });
     });
 
     it("maps results with correct categories and hrefs", async () => {
@@ -161,11 +161,12 @@ describe("data helpers", () => {
       (prisma.essay.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([]);
       (prisma.researchPaper.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([]);
       (prisma.book.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([]);
+      (prisma.photo.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([]);
 
       const result = await searchContent("night");
 
-      expect(result).toHaveLength(1);
-      expect(result[0]).toEqual({
+      expect(result.results).toHaveLength(1);
+      expect(result.results[0]).toEqual({
         category: "POETRY",
         icon: "feather",
         title: "Night Poem",

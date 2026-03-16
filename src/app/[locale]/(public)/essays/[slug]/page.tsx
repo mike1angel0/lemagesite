@@ -6,7 +6,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { SectionLabel } from "@/components/ui/section-label";
 import { EssayCard } from "@/components/content/essay-card";
 import { EssayActionBarNew } from "@/components/ui/essay-action-bar-new";
-import { getEssayBySlug, getPublishedEssays } from "@/lib/data";
+import { getEssayBySlug, getPublishedEssays, getRelatedEssays } from "@/lib/data";
 import { MarkdownBody } from "@/components/content/markdown-body";
 import { makeMetadata } from "@/lib/seo/metadata";
 import { JsonLd, articleJsonLd } from "@/lib/seo/jsonld";
@@ -15,6 +15,8 @@ import { FontSizeControls } from "@/components/ui/font-size-controls";
 import { ScrollPositionTracker } from "@/components/ui/scroll-position-tracker";
 import { MobileToc } from "@/components/ui/mobile-toc";
 import { NewsletterForm } from "@/components/ui/newsletter-form";
+import { ViewTracker } from "@/components/ui/view-tracker";
+import { CommentsSection } from "@/components/content/comments-section";
 
 export async function generateMetadata({
   params,
@@ -54,9 +56,7 @@ export default async function EssayDetailPage({
   const currentIndex = allEssays.findIndex((e) => e.slug === slug);
   const prevEssay = currentIndex > 0 ? allEssays[currentIndex - 1] : null;
   const nextEssay = currentIndex < allEssays.length - 1 ? allEssays[currentIndex + 1] : null;
-  const relatedEssays = allEssays
-    .filter((e) => e.slug !== slug)
-    .slice(0, 3);
+  const relatedEssays = await getRelatedEssays(slug, essay.category);
 
   // Generate TOC from markdown headings (## Heading)
   const headingRegex = /^#{1,3}\s+(.+)$/gm;
@@ -89,6 +89,7 @@ export default async function EssayDetailPage({
         })}
       />
 
+      <ViewTracker contentType="ESSAY" contentId={essay.id} />
       <ScrollPositionTracker slug={`essay-${slug}`} />
       <MobileToc items={tocItems} />
 
@@ -191,6 +192,11 @@ export default async function EssayDetailPage({
             prevLabel={tc("previous")}
             nextLabel={tc("next")}
           />
+        </div>
+
+        {/* -- Comments -- */}
+        <div className="max-w-2xl">
+          <CommentsSection contentType="ESSAY" contentId={essay.id} />
         </div>
 
         {/* -- Newsletter CTA -- */}
