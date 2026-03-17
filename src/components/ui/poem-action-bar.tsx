@@ -91,78 +91,95 @@ function renderPoemImage(
 
   let contentStartY: number;
 
-  if (coverImg) {
-    // ── Cover image as featured element ──
-    const imgPadding = 56;
-    const imgX = imgPadding;
-    const imgW = w - imgPadding * 2;
-    const imgH = isStory ? 520 : 380;
-    const imgY = isStory ? 80 : 60;
-    const radius = 12;
+  if (currentPage === 0) {
+    // ── Page 1: full header with cover image or title ──
+    if (coverImg) {
+      // ── Cover image as featured element ──
+      const imgPadding = 56;
+      const imgX = imgPadding;
+      const imgW = w - imgPadding * 2;
+      const imgH = isStory ? 520 : 380;
+      const imgY = isStory ? 80 : 60;
+      const radius = 12;
 
-    // Draw rounded image
-    ctx.save();
-    drawRoundedRect(ctx, imgX, imgY, imgW, imgH, radius);
-    ctx.clip();
+      // Draw rounded image
+      ctx.save();
+      drawRoundedRect(ctx, imgX, imgY, imgW, imgH, radius);
+      ctx.clip();
 
-    // Cover-fit the image into the rounded rect
-    const imgRatio = coverImg.width / coverImg.height;
-    const rectRatio = imgW / imgH;
-    let sx = 0, sy = 0, sw = coverImg.width, sh = coverImg.height;
-    if (imgRatio > rectRatio) {
-      sw = coverImg.height * rectRatio;
-      sx = (coverImg.width - sw) / 2;
+      // Cover-fit the image into the rounded rect
+      const imgRatio = coverImg.width / coverImg.height;
+      const rectRatio = imgW / imgH;
+      let sx = 0, sy = 0, sw = coverImg.width, sh = coverImg.height;
+      if (imgRatio > rectRatio) {
+        sw = coverImg.height * rectRatio;
+        sx = (coverImg.width - sw) / 2;
+      } else {
+        sh = coverImg.width / rectRatio;
+        sy = (coverImg.height - sh) / 2;
+      }
+      ctx.drawImage(coverImg, sx, sy, sw, sh, imgX, imgY, imgW, imgH);
+
+      // Gradient overlay on bottom half of image for title readability
+      const gradient = ctx.createLinearGradient(imgX, imgY + imgH * 0.4, imgX, imgY + imgH);
+      gradient.addColorStop(0, "rgba(10, 8, 6, 0)");
+      gradient.addColorStop(1, "rgba(10, 8, 6, 0.85)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(imgX, imgY, imgW, imgH);
+
+      ctx.restore();
+
+      // Subtle gold border around image
+      ctx.save();
+      drawRoundedRect(ctx, imgX, imgY, imgW, imgH, radius);
+      ctx.strokeStyle = "rgba(201, 169, 110, 0.3)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+
+      // ── Title overlaid on bottom of image ──
+      const titleSize = isStory ? 48 : 42;
+      ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+      ctx.fillStyle = "#F5EED8";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const titleY = imgY + imgH - 36;
+      ctx.fillText(title, w / 2, titleY, imgW - 40);
+
+      // Gold divider below image
+      const dividerY = imgY + imgH + 28;
+      drawGoldDivider(ctx, w / 2, dividerY, 60);
+
+      contentStartY = dividerY + 36;
     } else {
-      sh = coverImg.width / rectRatio;
-      sy = (coverImg.height - sh) / 2;
+      // ── No cover image: title at top (original layout) ──
+      const titleSize = isStory ? 52 : 46;
+      ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+      ctx.fillStyle = "#F5EED8";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const titleY = isStory ? 200 : 150;
+      ctx.fillText(title, w / 2, titleY, contentWidth);
+
+      const dividerY = titleY + 48;
+      drawGoldDivider(ctx, w / 2, dividerY, 60);
+
+      contentStartY = dividerY + 40;
     }
-    ctx.drawImage(coverImg, sx, sy, sw, sh, imgX, imgY, imgW, imgH);
-
-    // Gradient overlay on bottom half of image for title readability
-    const gradient = ctx.createLinearGradient(imgX, imgY + imgH * 0.4, imgX, imgY + imgH);
-    gradient.addColorStop(0, "rgba(10, 8, 6, 0)");
-    gradient.addColorStop(1, "rgba(10, 8, 6, 0.85)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(imgX, imgY, imgW, imgH);
-
-    ctx.restore();
-
-    // Subtle gold border around image
-    ctx.save();
-    drawRoundedRect(ctx, imgX, imgY, imgW, imgH, radius);
-    ctx.strokeStyle = "rgba(201, 169, 110, 0.3)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.restore();
-
-    // ── Title overlaid on bottom of image ──
-    const titleSize = isStory ? 48 : 42;
-    ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
-    ctx.fillStyle = "#F5EED8";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const titleY = imgY + imgH - 36;
-    ctx.fillText(title, w / 2, titleY, imgW - 40);
-
-    // Gold divider below image
-    const dividerY = imgY + imgH + 28;
-    drawGoldDivider(ctx, w / 2, dividerY, 60);
-
-    contentStartY = dividerY + 36;
   } else {
-    // ── No cover image: title at top (original layout) ──
-    const titleSize = isStory ? 52 : 46;
-    ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
-    ctx.fillStyle = "#F5EED8";
+    // ── Pages 2+: compact header with small title + page number ──
+    const compactTitleSize = isStory ? 28 : 24;
+    ctx.font = `300 ${compactTitleSize}px "Cormorant Garamond", Georgia, serif`;
+    ctx.fillStyle = "rgba(245, 238, 216, 0.6)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const titleY = isStory ? 200 : 150;
-    ctx.fillText(title, w / 2, titleY, contentWidth);
+    const compactY = isStory ? 70 : 55;
+    ctx.fillText(`${title}  ·  ${currentPage + 1} / ${totalPages}`, w / 2, compactY, contentWidth);
 
-    const dividerY = titleY + 48;
-    drawGoldDivider(ctx, w / 2, dividerY, 60);
+    const dividerY = compactY + 24;
+    drawGoldDivider(ctx, w / 2, dividerY, 40);
 
-    contentStartY = dividerY + 40;
+    contentStartY = dividerY + 28;
   }
 
   // ── Stanzas ──
@@ -225,6 +242,70 @@ function renderPoemImage(
   );
 }
 
+function renderCtaPage(
+  canvas: HTMLCanvasElement,
+  logoImg: HTMLImageElement | null,
+  title: string,
+  format: "square" | "story",
+) {
+  const scale = 3;
+  const { width: w, height: h } = FORMATS[format];
+  canvas.width = w * scale;
+  canvas.height = h * scale;
+  const ctx = canvas.getContext("2d")!;
+  ctx.scale(scale, scale);
+
+  const isStory = format === "story";
+
+  // ── Dark background ──
+  ctx.fillStyle = "#0A0806";
+  ctx.fillRect(0, 0, w, h);
+  drawVignette(ctx, w, h);
+  drawInsetBorder(ctx, w, h);
+
+  const centerY = h / 2;
+
+  // ── Logo ──
+  if (logoImg) {
+    const logoSize = isStory ? 160 : 120;
+    ctx.globalAlpha = 0.85;
+    ctx.drawImage(logoImg, (w - logoSize) / 2, centerY - logoSize - (isStory ? 100 : 70), logoSize, logoSize);
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Gold divider ──
+  drawGoldDivider(ctx, w / 2, centerY - (isStory ? 50 : 36), 60);
+
+  // ── "Follow for more" ──
+  const followSize = isStory ? 46 : 38;
+  ctx.font = `300 ${followSize}px "Cormorant Garamond", Georgia, serif`;
+  ctx.fillStyle = "#F5EED8";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Follow for more", w / 2, centerY + (isStory ? 10 : 8));
+
+  // ── Gold divider ──
+  drawGoldDivider(ctx, w / 2, centerY + (isStory ? 60 : 46), 40);
+
+  // ── Website URL ──
+  const urlSize = isStory ? 28 : 24;
+  ctx.font = `400 ${urlSize}px Inter, system-ui, sans-serif`;
+  ctx.fillStyle = "#C9A96E";
+  ctx.letterSpacing = "2px";
+  ctx.fillText("mihaigavrilescu.ro", w / 2, centerY + (isStory ? 110 : 86));
+  ctx.letterSpacing = "0px";
+
+  // ── Subtitle ──
+  const subSize = isStory ? 20 : 17;
+  ctx.font = `400 ${subSize}px Inter, system-ui, sans-serif`;
+  ctx.fillStyle = "rgba(245, 238, 216, 0.45)";
+  ctx.fillText("Selenarium  ·  Poetry & Essays", w / 2, centerY + (isStory ? 150 : 118));
+
+  // ── Bottom bar ──
+  const bottomBarHeight = isStory ? 180 : 140;
+  drawBottomBar(ctx, w, h, 80, bottomBarHeight, "LEMAGEPOET", "Poetry", logoImg);
+}
+
 export function PoemActionBar({
   poemId,
   title,
@@ -259,14 +340,18 @@ export function PoemActionBar({
         const slug = slugify(title);
         const prefix = platform === "tiktok" ? "tt" : "ig";
 
+        const totalWithCta = totalPages + 1; // +1 for CTA page
         const blobs: { blob: Blob; filename: string }[] = [];
         for (let page = 0; page < totalPages; page++) {
           const pageStanzas = stanzas.slice(page * perPage, (page + 1) * perPage);
           renderPoemImage(canvas, null, coverImg, logoImg, title, pageStanzas, format, page, totalPages);
           const blob = await canvasToBlob(canvas);
-          const suffix = totalPages > 1 ? `-${page + 1}` : "";
-          blobs.push({ blob, filename: `${slug}-${prefix}-${format}${suffix}.png` });
+          blobs.push({ blob, filename: `${slug}-${prefix}-${format}-${page + 1}.png` });
         }
+        // Final CTA page
+        renderCtaPage(canvas, logoImg, title, format);
+        const ctaBlob = await canvasToBlob(canvas);
+        blobs.push({ blob: ctaBlob, filename: `${slug}-${prefix}-${format}-${totalWithCta}.png` });
 
         for (let i = 0; i < blobs.length; i++) {
           if (i > 0) await new Promise((r) => setTimeout(r, 500));
