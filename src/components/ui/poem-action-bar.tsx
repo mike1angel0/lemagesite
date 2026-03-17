@@ -186,14 +186,34 @@ function renderPoemImage(
   const bottomBarHeight = isStory ? 180 : 140;
   const textAreaBottom = h - bottomBarHeight;
   const textAreaHeight = textAreaBottom - contentStartY;
-  let y = contentStartY + (textAreaHeight - totalTextHeight) / 2 + fontSize / 2;
+
+  // If text overflows the available area, shrink font to fit
+  let actualFontSize = fontSize;
+  let actualLineHeight = lineHeight;
+  let actualStanzaGap = stanzaGap;
+  if (totalTextHeight > textAreaHeight && textAreaHeight > 0) {
+    const scale = textAreaHeight / totalTextHeight;
+    actualFontSize = Math.max(18, Math.floor(fontSize * scale));
+    actualLineHeight = actualFontSize * 1.75;
+    actualStanzaGap = Math.max(16, Math.floor(stanzaGap * scale));
+    ctx.font = `300 ${actualFontSize}px "Cormorant Garamond", Georgia, serif`;
+    // Recalculate total height with scaled values
+    totalTextHeight = 0;
+    for (const lines of stanzaLines) {
+      totalTextHeight += lines.length * actualLineHeight;
+    }
+    totalTextHeight += (stanzaLines.length - 1) * actualStanzaGap;
+  }
+
+  // Clamp y so text never overlaps the title area
+  let y = contentStartY + Math.max(0, (textAreaHeight - totalTextHeight) / 2) + actualFontSize / 2;
 
   for (let i = 0; i < stanzaLines.length; i++) {
     for (const line of stanzaLines[i]) {
       ctx.fillText(line, w / 2, y, contentWidth);
-      y += lineHeight;
+      y += actualLineHeight;
     }
-    if (i < stanzaLines.length - 1) y += stanzaGap;
+    if (i < stanzaLines.length - 1) y += actualStanzaGap;
   }
 
   // ── Bottom bar ──
