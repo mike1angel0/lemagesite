@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(mediaFile);
+    return NextResponse.json({ ...mediaFile, secure_url: mediaFile.url });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
