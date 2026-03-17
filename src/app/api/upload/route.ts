@@ -49,9 +49,13 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ ...mediaFile, secure_url: mediaFile.url });
-  } catch (error) {
-    console.error("Upload error:", error);
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
+  } catch (error: unknown) {
+    const detail = error instanceof Error
+      ? error.message
+      : typeof error === "object" && error !== null
+        ? JSON.stringify(error)
+        : String(error);
+    console.error("Upload error:", detail);
+    return NextResponse.json({ error: `Upload failed: ${detail}` }, { status: 500 });
   }
 }
