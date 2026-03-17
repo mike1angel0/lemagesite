@@ -49,35 +49,30 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await imageResponse.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Try uploading to Cloudinary, fall back to OpenAI temporary URL
-    try {
-      const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream(
-            { folder: "selenarium/ai-generated" },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result as Record<string, unknown>);
-            }
-          )
-          .end(buffer);
-      });
+    // Upload to Cloudinary for permanent storage (OpenAI URLs expire in ~2 hours)
+    const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          { folder: "selenarium/ai-generated" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as Record<string, unknown>);
+          }
+        )
+        .end(buffer);
+    });
 
-      await prisma.mediaFile.create({
-        data: {
-          name: `ai-generated-${Date.now()}.png`,
-          url: result.secure_url as string,
-          type: "image/png",
-          size: buffer.length,
-          cloudinaryId: result.public_id as string,
-        },
-      });
+    await prisma.mediaFile.create({
+      data: {
+        name: `ai-generated-${Date.now()}.png`,
+        url: result.secure_url as string,
+        type: "image/png",
+        size: buffer.length,
+        cloudinaryId: result.public_id as string,
+      },
+    });
 
-      return NextResponse.json({ url: result.secure_url as string });
-    } catch (cloudinaryError) {
-      console.warn("Cloudinary upload failed, returning OpenAI URL:", cloudinaryError);
-      return NextResponse.json({ url: imageUrl });
-    }
+    return NextResponse.json({ url: result.secure_url as string });
   } catch (error) {
     console.error("Image generation error:", error);
     return NextResponse.json({ error: "Image generation failed" }, { status: 500 });
