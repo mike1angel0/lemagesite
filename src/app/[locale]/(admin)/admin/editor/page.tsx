@@ -106,11 +106,11 @@ export default function AdminEditorNewPage() {
       const formData = new FormData();
       formData.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error();
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
       setUrl(data.secure_url);
-    } catch {
-      setErrorMsg("Upload failed. Please try again.");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Upload failed. Please try again.");
       setStatus("error");
     } finally {
       setLoading(false);

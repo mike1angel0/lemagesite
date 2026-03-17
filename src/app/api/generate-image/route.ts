@@ -4,12 +4,6 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 const PROMPTS: Record<string, string> = {
   poem: "Create an atmospheric, artistic illustration for a poem about: {CONTENT}. Dark, moody aesthetic with deep blues and golds.",
   essay: "Create a conceptual editorial illustration for an essay about: {CONTENT}. Sophisticated, minimal, dark tones.",
@@ -17,6 +11,13 @@ const PROMPTS: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
+  // Configure inside handler to ensure env vars are available
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== "ADMIN") {
