@@ -33,8 +33,8 @@ interface PoemActionBarProps {
 
 // Max content lines per page (not counting blank separator lines)
 const MAX_LINES_PER_PAGE: Record<"square" | "story", number> = {
-  square: 8,
-  story: 14,
+  square: 14,
+  story: 24,
 };
 
 /**
