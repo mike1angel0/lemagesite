@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useActionState } from "react";
-import { Plus, Trash2, ImageIcon, FileText, Music, Film } from "lucide-react";
+import { useState, useRef, useActionState, useEffect, useCallback } from "react";
+import { Plus, Trash2, ImageIcon, FileText, Music, Film, X, Copy, Check, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createMediaFileAction, deleteMediaAction } from "@/lib/actions/media";
 import type { AuthState } from "@/lib/actions/auth";
@@ -40,7 +40,24 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
   const [files, setFiles] = useState(initialFiles);
   const [activeTab, setActiveTab] = useState("All Files");
   const [uploading, setUploading] = useState(false);
+  const [previewFile, setPreviewFile] = useState<MediaRow | null>(null);
+  const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const closePreview = useCallback(() => { setPreviewFile(null); setCopied(false); }, []);
+
+  useEffect(() => {
+    if (!previewFile) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") closePreview(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [previewFile, closePreview]);
+
+  function copyUrl(url: string) {
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
   const [, createAction] = useActionState(createMediaFileAction, {} as AuthState);
   const [, deleteAction] = useActionState(deleteMediaAction, {} as AuthState);
 
@@ -150,7 +167,10 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
           const Icon = typeIcons[file.type] || FileText;
           return (
             <div key={file.id} className="rounded-lg border border-border overflow-hidden hover:border-accent-dim transition-colors group">
-              <div className="h-[140px] bg-bg-elevated flex items-center justify-center rounded-t relative">
+              <div
+                className="h-[140px] bg-bg-elevated flex items-center justify-center rounded-t relative cursor-pointer"
+                onClick={() => setPreviewFile(file)}
+              >
                 {file.type === "image" ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={file.url} alt={file.name} className="w-full h-full object-cover" />
@@ -178,6 +198,63 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
+      {previewFile && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={closePreview}
+        >
+          <div
+            className="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={closePreview}
+              className="absolute -top-2 -right-2 z-10 rounded-full bg-bg-card border border-border p-1.5 text-text-muted hover:text-text-primary transition-colors"
+            >
+              <X size={16} />
+            </button>
+
+            {/* Image preview */}
+            {previewFile.type === "image" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={previewFile.url}
+                alt={previewFile.name}
+                className="max-w-[85vw] max-h-[75vh] object-contain rounded-lg"
+              />
+            ) : (
+              <div className="w-[400px] h-[300px] bg-bg-elevated rounded-lg flex items-center justify-center">
+                {(() => { const Icon = typeIcons[previewFile.type] || FileText; return <Icon className="h-16 w-16 text-text-muted" />; })()}
+              </div>
+            )}
+
+            {/* Info bar */}
+            <div className="flex items-center gap-3 bg-bg-card border border-border rounded-lg px-4 py-2.5">
+              <p className="font-sans text-[12px] text-text-primary truncate max-w-[300px]">{previewFile.name}</p>
+              <span className="font-mono text-[10px] text-text-muted">{formatSize(previewFile.size)}</span>
+              <button
+                onClick={() => copyUrl(previewFile.url)}
+                className="inline-flex items-center gap-1 font-sans text-[11px] text-accent hover:text-text-primary transition-colors"
+              >
+                {copied ? <Check size={12} /> : <Copy size={12} />}
+                {copied ? "Copied" : "Copy URL"}
+              </button>
+              <a
+                href={previewFile.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-sans text-[11px] text-accent hover:text-text-primary transition-colors"
+              >
+                <ExternalLink size={12} />
+                Open
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
