@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const STYLE_SUFFIX = "Cinematic fine art photograph. Color grading: warm gold (#C9A962), honey amber (#C8944A), deep navy (#0B0E13), ivory (#F5EED8), steel blue (#A8B4C8). Human subject with realistic face and natural skin. No text, no watermarks, no color swatches. Fill entire frame. Poetic, hopeful mood.";
+const STYLE_SUFFIX = "Minimalist ink and watercolor drawing. Limited palette: navy (#0B0E13), gold (#C9A962), amber (#C8944A), steel blue (#A8B4C8), ivory (#F5EED8). Human figure with expressive ink strokes. No text, no watermarks, no color swatches. Fill entire frame. Poetic, minimal.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available
