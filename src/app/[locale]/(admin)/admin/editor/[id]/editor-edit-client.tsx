@@ -113,12 +113,12 @@ export function EditorEditClient({ content }: { content: ContentData }) {
     }
   }
 
-  const IMAGE_RULES = "CRITICAL RULES: Style MUST be photorealistic — like a real photograph taken with a high-end DSLR camera. NOT illustration, NOT painting, NOT animation, NOT digital art, NOT cartoon, NOT 3D render. The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only. The scene MUST feature a real human figure (man or woman) as the focal point — never an empty landscape.";
+  const IMAGE_RULES = "CRITICAL RULES: Style MUST be photorealistic — like a real photograph taken with a high-end DSLR camera (Canon 5D, Sony A7). NOT illustration, NOT painting, NOT animation, NOT digital art, NOT cartoon, NOT 3D render. The human character must look completely real with natural skin texture, real hair, and believable proportions. The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only.";
 
   const defaultPrompts: Record<string, string> = {
-    Poetry: `Photorealistic cinematic photograph for a poem titled "{TITLE}". A real human figure in an evocative scene embodying the poem's emotion. {SUMMARY}. Shot on 35mm film, shallow depth of field, natural lighting, dark moody tones. Style: fine art photography by Gregory Crewdson or Annie Leibovitz. ${IMAGE_RULES}`,
-    Essay: `Photorealistic editorial photograph for an essay titled "{TITLE}". A real human figure in a conceptual scene reflecting the theme. {SUMMARY}. Clean composition, dramatic directional lighting, thought-provoking. Style: high-end magazine photography, National Geographic or Vogue editorial. ${IMAGE_RULES}`,
-    Research: `Photorealistic cinematic photograph for a research paper titled "{TITLE}". A real human figure interacting with the subject matter. {SUMMARY}. Sophisticated, modern composition. Style: documentary photography with artistic flair, dark palette with selective accent lighting. ${IMAGE_RULES}`,
+    Poetry: `Photorealistic cinematic photograph for a poem titled "{TITLE}". {SUMMARY}. Poetic and luminous atmosphere — soft golden hour light, gentle warmth, a quiet sense of hope. Not dark or gloomy. Shot on 35mm film, shallow depth of field, natural soft lighting. Style: fine art photography, intimate and emotionally stirring. ${IMAGE_RULES}`,
+    Essay: `Photorealistic editorial photograph for an essay titled "{TITLE}". {SUMMARY}. Warm, thoughtful atmosphere with natural light and a sense of quiet optimism. Clean composition, soft directional lighting. Style: high-end magazine photography, elegant and thought-provoking. ${IMAGE_RULES}`,
+    Research: `Photorealistic cinematic photograph for a research paper titled "{TITLE}". {SUMMARY}. Sophisticated, modern composition with warm tones and purposeful lighting. Style: documentary photography with poetic sensibility. ${IMAGE_RULES}`,
   };
 
   async function openPromptEditor() {
