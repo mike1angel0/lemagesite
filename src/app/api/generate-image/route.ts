@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const STYLE_SUFFIX = "Photorealistic photo, shot on Canon 5D Mark IV. No text, no labels, no watermarks, no color swatches. Fill entire frame edge-to-edge. Warm golden hour tones with navy and ivory accents. Human subject with detailed realistic face.";
+const STYLE_SUFFIX = "Cinematic fine art photograph. Color grading: warm gold (#C9A962), honey amber (#C8944A), deep navy (#0B0E13), ivory (#F5EED8), steel blue (#A8B4C8). Human subject with realistic face and natural skin. No text, no watermarks, no color swatches. Fill entire frame. Poetic, hopeful mood.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       prompt: fullPrompt,
       size: "1792x1024",
       quality: "hd",
-      style: "natural",
+      style: "vivid",
       n: 1,
     });
 
