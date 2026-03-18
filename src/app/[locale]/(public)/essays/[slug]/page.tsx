@@ -58,11 +58,15 @@ export default async function EssayDetailPage({
   const nextEssay = currentIndex < allEssays.length - 1 ? allEssays[currentIndex + 1] : null;
   const relatedEssays = await getRelatedEssays(slug, essay.category);
 
+  // Locale-aware title and body
+  const displayTitle = locale === "ro" && essay.titleRo ? essay.titleRo : essay.title;
+  const displayBody = locale === "ro" && essay.bodyRo ? essay.bodyRo : essay.body;
+
   // Generate TOC from markdown headings (## Heading)
   const headingRegex = /^#{1,3}\s+(.+)$/gm;
   const tocItems: { label: string; id: string }[] = [];
   let match;
-  while ((match = headingRegex.exec(essay.body)) !== null) {
+  while ((match = headingRegex.exec(displayBody)) !== null) {
     const label = match[1].trim();
     const id = label.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     tocItems.push({ label, id });
@@ -72,7 +76,7 @@ export default async function EssayDetailPage({
     ? new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(essay.publishedAt)
     : "";
 
-  const wordCount = essay.body.split(/\s+/).length;
+  const wordCount = displayBody.split(/\s+/).length;
 
   return (
     <>
@@ -114,7 +118,7 @@ export default async function EssayDetailPage({
         </span>
 
         <h1 className="font-serif text-3xl md:text-[44px] font-light text-text-primary mt-3 leading-[1.2] max-w-[800px]">
-          {essay.title}
+          {displayTitle}
         </h1>
 
         <div className="flex items-center gap-4 mt-4 font-mono text-[10px] text-text-muted tracking-[1px]">
@@ -159,7 +163,7 @@ export default async function EssayDetailPage({
 
           {/* Main Content */}
           <article className="flex-1 max-w-2xl">
-            <MarkdownBody content={essay.body} />
+            <MarkdownBody content={displayBody} />
           </article>
         </div>
 
@@ -181,9 +185,9 @@ export default async function EssayDetailPage({
         <div className="mt-6">
           <EssayActionBarNew
             essayId={essay.id}
-            title={essay.title}
+            title={displayTitle}
             excerpt={essay.excerpt ?? ""}
-            body={essay.body}
+            body={displayBody}
             category={essay.category ?? ""}
             readTime={essay.readTime ? `${essay.readTime} ${t("minRead").toLowerCase()}` : ""}
             bgImage={essay.thumbnail ?? undefined}

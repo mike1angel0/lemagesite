@@ -22,6 +22,9 @@ import {
   Eye,
   PenLine,
   Heading2,
+  Languages,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { updateContentAction } from "@/lib/actions/content";
 import type { AuthState } from "@/lib/actions/auth";
@@ -59,6 +62,9 @@ interface ContentData {
   coverImage?: string;
   readTime?: number;
   essayCategory?: string;
+  titleRo?: string | null;
+  bodyRo?: string | null;
+  language?: string | null;
   [key: string]: unknown;
 }
 
@@ -90,7 +96,47 @@ export function EditorEditClient({ content }: { content: ContentData }) {
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
+  // Translation state (Poetry & Essay)
+  const [titleRo, setTitleRo] = useState(content.titleRo || "");
+  const [bodyRo, setBodyRo] = useState(content.bodyRo || "");
+  const [translating, setTranslating] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(false);
+
   const isBusy = status === "saving";
+
+  const supportsTranslation = content.contentType === "Poem" || content.contentType === "Essay";
+
+  async function handleTranslate() {
+    if (!title.trim() && !body.trim()) return;
+    setTranslating(true);
+    setShowTranslation(true);
+    const ct = content.contentType === "Essay" ? "essay" : "poetry";
+    try {
+      const [titleRes, bodyRes] = await Promise.all([
+        title.trim()
+          ? fetch("/api/translate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: title, from: "en", to: "ro", field: "title", contentType: ct }),
+            }).then((r) => r.json())
+          : Promise.resolve({ translation: "" }),
+        body.trim()
+          ? fetch("/api/translate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: body, from: "en", to: "ro", field: "body", contentType: ct }),
+            }).then((r) => r.json())
+          : Promise.resolve({ translation: "" }),
+      ]);
+      setTitleRo(titleRes.translation || "");
+      setBodyRo(bodyRes.translation || "");
+    } catch {
+      setErrorMsg("Translation failed. Please try again.");
+      setStatus("error");
+    } finally {
+      setTranslating(false);
+    }
+  }
 
   async function handleFileUpload(
     file: File,
@@ -195,6 +241,8 @@ export function EditorEditClient({ content }: { content: ContentData }) {
 
     if (content.contentType === "Poem") {
       if (featuredImage) formData.set("coverImage", featuredImage);
+      if (titleRo) formData.set("titleRo", titleRo);
+      if (bodyRo) formData.set("bodyRo", bodyRo);
     } else if (content.contentType === "Research") {
       formData.set("abstract", abstract);
       formData.set("doi", doi);
@@ -204,6 +252,8 @@ export function EditorEditClient({ content }: { content: ContentData }) {
       formData.set("readTime", readTime);
       formData.set("essayCategory", essayCategory);
       if (featuredImage) formData.set("thumbnail", featuredImage);
+      if (titleRo) formData.set("titleRo", titleRo);
+      if (bodyRo) formData.set("bodyRo", bodyRo);
     } else if (content.contentType === "Photo") {
       formData.set("imageUrl", imageUrl || featuredImage);
     }
@@ -413,6 +463,66 @@ export function EditorEditClient({ content }: { content: ContentData }) {
                 <input type="text" placeholder="e.g. AI & Philosophy" value={essayCategory} onChange={(e) => setEssayCategory(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
               </div>
             </div>
+          )}
+
+          {/* Translation (Poetry & Essay) */}
+          {supportsTranslation && (
+            <>
+              <button
+                type="button"
+                onClick={handleTranslate}
+                disabled={translating || (!title.trim() && !body.trim())}
+                className="w-full h-[40px] border border-dashed border-accent-dim rounded flex items-center justify-center gap-2 cursor-pointer hover:bg-accent/10 transition-colors disabled:opacity-50"
+              >
+                {translating ? (
+                  <span className="font-sans text-xs text-accent">Translating...</span>
+                ) : (
+                  <>
+                    <Languages size={14} className="text-accent" />
+                    <span className="font-sans text-xs text-accent">
+                      {titleRo || bodyRo ? "Re-translate to Romanian" : "Translate to Romanian"}
+                    </span>
+                  </>
+                )}
+              </button>
+
+              {(titleRo || bodyRo) && (
+                <div className="border border-border rounded overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowTranslation(!showTranslation)}
+                    className="w-full flex items-center justify-between px-3 py-2 bg-bg-card hover:bg-bg-elevated transition-colors"
+                  >
+                    <span className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">
+                      Romanian Translation
+                    </span>
+                    {showTranslation ? <ChevronUp size={14} className="text-text-muted" /> : <ChevronDown size={14} className="text-text-muted" />}
+                  </button>
+                  {showTranslation && (
+                    <div className="p-3 flex flex-col gap-3">
+                      <div>
+                        <label className="font-mono text-[9px] uppercase tracking-[1px] text-text-muted mb-1 block">Title (RO)</label>
+                        <input
+                          type="text"
+                          value={titleRo}
+                          onChange={(e) => setTitleRo(e.target.value)}
+                          className="w-full border border-border bg-transparent rounded py-2 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim"
+                        />
+                      </div>
+                      <div>
+                        <label className="font-mono text-[9px] uppercase tracking-[1px] text-text-muted mb-1 block">Body (RO)</label>
+                        <textarea
+                          value={bodyRo}
+                          onChange={(e) => setBodyRo(e.target.value)}
+                          rows={8}
+                          className="w-full border border-border bg-transparent rounded py-2 px-3 text-text-primary font-mono text-xs leading-relaxed focus:outline-none focus:border-accent-dim resize-y"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
 
           {/* Photography-specific */}

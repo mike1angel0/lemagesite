@@ -47,10 +47,10 @@ export default async function EssaysPage() {
                 {(essay.category ?? "ESSAY").toUpperCase()} &middot; {essay.readTime ? `${essay.readTime} ${t("minRead")}` : ""}
               </span>
               <h3 className="font-serif text-[28px] text-text-primary leading-[1.2]">
-                {essay.title}
+                {locale === "ro" && essay.titleRo ? essay.titleRo : essay.title}
               </h3>
               <p className="font-sans text-[13px] text-text-secondary leading-[1.6] max-w-[600px]">
-                {essay.excerpt}
+                {locale === "ro" && essay.excerptRo ? essay.excerptRo : essay.excerpt}
               </p>
               <span className="font-sans text-[11px] text-text-muted">
                 {essay.publishedAt

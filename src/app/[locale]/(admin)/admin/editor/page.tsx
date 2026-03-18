@@ -87,7 +87,7 @@ export default function AdminEditorNewPage() {
   const [suggestingTags, setSuggestingTags] = useState(false);
   const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
 
-  // Translation state (Poetry only)
+  // Translation state (Poetry & Essay)
   const [language, setLanguage] = useState<"ro" | "en">("ro");
   const [titleTranslation, setTitleTranslation] = useState("");
   const [bodyTranslation, setBodyTranslation] = useState("");
@@ -202,20 +202,21 @@ export default function AdminEditorNewPage() {
     setTranslating(true);
     setShowTranslation(true);
     const targetLang = language === "ro" ? "en" : "ro";
+    const ct = category === "Essay" ? "essay" : "poetry";
     try {
       const [titleRes, bodyRes] = await Promise.all([
         title.trim()
           ? fetch("/api/translate", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ text: title, from: language, to: targetLang, field: "title" }),
+              body: JSON.stringify({ text: title, from: language, to: targetLang, field: "title", contentType: ct }),
             }).then((r) => r.json())
           : Promise.resolve({ translation: "" }),
         body.trim()
           ? fetch("/api/translate", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ text: body, from: language, to: targetLang, field: "body" }),
+              body: JSON.stringify({ text: body, from: language, to: targetLang, field: "body", contentType: ct }),
             }).then((r) => r.json())
           : Promise.resolve({ translation: "" }),
       ]);
@@ -276,6 +277,9 @@ export default function AdminEditorNewPage() {
       formData.set("readTime", readTime);
       formData.set("essayCategory", essayCategory);
       if (featuredImage) formData.set("thumbnail", featuredImage);
+      formData.set("language", language);
+      if (titleTranslation) formData.set("titleTranslation", titleTranslation);
+      if (bodyTranslation) formData.set("bodyTranslation", bodyTranslation);
       result = await saveEssayAction({} as AuthState, formData);
     } else if (category === "Music") {
       formData.set("duration", duration);
@@ -486,8 +490,8 @@ export default function AdminEditorNewPage() {
             )}
           </div>
 
-          {/* Poetry: Language & Translation */}
-          {category === "Poetry" && (
+          {/* Language & Translation (Poetry & Essay) */}
+          {(category === "Poetry" || category === "Essay") && (
             <>
               <div>
                 <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Original Language</label>

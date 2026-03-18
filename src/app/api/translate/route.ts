@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { auth } from "@/lib/auth";
 
-const SYSTEM_PROMPTS: Record<string, Record<string, string>> = {
+const POETRY_PROMPTS: Record<string, Record<string, string>> = {
   "en-ro": {
     title:
       "You are a literary translator specializing in Romanian poetry. Translate the given English title into Romanian. Be concise and preserve the poetic feel. Return only the translated title, nothing else.",
@@ -15,6 +15,19 @@ const SYSTEM_PROMPTS: Record<string, Record<string, string>> = {
   },
 };
 
+const ESSAY_PROMPTS: Record<string, Record<string, string>> = {
+  "en-ro": {
+    title:
+      "You are a professional literary translator. Translate the given English essay title into Romanian. Be natural and preserve the intellectual tone. Return only the translated title, nothing else.",
+    body: "You are a professional literary translator. Translate the given English essay into Romanian. Preserve paragraph structure, markdown formatting, headings, and the author's voice and style. Maintain intellectual nuance and cultural context. Return only the translated text, nothing else.",
+  },
+  "ro-en": {
+    title:
+      "You are a professional literary translator. Translate the given Romanian essay title into English. Be natural and preserve the intellectual tone. Return only the translated title, nothing else.",
+    body: "You are a professional literary translator. Translate the given Romanian essay into English. Preserve paragraph structure, markdown formatting, headings, and the author's voice and style. Maintain intellectual nuance and cultural context. Return only the translated text, nothing else.",
+  },
+};
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -22,14 +35,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { text, from, to, field } = await req.json();
+    const { text, from, to, field, contentType } = await req.json();
 
     if (!text?.trim()) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
     const direction = `${from}-${to}`;
-    const prompts = SYSTEM_PROMPTS[direction];
+    const promptSet = contentType === "essay" ? ESSAY_PROMPTS : POETRY_PROMPTS;
+    const prompts = promptSet[direction];
     if (!prompts) {
       return NextResponse.json({ error: "Invalid language pair" }, { status: 400 });
     }
@@ -44,7 +58,7 @@ export async function POST(req: NextRequest) {
         { role: "system", content: systemPrompt },
         { role: "user", content: text },
       ],
-      max_tokens: 2000,
+      max_tokens: contentType === "essay" ? 8000 : 2000,
       temperature: 0.7,
     });
 

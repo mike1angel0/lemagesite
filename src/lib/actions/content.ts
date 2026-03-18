@@ -199,8 +199,8 @@ export async function saveEssayAction(
   const admin = await requireAdmin();
   if (!admin) return { error: "Not authorized" };
 
-  const title = (formData.get("title") as string)?.trim();
-  const body = (formData.get("body") as string)?.trim();
+  const rawTitle = (formData.get("title") as string)?.trim();
+  const rawBody = (formData.get("body") as string)?.trim();
   const tier = (formData.get("tier") as string) || "Free";
   const tags = (formData.get("tags") as string)?.trim();
   const readTimeStr = formData.get("readTime") as string;
@@ -208,9 +208,30 @@ export async function saveEssayAction(
   const thumbnail = (formData.get("thumbnail") as string)?.trim();
   const publish = formData.get("publish") === "true";
   const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
+  const language = (formData.get("language") as string)?.trim() || "en";
+  const titleTranslation = (formData.get("titleTranslation") as string)?.trim();
+  const bodyTranslation = (formData.get("bodyTranslation") as string)?.trim();
 
-  if (!title) return { error: "Title is required" };
-  if (!body) return { error: "Body is required" };
+  if (!rawTitle) return { error: "Title is required" };
+  if (!rawBody) return { error: "Body is required" };
+
+  // Schema: title/body = EN, titleRo/bodyRo = RO
+  let title: string;
+  let body: string;
+  let titleRo: string | null = null;
+  let bodyRo: string | null = null;
+
+  if (language === "ro") {
+    titleRo = rawTitle;
+    bodyRo = rawBody;
+    title = titleTranslation || rawTitle;
+    body = bodyTranslation || rawBody;
+  } else {
+    title = rawTitle;
+    body = rawBody;
+    titleRo = titleTranslation || null;
+    bodyRo = bodyTranslation || null;
+  }
 
   const slug = slugify(title);
   const existing = await prisma.essay.findUnique({ where: { slug } });
@@ -221,6 +242,8 @@ export async function saveEssayAction(
       title,
       slug,
       body,
+      titleRo,
+      bodyRo,
       category: essayCategory || tags || null,
       readTime: readTimeStr ? parseInt(readTimeStr) : null,
       thumbnail: thumbnail || null,
@@ -307,12 +330,16 @@ export async function updateContentAction(
   if (!title) return { error: "Title is required" };
 
   switch (contentType) {
-    case "Poem":
+    case "Poem": {
+      const poemTitleRo = (formData.get("titleRo") as string)?.trim();
+      const poemBodyRo = (formData.get("bodyRo") as string)?.trim();
       await prisma.poem.update({
         where: { id },
         data: {
           title,
           body: body || "",
+          titleRo: poemTitleRo || undefined,
+          bodyRo: poemBodyRo || undefined,
           collection: tags || null,
           coverImage: (formData.get("coverImage") as string) || undefined,
           accessTier: tierMap[tier] || "FREE",
@@ -320,6 +347,7 @@ export async function updateContentAction(
         },
       });
       break;
+    }
     case "Photo":
       await prisma.photo.update({
         where: { id },
@@ -335,11 +363,15 @@ export async function updateContentAction(
     case "Essay": {
       const essayCategory = (formData.get("essayCategory") as string)?.trim();
       const readTimeStr = formData.get("readTime") as string;
+      const essayTitleRo = (formData.get("titleRo") as string)?.trim();
+      const essayBodyRo = (formData.get("bodyRo") as string)?.trim();
       await prisma.essay.update({
         where: { id },
         data: {
           title,
           body: body || "",
+          titleRo: essayTitleRo || undefined,
+          bodyRo: essayBodyRo || undefined,
           category: essayCategory || tags || null,
           readTime: readTimeStr ? parseInt(readTimeStr) : undefined,
           thumbnail: (formData.get("thumbnail") as string) || undefined,
