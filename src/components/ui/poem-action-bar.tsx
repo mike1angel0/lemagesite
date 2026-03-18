@@ -223,19 +223,8 @@ function renderPoemImage(
       contentStartY = dividerY + 40;
     }
   } else {
-    // ── Pages 2+: compact header with small title + page number ──
-    const compactTitleSize = isStory ? 28 : 24;
-    ctx.font = `300 ${compactTitleSize}px "Cormorant Garamond", Georgia, serif`;
-    ctx.fillStyle = "rgba(245, 238, 216, 0.6)";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const compactY = isStory ? 70 : 55;
-    ctx.fillText(`${title}  ·  ${currentPage + 1} / ${totalPages}`, w / 2, compactY, contentWidth);
-
-    const dividerY = compactY + 24;
-    drawGoldDivider(ctx, w / 2, dividerY, 40);
-
-    contentStartY = dividerY + 28;
+    // ── Pages 2+: no header, just start content with some top padding ──
+    contentStartY = isStory ? 100 : 80;
   }
 
   // ── Stanzas ──
