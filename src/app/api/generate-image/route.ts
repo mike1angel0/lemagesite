@@ -4,11 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const PROMPTS: Record<string, string> = {
-  poem: "Create an atmospheric, artistic illustration for a poem about: {CONTENT}. Dark, moody aesthetic with deep blues and golds.",
-  essay: "Create a conceptual editorial illustration for an essay about: {CONTENT}. Sophisticated, minimal, dark tones.",
-  research: "Create an abstract scientific visualization for a paper about: {CONTENT}. Academic, modern, dark palette.",
-};
+const STYLE_SUFFIX = "CRITICAL: Fill the ENTIRE canvas edge-to-edge. No text, no letters, no labels, no watermarks, no color palettes or swatches. Single cohesive scene only.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available
@@ -32,11 +28,14 @@ export async function POST(req: NextRequest) {
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+    // Append style rules to ensure consistent output
+    const fullPrompt = prompt.includes("CRITICAL") ? prompt : `${prompt}\n\n${STYLE_SUFFIX}`;
+
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt,
+      prompt: fullPrompt,
       size: "1792x1024",
-      quality: "standard",
+      quality: "hd",
       n: 1,
     });
 

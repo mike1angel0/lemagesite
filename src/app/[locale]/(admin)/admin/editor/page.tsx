@@ -117,12 +117,12 @@ export default function AdminEditorNewPage() {
     }
   }
 
-  const SITE_COLORS = "Use a color palette inspired by: deep navy (#0B0E13), muted steel blue (#A8B4C8), warm gold (#C9A962), honey (#C8944A), and warm ivory (#F5EED8). The overall mood should be dark and atmospheric.";
+  const IMAGE_RULES = "CRITICAL RULES: The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only.";
 
   const defaultPrompts: Record<string, string> = {
-    Poetry: `Create an atmospheric, artistic illustration for a poem titled "{TITLE}".\n\n{SUMMARY}\n\n${SITE_COLORS}`,
-    Essay: `Create a conceptual editorial illustration for an essay titled "{TITLE}".\n\n{SUMMARY}\n\n${SITE_COLORS}`,
-    Research: `Create an abstract scientific visualization for a research paper titled "{TITLE}".\n\n{SUMMARY}\n\n${SITE_COLORS}`,
+    Poetry: `Evocative, minimal, atmospheric photograph or painting for a poem titled "{TITLE}". Capture the emotional essence: {SUMMARY}. Dark moody tones, cinematic lighting, strong visual metaphor. Think editorial art photography — intimate, haunting, shareable. ${IMAGE_RULES}`,
+    Essay: `Bold, minimal editorial illustration for an essay titled "{TITLE}". Core theme: {SUMMARY}. Clean composition, dramatic lighting, conceptual and thought-provoking. Modern magazine cover aesthetic — striking, scroll-stopping. ${IMAGE_RULES}`,
+    Research: `Abstract, elegant visualization for a research paper titled "{TITLE}". Subject: {SUMMARY}. Sophisticated, modern, minimal — like a premium journal cover. Dark palette with selective accent color. ${IMAGE_RULES}`,
   };
 
   const [summarizing, setSummarizing] = useState(false);

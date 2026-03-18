@@ -46,7 +46,7 @@ export async function POST() {
       const genRes = await fetch(`${process.env.NEXTAUTH_URL || ""}/api/generate-image`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: `Atmospheric illustration for "${item.title}". Dark color palette with deep navy, muted steel blue, warm gold, and warm ivory tones.` }),
+        body: JSON.stringify({ prompt: `Evocative, minimal, atmospheric image for "${item.title}". Dark moody tones, cinematic lighting, strong visual metaphor. Editorial art photography aesthetic — intimate, haunting, shareable.` }),
       });
 
       if (!genRes.ok) {
