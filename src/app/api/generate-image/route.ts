@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const STYLE_SUFFIX = "CRITICAL: Style MUST be photorealistic like a real DSLR photograph — NOT illustration, NOT painting, NOT animation, NOT digital art. Human characters must look completely real. Fill the ENTIRE canvas edge-to-edge. No text, no labels, no watermarks. Do NOT render color palettes or swatches as separate graphics — only use colors naturally in the scene. Use this chromatic range naturally: deep navy, muted steel blue, warm gold, honey amber, warm ivory. Poetic atmosphere with soft warm light and quiet optimism.";
+const STYLE_SUFFIX = "Photorealistic photo, shot on Canon 5D Mark IV. No text, no labels, no watermarks, no color swatches. Fill entire frame edge-to-edge. Warm golden hour tones with navy and ivory accents. Human subject with detailed realistic face.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
       prompt: fullPrompt,
       size: "1792x1024",
       quality: "hd",
+      style: "natural",
       n: 1,
     });
 

@@ -113,14 +113,10 @@ export function EditorEditClient({ content }: { content: ContentData }) {
     }
   }
 
-  const IMAGE_RULES = "CRITICAL RULES: Style MUST be photorealistic — like a real photograph taken with a high-end DSLR camera (Canon 5D, Sony A7). NOT illustration, NOT painting, NOT animation, NOT digital art, NOT cartoon, NOT 3D render. The human character must look completely real with natural skin texture, real hair, and believable proportions. The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, color swatches, or design reference elements as separate items — only use the colors naturally within the scene. Output a single cohesive scene only.";
-
-  const SITE_PALETTE = "Color palette must match this chromatic range: deep navy (#0B0E13), muted steel blue (#A8B4C8), warm gold (#C9A962), honey amber (#C8944A), and warm ivory (#F5EED8). These colors should appear naturally in the scene — in clothing, light, environment, or atmosphere — not as a separate palette graphic.";
-
   const defaultPrompts: Record<string, string> = {
-    Poetry: `Photorealistic cinematic photograph for a poem titled "{TITLE}". {SUMMARY}. Poetic and luminous atmosphere — soft golden hour light with warm gold and honey tones, gentle warmth, a quiet sense of hope. Not completely dark or gloomy. Shot on 35mm film, shallow depth of field, natural soft lighting. Style: fine art photography, intimate and emotionally stirring. ${SITE_PALETTE} ${IMAGE_RULES}`,
-    Essay: `Photorealistic editorial photograph for an essay titled "{TITLE}". {SUMMARY}. Warm, thoughtful atmosphere with natural light and a sense of quiet optimism. Clean composition, soft directional lighting with golden and ivory warmth. Style: high-end magazine photography, elegant and thought-provoking. ${SITE_PALETTE} ${IMAGE_RULES}`,
-    Research: `Photorealistic cinematic photograph for a research paper titled "{TITLE}". {SUMMARY}. Sophisticated, modern composition with warm tones and purposeful lighting. Deep navy and steel blue undertones with gold accent light. Style: documentary photography with poetic sensibility. ${SITE_PALETTE} ${IMAGE_RULES}`,
+    Poetry: `Photo, shot on Canon 5D Mark IV, 85mm f/1.4 lens. "{TITLE}" — {SUMMARY}. Golden hour warm light filtering through the scene. Tones: warm gold, honey amber, deep navy shadows, ivory highlights. The human subject has a highly detailed realistic face with visible skin pores and natural imperfections. Poetic, intimate, hopeful mood. No text, no labels, no watermarks, no color swatches. Fill entire frame.`,
+    Essay: `Photo, shot on Sony A7III, 50mm f/1.8 lens. "{TITLE}" — {SUMMARY}. Soft warm directional light with golden and ivory tones. Deep navy and steel blue in shadows. The human subject has a highly detailed realistic face with natural skin texture. Thoughtful, elegant, editorial mood. No text, no labels, no watermarks, no color swatches. Fill entire frame.`,
+    Research: `Photo, shot on Canon 5D Mark IV, 35mm f/2 lens. "{TITLE}" — {SUMMARY}. Warm amber accent lighting against deep navy tones. Ivory and gold highlights. The human subject has a highly detailed realistic face. Sophisticated, contemplative mood. No text, no labels, no watermarks, no color swatches. Fill entire frame.`,
   };
 
   async function openPromptEditor() {
