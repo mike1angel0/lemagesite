@@ -50,11 +50,17 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await imageResponse.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Cloudinary for permanent storage (OpenAI URLs expire in ~2 hours)
+    // Upload to Cloudinary — trim white borders and fill to exact dimensions
     const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
-          { folder: "selenarium/ai-generated" },
+          {
+            folder: "selenarium/ai-generated",
+            transformation: [
+              { effect: "trim:20" },                    // auto-trim white/near-white borders (20 color tolerance)
+              { width: 1792, height: 1024, crop: "fill", gravity: "auto" }, // fill back to exact dimensions
+            ],
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result as Record<string, unknown>);
