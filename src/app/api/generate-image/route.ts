@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const STYLE_SUFFIX = "CRITICAL: Style MUST be photorealistic like a real DSLR photograph — NOT illustration, NOT painting, NOT animation, NOT digital art. Human characters must look completely real with natural skin, real hair, believable proportions. Fill the ENTIRE canvas edge-to-edge. No text, no labels, no watermarks, no color palettes. Poetic atmosphere with soft warm light and quiet optimism — not dark or gloomy.";
+const STYLE_SUFFIX = "CRITICAL: Style MUST be photorealistic like a real DSLR photograph — NOT illustration, NOT painting, NOT animation, NOT digital art. Human characters must look completely real. Fill the ENTIRE canvas edge-to-edge. No text, no labels, no watermarks. Do NOT render color palettes or swatches as separate graphics — only use colors naturally in the scene. Use this chromatic range naturally: deep navy, muted steel blue, warm gold, honey amber, warm ivory. Poetic atmosphere with soft warm light and quiet optimism.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available
