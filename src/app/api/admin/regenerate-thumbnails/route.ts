@@ -46,7 +46,7 @@ export async function POST() {
       const genRes = await fetch(`${process.env.NEXTAUTH_URL || ""}/api/generate-image`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: `Evocative, minimal, atmospheric image for "${item.title}". Dark moody tones, cinematic lighting, strong visual metaphor. Editorial art photography aesthetic — intimate, haunting, shareable.` }),
+        body: JSON.stringify({ prompt: `Cute, playful ink and watercolor illustration for "${item.title}". Whimsical, warm drawing with soft washes of color. Abstract metaphoric human silhouette — faceless, dissolving into nature or light. Playful details: floating petals, tiny stars, gentle light rays. Warm palette: honey gold (#C9A962), soft amber (#C8944A), ivory (#F5EED8) dominant, steel blue (#A8B4C8) and navy (#0B0E13) for accents. Bright and uplifting. CRITICAL: Fill the ENTIRE frame edge-to-edge, no white space, no margins, no borders. No text, no watermarks, no color swatches.` }),
       });
 
       if (!genRes.ok) {
