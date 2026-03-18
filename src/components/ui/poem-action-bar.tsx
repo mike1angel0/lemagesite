@@ -43,52 +43,33 @@ const MAX_LINES_PER_PAGE: Record<"square" | "story", number> = {
 };
 
 /**
- * Split stanzas into pages based on both stanza count and line count limits.
- * Handles poems that are one big block or have very long stanzas.
+ * Split stanzas into pages based on line count limits.
+ * Handles poems that are one big block, have very long stanzas,
+ * or use different line-ending formats.
  */
 function paginateStanzas(stanzas: string[], format: "square" | "story"): string[][] {
-  const maxStanzas = STANZAS_PER_PAGE[format];
   const maxLines = MAX_LINES_PER_PAGE[format];
 
-  const pages: string[][] = [];
-  let currentPage: string[] = [];
-  let currentLineCount = 0;
-
-  for (const stanza of stanzas) {
-    const stanzaLines = stanza.split("\n").length;
-
-    // If a single stanza exceeds max lines, split it by lines
-    if (stanzaLines > maxLines) {
-      // Flush current page if it has content
-      if (currentPage.length > 0) {
-        pages.push(currentPage);
-        currentPage = [];
-        currentLineCount = 0;
-      }
-      // Split the large stanza into chunks
-      const lines = stanza.split("\n");
-      for (let i = 0; i < lines.length; i += maxLines) {
-        pages.push([lines.slice(i, i + maxLines).join("\n")]);
-      }
-      continue;
+  // First, normalize: collect all lines with stanza break markers
+  const allLines: string[] = [];
+  for (let s = 0; s < stanzas.length; s++) {
+    if (s > 0) allLines.push(""); // blank line between stanzas
+    const lines = stanzas[s].split("\n");
+    for (const line of lines) {
+      allLines.push(line);
     }
-
-    // Check if adding this stanza would exceed limits
-    const wouldExceedStanzas = currentPage.length >= maxStanzas;
-    const wouldExceedLines = currentLineCount + stanzaLines + (currentPage.length > 0 ? 1 : 0) > maxLines;
-
-    if (currentPage.length > 0 && (wouldExceedStanzas || wouldExceedLines)) {
-      pages.push(currentPage);
-      currentPage = [];
-      currentLineCount = 0;
-    }
-
-    currentPage.push(stanza);
-    currentLineCount += stanzaLines + (currentPage.length > 1 ? 1 : 0); // +1 for gap between stanzas
   }
 
-  if (currentPage.length > 0) {
-    pages.push(currentPage);
+  // Now paginate by line count
+  const pages: string[][] = [];
+  for (let i = 0; i < allLines.length; i += maxLines) {
+    const chunk = allLines.slice(i, i + maxLines);
+    // Trim leading/trailing blank lines from each page
+    while (chunk.length > 0 && chunk[0].trim() === "") chunk.shift();
+    while (chunk.length > 0 && chunk[chunk.length - 1].trim() === "") chunk.pop();
+    if (chunk.length > 0) {
+      pages.push([chunk.join("\n")]);
+    }
   }
 
   return pages.length > 0 ? pages : [stanzas];

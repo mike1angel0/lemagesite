@@ -57,7 +57,7 @@ export function PoemDetailClient({
   const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
   const displayBody = locale === "ro" && poem.bodyRo ? poem.bodyRo : poem.body;
 
-  const stanzas = displayBody.split("\n\n").filter(Boolean);
+  const stanzas = displayBody.split(/\n\s*\n/).filter(Boolean);
   const userTier = (session?.user as unknown as Record<string, unknown>)?.tier as string | undefined;
   const canAccess = hasAccess(userTier, poem.accessTier);
 
