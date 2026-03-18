@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const STYLE_SUFFIX = "CRITICAL: Fill the ENTIRE canvas edge-to-edge. No text, no letters, no labels, no watermarks, no color palettes or swatches. Single cohesive scene only. Must feature a human figure (man or woman) as focal point.";
+const STYLE_SUFFIX = "CRITICAL: Style MUST be photorealistic like a real DSLR photograph — NOT illustration, NOT painting, NOT animation, NOT digital art. Fill the ENTIRE canvas edge-to-edge. No text, no labels, no watermarks, no color palettes. Must feature a real human figure as focal point.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available

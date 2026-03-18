@@ -117,12 +117,12 @@ export default function AdminEditorNewPage() {
     }
   }
 
-  const IMAGE_RULES = "CRITICAL RULES: The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only. The scene MUST feature a human figure (man or woman) as the focal point or prominent element — never an empty landscape.";
+  const IMAGE_RULES = "CRITICAL RULES: Style MUST be photorealistic — like a real photograph taken with a high-end DSLR camera. NOT illustration, NOT painting, NOT animation, NOT digital art, NOT cartoon, NOT 3D render. The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only. The scene MUST feature a real human figure (man or woman) as the focal point — never an empty landscape.";
 
   const defaultPrompts: Record<string, string> = {
-    Poetry: `Evocative, minimal, atmospheric photograph or painting for a poem titled "{TITLE}". Feature a solitary human figure embodying the poem's emotion. Capture the emotional essence: {SUMMARY}. Dark moody tones, cinematic lighting, strong visual metaphor. Think editorial art photography — intimate, haunting, shareable. ${IMAGE_RULES}`,
-    Essay: `Bold, minimal editorial illustration for an essay titled "{TITLE}". Feature a human figure in a conceptual scene reflecting the theme. Core theme: {SUMMARY}. Clean composition, dramatic lighting, thought-provoking. Modern magazine cover aesthetic — striking, scroll-stopping. ${IMAGE_RULES}`,
-    Research: `Abstract, elegant visualization for a research paper titled "{TITLE}". Include a human figure interacting with or surrounded by the subject matter. Subject: {SUMMARY}. Sophisticated, modern, minimal — like a premium journal cover. Dark palette with selective accent color. ${IMAGE_RULES}`,
+    Poetry: `Photorealistic cinematic photograph for a poem titled "{TITLE}". A real human figure in an evocative scene embodying the poem's emotion. {SUMMARY}. Shot on 35mm film, shallow depth of field, natural lighting, dark moody tones. Style: fine art photography by Gregory Crewdson or Annie Leibovitz. ${IMAGE_RULES}`,
+    Essay: `Photorealistic editorial photograph for an essay titled "{TITLE}". A real human figure in a conceptual scene reflecting the theme. {SUMMARY}. Clean composition, dramatic directional lighting, thought-provoking. Style: high-end magazine photography, National Geographic or Vogue editorial. ${IMAGE_RULES}`,
+    Research: `Photorealistic cinematic photograph for a research paper titled "{TITLE}". A real human figure interacting with the subject matter. {SUMMARY}. Sophisticated, modern composition. Style: documentary photography with artistic flair, dark palette with selective accent lighting. ${IMAGE_RULES}`,
   };
 
   const [summarizing, setSummarizing] = useState(false);
