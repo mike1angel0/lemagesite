@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const STYLE_SUFFIX = "Minimalist ink and watercolor drawing. Limited palette: navy (#0B0E13), gold (#C9A962), amber (#C8944A), steel blue (#A8B4C8), ivory (#F5EED8). Human figure with expressive ink strokes. No text, no watermarks, no color swatches. Fill entire frame. Poetic, minimal.";
+const STYLE_SUFFIX = "Minimalist ink and watercolor drawing. Abstract metaphoric human silhouette, not a realistic face. Limited palette: navy (#0B0E13), gold (#C9A962), amber (#C8944A), steel blue (#A8B4C8), ivory (#F5EED8). No text, no watermarks, no color swatches. Fill entire frame. Poetic, minimal.";
 
 export async function POST(req: NextRequest) {
   // Configure inside handler to ensure env vars are available

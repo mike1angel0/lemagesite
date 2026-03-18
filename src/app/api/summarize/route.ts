@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   default:
-    "You summarize text for photorealistic image generation prompts. Given the full text of a creative work, produce a response with TWO parts:\n1. SCENE (2-3 sentences): The core themes, mood, and imagery. Focus on visual elements and emotional tone. Be concise and evocative.\n2. CHARACTER (1 sentence): Describe a specific human character that fits the work — specify gender (man or woman), approximate age, appearance details (hair, clothing, expression, posture). Make the character feel real and specific, not generic. Example: 'A woman in her 30s with dark windswept hair, wearing a loose linen dress, eyes closed, face tilted upward with a serene expression.'\n\nFormat your response as: [scene description]. Character: [character description].",
+    "You summarize text for minimalist illustration prompts. Given the full text of a creative work, produce a 2-3 sentence summary capturing the core visual metaphors, emotional atmosphere, and symbolic imagery. Focus on abstract, poetic elements — what shapes, silhouettes, natural forms, or symbolic objects could represent the work's essence. Be evocative and metaphoric, not literal.",
   instagram:
     "You write compelling Instagram carousel text for essays and articles. Given the full text, write a 3-4 sentence teaser that hooks readers and makes them want to read the full piece. Write in a thought-provoking, slightly provocative tone. Don't use hashtags or emojis. Don't start with a question. Be intellectual but accessible. The text will appear on a dark, elegant image slide.",
 };
