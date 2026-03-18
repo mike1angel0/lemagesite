@@ -113,12 +113,12 @@ export function EditorEditClient({ content }: { content: ContentData }) {
     }
   }
 
-  const IMAGE_RULES = "CRITICAL RULES: The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only.";
+  const IMAGE_RULES = "CRITICAL RULES: The image MUST fill the ENTIRE canvas edge-to-edge — no borders, margins, or empty space. Do NOT include any text, words, letters, labels, titles, watermarks, or typography. Do NOT show color palettes, swatches, or design reference elements. Output a single cohesive scene only. The scene MUST feature a human figure (man or woman) as the focal point or prominent element — never an empty landscape.";
 
   const defaultPrompts: Record<string, string> = {
-    Poetry: `Evocative, minimal, atmospheric photograph or painting for a poem titled "{TITLE}". Capture the emotional essence: {SUMMARY}. Dark moody tones, cinematic lighting, strong visual metaphor. Think editorial art photography — intimate, haunting, shareable. ${IMAGE_RULES}`,
-    Essay: `Bold, minimal editorial illustration for an essay titled "{TITLE}". Core theme: {SUMMARY}. Clean composition, dramatic lighting, conceptual and thought-provoking. Modern magazine cover aesthetic — striking, scroll-stopping. ${IMAGE_RULES}`,
-    Research: `Abstract, elegant visualization for a research paper titled "{TITLE}". Subject: {SUMMARY}. Sophisticated, modern, minimal — like a premium journal cover. Dark palette with selective accent color. ${IMAGE_RULES}`,
+    Poetry: `Evocative, minimal, atmospheric photograph or painting for a poem titled "{TITLE}". Feature a solitary human figure embodying the poem's emotion. Capture the emotional essence: {SUMMARY}. Dark moody tones, cinematic lighting, strong visual metaphor. Think editorial art photography — intimate, haunting, shareable. ${IMAGE_RULES}`,
+    Essay: `Bold, minimal editorial illustration for an essay titled "{TITLE}". Feature a human figure in a conceptual scene reflecting the theme. Core theme: {SUMMARY}. Clean composition, dramatic lighting, thought-provoking. Modern magazine cover aesthetic — striking, scroll-stopping. ${IMAGE_RULES}`,
+    Research: `Abstract, elegant visualization for a research paper titled "{TITLE}". Include a human figure interacting with or surrounded by the subject matter. Subject: {SUMMARY}. Sophisticated, modern, minimal — like a premium journal cover. Dark palette with selective accent color. ${IMAGE_RULES}`,
   };
 
   async function openPromptEditor() {
