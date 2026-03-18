@@ -36,6 +36,64 @@ const STANZAS_PER_PAGE: Record<"square" | "story", number> = {
   story: 4,
 };
 
+// Max lines per page (including blank lines between stanzas)
+const MAX_LINES_PER_PAGE: Record<"square" | "story", number> = {
+  square: 10,
+  story: 18,
+};
+
+/**
+ * Split stanzas into pages based on both stanza count and line count limits.
+ * Handles poems that are one big block or have very long stanzas.
+ */
+function paginateStanzas(stanzas: string[], format: "square" | "story"): string[][] {
+  const maxStanzas = STANZAS_PER_PAGE[format];
+  const maxLines = MAX_LINES_PER_PAGE[format];
+
+  const pages: string[][] = [];
+  let currentPage: string[] = [];
+  let currentLineCount = 0;
+
+  for (const stanza of stanzas) {
+    const stanzaLines = stanza.split("\n").length;
+
+    // If a single stanza exceeds max lines, split it by lines
+    if (stanzaLines > maxLines) {
+      // Flush current page if it has content
+      if (currentPage.length > 0) {
+        pages.push(currentPage);
+        currentPage = [];
+        currentLineCount = 0;
+      }
+      // Split the large stanza into chunks
+      const lines = stanza.split("\n");
+      for (let i = 0; i < lines.length; i += maxLines) {
+        pages.push([lines.slice(i, i + maxLines).join("\n")]);
+      }
+      continue;
+    }
+
+    // Check if adding this stanza would exceed limits
+    const wouldExceedStanzas = currentPage.length >= maxStanzas;
+    const wouldExceedLines = currentLineCount + stanzaLines + (currentPage.length > 0 ? 1 : 0) > maxLines;
+
+    if (currentPage.length > 0 && (wouldExceedStanzas || wouldExceedLines)) {
+      pages.push(currentPage);
+      currentPage = [];
+      currentLineCount = 0;
+    }
+
+    currentPage.push(stanza);
+    currentLineCount += stanzaLines + (currentPage.length > 1 ? 1 : 0); // +1 for gap between stanzas
+  }
+
+  if (currentPage.length > 0) {
+    pages.push(currentPage);
+  }
+
+  return pages.length > 0 ? pages : [stanzas];
+}
+
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -328,8 +386,8 @@ export function PoemActionBar({
       setGeneratingImage({ platform, format });
       try {
         await ensureFontsLoaded();
-        const perPage = STANZAS_PER_PAGE[format];
-        const totalPages = Math.max(1, Math.ceil(stanzas.length / perPage));
+        const pages = paginateStanzas(stanzas, format);
+        const totalPages = pages.length;
 
         const [coverImg, logoImg] = await Promise.all([
           coverImage ? loadImageSafe(coverImage).catch(() => null) : Promise.resolve(null),
@@ -343,7 +401,7 @@ export function PoemActionBar({
         const totalWithCta = totalPages + 1; // +1 for CTA page
         const blobs: { blob: Blob; filename: string }[] = [];
         for (let page = 0; page < totalPages; page++) {
-          const pageStanzas = stanzas.slice(page * perPage, (page + 1) * perPage);
+          const pageStanzas = pages[page];
           renderPoemImage(canvas, null, coverImg, logoImg, title, pageStanzas, format, page, totalPages);
           const blob = await canvasToBlob(canvas);
           blobs.push({ blob, filename: `${slug}-${prefix}-${format}-${page + 1}.png` });
