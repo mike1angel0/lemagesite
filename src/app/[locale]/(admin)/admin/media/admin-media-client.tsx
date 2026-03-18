@@ -21,6 +21,14 @@ const typeIcons: Record<string, typeof ImageIcon> = {
   video: Film,
 };
 
+/** Normalize type — handles both short ("image") and MIME ("image/png") formats */
+function getCategory(type: string): string {
+  if (type.startsWith("image")) return "image";
+  if (type.startsWith("audio")) return "audio";
+  if (type.startsWith("video")) return "video";
+  return type;
+}
+
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -63,7 +71,7 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
 
   const filtered = files.filter((f) => {
     if (activeTab === "All Files") return true;
-    return f.type === typeFilter[activeTab];
+    return getCategory(f.type) === typeFilter[activeTab];
   });
 
   async function handleUpload(file: File) {
@@ -164,14 +172,15 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
       {/* Media Grid */}
       <div className="grid grid-cols-4 gap-4 px-8 mt-4 pb-8">
         {filtered.map((file) => {
-          const Icon = typeIcons[file.type] || FileText;
+          const cat = getCategory(file.type);
+          const Icon = typeIcons[cat] || FileText;
           return (
             <div key={file.id} className="rounded-lg border border-border overflow-hidden hover:border-accent-dim transition-colors group">
               <div
                 className="h-[140px] bg-bg-elevated flex items-center justify-center rounded-t relative cursor-pointer"
                 onClick={() => setPreviewFile(file)}
               >
-                {file.type === "image" ? (
+                {cat === "image" ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={file.url} alt={file.name} className="w-full h-full object-cover" />
                 ) : (
@@ -218,7 +227,7 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
             </button>
 
             {/* Image preview */}
-            {previewFile.type === "image" ? (
+            {getCategory(previewFile.type) === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={previewFile.url}
@@ -227,7 +236,7 @@ export function AdminMediaClient({ files: initialFiles }: { files: MediaRow[] })
               />
             ) : (
               <div className="w-[400px] h-[300px] bg-bg-elevated rounded-lg flex items-center justify-center">
-                {(() => { const Icon = typeIcons[previewFile.type] || FileText; return <Icon className="h-16 w-16 text-text-muted" />; })()}
+                {(() => { const PIcon = typeIcons[getCategory(previewFile.type)] || FileText; return <PIcon className="h-16 w-16 text-text-muted" />; })()}
               </div>
             )}
 
