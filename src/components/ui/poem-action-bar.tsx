@@ -31,48 +31,65 @@ interface PoemActionBarProps {
   nextLabel?: string;
 }
 
-const STANZAS_PER_PAGE: Record<"square" | "story", number> = {
-  square: 2,
-  story: 4,
-};
-
-// Max lines per page (including blank lines between stanzas)
+// Max content lines per page (not counting blank separator lines)
 const MAX_LINES_PER_PAGE: Record<"square" | "story", number> = {
-  square: 10,
-  story: 18,
+  square: 8,
+  story: 14,
 };
 
 /**
- * Split stanzas into pages based on line count limits.
- * Handles poems that are one big block, have very long stanzas,
- * or use different line-ending formats.
+ * Paginate poem content for image generation.
+ * 1. Re-split the body into stanzas using blank lines (handles \r\n, whitespace lines)
+ * 2. Place stanzas onto pages, breaking at stanza boundaries
+ * 3. If a single stanza exceeds the line limit, split it mid-stanza
  */
-function paginateStanzas(stanzas: string[], format: "square" | "story"): string[][] {
+function paginateStanzas(inputStanzas: string[], format: "square" | "story"): string[][] {
   const maxLines = MAX_LINES_PER_PAGE[format];
 
-  // First, normalize: collect all lines with stanza break markers
-  const allLines: string[] = [];
-  for (let s = 0; s < stanzas.length; s++) {
-    if (s > 0) allLines.push(""); // blank line between stanzas
-    const lines = stanzas[s].split("\n");
-    for (const line of lines) {
-      allLines.push(line);
-    }
-  }
+  // Re-normalize: join everything back and re-split by blank lines
+  // This handles cases where the original split didn't catch all separators
+  const fullText = inputStanzas.join("\n\n");
+  const stanzas = fullText.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
 
-  // Now paginate by line count
   const pages: string[][] = [];
-  for (let i = 0; i < allLines.length; i += maxLines) {
-    const chunk = allLines.slice(i, i + maxLines);
-    // Trim leading/trailing blank lines from each page
-    while (chunk.length > 0 && chunk[0].trim() === "") chunk.shift();
-    while (chunk.length > 0 && chunk[chunk.length - 1].trim() === "") chunk.pop();
-    if (chunk.length > 0) {
-      pages.push([chunk.join("\n")]);
+  let currentPageStanzas: string[] = [];
+  let currentLineCount = 0;
+
+  for (const stanza of stanzas) {
+    const lineCount = stanza.split("\n").length;
+
+    // If this single stanza is too long, split it into line chunks
+    if (lineCount > maxLines) {
+      // First flush current page
+      if (currentPageStanzas.length > 0) {
+        pages.push(currentPageStanzas);
+        currentPageStanzas = [];
+        currentLineCount = 0;
+      }
+      // Split long stanza by lines
+      const lines = stanza.split("\n");
+      for (let i = 0; i < lines.length; i += maxLines) {
+        pages.push([lines.slice(i, i + maxLines).join("\n")]);
+      }
+      continue;
     }
+
+    // Would adding this stanza exceed the page limit?
+    if (currentPageStanzas.length > 0 && currentLineCount + lineCount > maxLines) {
+      pages.push(currentPageStanzas);
+      currentPageStanzas = [];
+      currentLineCount = 0;
+    }
+
+    currentPageStanzas.push(stanza);
+    currentLineCount += lineCount;
   }
 
-  return pages.length > 0 ? pages : [stanzas];
+  if (currentPageStanzas.length > 0) {
+    pages.push(currentPageStanzas);
+  }
+
+  return pages.length > 0 ? pages : [inputStanzas];
 }
 
 function drawRoundedRect(
