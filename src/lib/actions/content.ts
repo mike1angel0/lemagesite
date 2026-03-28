@@ -123,6 +123,7 @@ export async function saveResearchAction(
   const coverImage = (formData.get("coverImage") as string)?.trim();
   const publish = formData.get("publish") === "true";
   const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
+  const references = (formData.get("references") as string)?.trim();
 
   if (!title) return { error: "Title is required" };
 
@@ -145,6 +146,7 @@ export async function saveResearchAction(
       year: yearStr ? parseInt(yearStr) : null,
       coverImage: coverImage || null,
       pdfUrl: pdfUrl || null,
+      references: references || null,
       accessTier: tierMap[tier] || "FREE",
       publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
@@ -168,20 +170,58 @@ export async function savePhotoAction(
   const tier = (formData.get("tier") as string) || "Free";
   const publish = formData.get("publish") === "true";
   const scheduleDate = (formData.get("scheduleDate") as string)?.trim();
+  const language = (formData.get("language") as string) || "ro";
+  const titleTranslation = (formData.get("titleTranslation") as string)?.trim();
+  const bodyTranslation = (formData.get("bodyTranslation") as string)?.trim();
+  const camera = (formData.get("camera") as string)?.trim();
+  const location = (formData.get("location") as string)?.trim();
+  const photoYear = (formData.get("year") as string)?.trim();
+  const seriesName = (formData.get("seriesName") as string)?.trim();
 
   if (!title) return { error: "Title is required" };
   if (!imageUrl) return { error: "Photo URL is required" };
 
+  // Determine RO/EN fields based on original language
+  const titleEn = language === "en" ? title : titleTranslation || null;
+  const titleRo = language === "ro" ? title : titleTranslation || null;
+  const descEn = language === "en" ? (description || null) : (bodyTranslation || null);
+  const descRo = language === "ro" ? (description || null) : (bodyTranslation || null);
+
+  // Build exifData JSON
+  const exifData: Record<string, string> = {};
+  if (camera) exifData.camera = camera;
+  if (location) exifData.location = location;
+  if (photoYear) exifData.year = photoYear;
+
+  // Resolve or create series
+  let seriesId: string | null = null;
+  if (seriesName) {
+    const seriesSlug = slugify(seriesName);
+    const existing = await prisma.photoSeries.findUnique({ where: { slug: seriesSlug } });
+    if (existing) {
+      seriesId = existing.id;
+    } else {
+      const newSeries = await prisma.photoSeries.create({
+        data: { name: seriesName, slug: seriesSlug },
+      });
+      seriesId = newSeries.id;
+    }
+  }
+
   const slug = slugify(title);
-  const existing = await prisma.photo.findUnique({ where: { slug } });
-  if (existing) return { error: "A photo with a similar title already exists" };
+  const existingPhoto = await prisma.photo.findUnique({ where: { slug } });
+  if (existingPhoto) return { error: "A photo with a similar title already exists" };
 
   await prisma.photo.create({
     data: {
-      title,
+      title: titleEn || title,
+      titleRo: titleRo,
       slug,
       imageUrl,
-      description: description || null,
+      description: descEn,
+      descriptionRo: descRo,
+      exifData: Object.keys(exifData).length > 0 ? exifData : undefined,
+      seriesId,
       accessTier: tierMap[tier] || "FREE",
       publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
@@ -211,6 +251,8 @@ export async function saveEssayAction(
   const language = (formData.get("language") as string)?.trim() || "en";
   const titleTranslation = (formData.get("titleTranslation") as string)?.trim();
   const bodyTranslation = (formData.get("bodyTranslation") as string)?.trim();
+  const references = (formData.get("references") as string)?.trim();
+  const excerpt = (formData.get("excerpt") as string)?.trim();
 
   if (!rawTitle) return { error: "Title is required" };
   if (!rawBody) return { error: "Body is required" };
@@ -247,6 +289,8 @@ export async function saveEssayAction(
       category: essayCategory || tags || null,
       readTime: readTimeStr ? parseInt(readTimeStr) : null,
       thumbnail: thumbnail || null,
+      references: references || null,
+      excerpt: excerpt || null,
       accessTier: tierMap[tier] || "FREE",
       publishedAt: publish ? (scheduleDate ? new Date(scheduleDate) : new Date()) : null,
     },
@@ -348,23 +392,58 @@ export async function updateContentAction(
       });
       break;
     }
-    case "Photo":
+    case "Photo": {
+      const photoTitleRo = (formData.get("titleRo") as string)?.trim();
+      const photoBodyRo = (formData.get("bodyRo") as string)?.trim();
+      const photoCamera = (formData.get("camera") as string)?.trim();
+      const photoLocation = (formData.get("location") as string)?.trim();
+      const photoYear = (formData.get("year") as string)?.trim();
+      const photoSeriesName = (formData.get("seriesName") as string)?.trim();
+
+      // Build exifData
+      const photoExif: Record<string, string> = {};
+      if (photoCamera) photoExif.camera = photoCamera;
+      if (photoLocation) photoExif.location = photoLocation;
+      if (photoYear) photoExif.year = photoYear;
+
+      // Resolve series
+      let photoSeriesId: string | null | undefined = undefined;
+      if (photoSeriesName) {
+        const seriesSlug = slugify(photoSeriesName);
+        const existingSeries = await prisma.photoSeries.findUnique({ where: { slug: seriesSlug } });
+        if (existingSeries) {
+          photoSeriesId = existingSeries.id;
+        } else {
+          const newSeries = await prisma.photoSeries.create({
+            data: { name: photoSeriesName, slug: seriesSlug },
+          });
+          photoSeriesId = newSeries.id;
+        }
+      }
+
       await prisma.photo.update({
         where: { id },
         data: {
           title,
+          titleRo: photoTitleRo || null,
           description: body || null,
+          descriptionRo: photoBodyRo || null,
           imageUrl: (formData.get("imageUrl") as string) || undefined,
+          exifData: Object.keys(photoExif).length > 0 ? photoExif : undefined,
+          seriesId: photoSeriesId,
           accessTier: tierMap[tier] || "FREE",
           publishedAt: publish ? new Date() : null,
         },
       });
       break;
+    }
     case "Essay": {
       const essayCategory = (formData.get("essayCategory") as string)?.trim();
       const readTimeStr = formData.get("readTime") as string;
       const essayTitleRo = (formData.get("titleRo") as string)?.trim();
       const essayBodyRo = (formData.get("bodyRo") as string)?.trim();
+      const essayReferences = (formData.get("references") as string)?.trim();
+      const essayExcerpt = (formData.get("excerpt") as string)?.trim();
       await prisma.essay.update({
         where: { id },
         data: {
@@ -375,13 +454,16 @@ export async function updateContentAction(
           category: essayCategory || tags || null,
           readTime: readTimeStr ? parseInt(readTimeStr) : undefined,
           thumbnail: (formData.get("thumbnail") as string) || undefined,
+          references: essayReferences || null,
+          excerpt: essayExcerpt || undefined,
           accessTier: tierMap[tier] || "FREE",
           publishedAt: publish ? new Date() : null,
         },
       });
       break;
     }
-    case "Research":
+    case "Research": {
+      const researchReferences = (formData.get("references") as string)?.trim();
       await prisma.researchPaper.update({
         where: { id },
         data: {
@@ -391,11 +473,13 @@ export async function updateContentAction(
           doi: (formData.get("doi") as string) || null,
           coverImage: (formData.get("coverImage") as string) || undefined,
           pdfUrl: (formData.get("pdfUrl") as string) || null,
+          references: researchReferences || null,
           accessTier: tierMap[tier] || "FREE",
           publishedAt: publish ? new Date() : null,
         },
       });
       break;
+    }
     default:
       return { error: "Unknown content type" };
   }

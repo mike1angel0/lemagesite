@@ -27,6 +27,8 @@ export default async function AdminEditorEditPage({ params }: EditorEditPageProp
       : (content as Record<string, unknown>).body as string || (content as Record<string, unknown>).abstract as string || "";
 
   const r = content as Record<string, unknown>;
+  const exifData = (r.exifData as Record<string, string> | null) ?? {};
+  const series = r.series as { name: string } | null;
   const serialized = {
     id: content.id,
     contentType: content.contentType,
@@ -44,6 +46,15 @@ export default async function AdminEditorEditPage({ params }: EditorEditPageProp
     coverImage: r.coverImage as string || "",
     readTime: r.readTime as number | undefined,
     essayCategory: r.category as string || "",
+    titleRo: r.titleRo as string | null || null,
+    bodyRo: (r.bodyRo || r.descriptionRo) as string | null || null,
+    camera: exifData.camera || "",
+    location: exifData.location || "",
+    year: exifData.year || "",
+    seriesName: series?.name || "",
+    references: r.references as string | null || null,
+    excerpt: r.excerpt as string | null || null,
+    language: r.language as string | null || null,
   };
 
   return <EditorEditClient content={serialized} />;

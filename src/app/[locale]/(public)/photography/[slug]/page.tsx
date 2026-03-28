@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getPhotoBySlug, getPublishedPhotos } from "@/lib/data";
-import { Button } from "@/components/ui/button";
+import { PhotoActionBar } from "@/components/ui/photo-action-bar";
 
 export default async function PhotoDetailPage({
   params,
@@ -82,7 +82,7 @@ export default async function PhotoDetailPage({
           <div className="flex flex-col gap-3">
             {[
               { label: tc("camera"), value: exifData.camera ?? "—" },
-              { label: tc("year"), value: photo.publishedAt ? new Date(photo.publishedAt).getFullYear().toString() : "—" },
+              { label: tc("year"), value: exifData.year || (photo.publishedAt ? new Date(photo.publishedAt).getFullYear().toString() : "—") },
               { label: tc("location"), value: exifData.location ?? "—" },
               { label: tc("series"), value: photo.series?.name ?? "—" },
               { label: tc("print"), value: t("availableLimited") },
@@ -111,6 +111,18 @@ export default async function PhotoDetailPage({
           )}
         </div>
       </div>
+
+      {/* Share / Export action bar */}
+      <PhotoActionBar
+        photoId={photo.id}
+        title={photo.title}
+        description={photo.description}
+        imageUrl={photo.imageUrl}
+        prevSlug={currentIdx > 0 ? `/photography/${allPhotos[currentIdx - 1].slug}` : null}
+        nextSlug={currentIdx < total - 1 ? `/photography/${allPhotos[currentIdx + 1].slug}` : null}
+        prevLabel={tc("previous")}
+        nextLabel={tc("next")}
+      />
     </article>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useActionState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { deleteNewsletterAction } from "@/lib/actions/newsletter";
 import type { AuthState } from "@/lib/actions/auth";
 
@@ -142,7 +142,10 @@ export function AdminNewsletterClient({
                 <td className="font-sans text-[13px] text-text-secondary px-4 py-3.5">
                   {row.openRate != null ? `${row.openRate}%` : "—"}
                 </td>
-                <td className="px-4 py-3.5">
+                <td className="px-4 py-3.5 flex items-center gap-3">
+                  <Link href={`/admin/newsletter/${row.id}`} className="inline-flex items-center gap-1 font-sans text-xs text-accent hover:text-text-primary transition-colors">
+                    <Pencil size={12} />Edit
+                  </Link>
                   <button onClick={() => handleDelete(row)} className="inline-flex items-center gap-1 font-sans text-xs text-accent-dim hover:text-red-400 transition-colors">
                     <Trash2 size={12} />Delete
                   </button>

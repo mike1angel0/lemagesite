@@ -46,6 +46,7 @@ Rules:
 - Focus on themes, mood, style, and subject matter
 - For poetry: include literary devices, emotional tone, imagery themes
 - For essays: include topic areas, philosophical themes
+- For photography: include visual elements, mood, lighting, composition, subject matter, color palette
 - For research: include academic fields, methodologies
 - Return ONLY a JSON array of strings, nothing else. Example: ["silence", "memory", "winter imagery"]`,
         },

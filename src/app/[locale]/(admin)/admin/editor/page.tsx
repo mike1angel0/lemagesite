@@ -65,6 +65,10 @@ export default function AdminEditorNewPage() {
   const [location, setLocation] = useState("");
   const [readTime, setReadTime] = useState("");
   const [essayCategory, setEssayCategory] = useState("");
+  const [references, setReferences] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [generatingExcerpt, setGeneratingExcerpt] = useState(false);
+  const [generatingAbstract, setGeneratingAbstract] = useState(false);
   const [album, setAlbum] = useState("");
   const [duration, setDuration] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
@@ -77,6 +81,9 @@ export default function AdminEditorNewPage() {
   const [featuredImage, setFeaturedImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [generatingCaption, setGeneratingCaption] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [showPromptEditor, setShowPromptEditor] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
@@ -99,7 +106,8 @@ export default function AdminEditorNewPage() {
   async function handleFileUpload(
     file: File,
     setUrl: (url: string) => void,
-    setLoading: (v: boolean) => void
+    setLoading: (v: boolean) => void,
+    onData?: (data: Record<string, unknown>) => void
   ) {
     setLoading(true);
     try {
@@ -109,6 +117,7 @@ export default function AdminEditorNewPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
       setUrl(data.secure_url);
+      onData?.(data);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Upload failed. Please try again.");
       setStatus("error");
@@ -202,7 +211,7 @@ export default function AdminEditorNewPage() {
     setTranslating(true);
     setShowTranslation(true);
     const targetLang = language === "ro" ? "en" : "ro";
-    const ct = category === "Essay" ? "essay" : "poetry";
+    const ct = category === "Essay" ? "essay" : category === "Photography" ? "photography" : "poetry";
     try {
       const [titleRes, bodyRes] = await Promise.all([
         title.trim()
@@ -268,10 +277,18 @@ export default function AdminEditorNewPage() {
       formData.set("doi", doi);
       formData.set("year", year);
       formData.set("pdfUrl", pdfUrl);
+      if (references) formData.set("references", references);
       if (featuredImage) formData.set("coverImage", featuredImage);
       result = await saveResearchAction({} as AuthState, formData);
     } else if (category === "Photography") {
       formData.set("imageUrl", imageUrl || featuredImage);
+      formData.set("language", language);
+      if (titleTranslation) formData.set("titleTranslation", titleTranslation);
+      if (bodyTranslation) formData.set("bodyTranslation", bodyTranslation);
+      if (camera) formData.set("camera", camera);
+      if (location) formData.set("location", location);
+      if (year) formData.set("year", year);
+      if (seriesName) formData.set("seriesName", seriesName);
       result = await savePhotoAction({} as AuthState, formData);
     } else if (category === "Essay") {
       formData.set("readTime", readTime);
@@ -280,6 +297,8 @@ export default function AdminEditorNewPage() {
       formData.set("language", language);
       if (titleTranslation) formData.set("titleTranslation", titleTranslation);
       if (bodyTranslation) formData.set("bodyTranslation", bodyTranslation);
+      if (references) formData.set("references", references);
+      if (excerpt) formData.set("excerpt", excerpt);
       result = await saveEssayAction({} as AuthState, formData);
     } else if (category === "Music") {
       formData.set("duration", duration);
@@ -349,77 +368,168 @@ export default function AdminEditorNewPage() {
             className="font-serif text-2xl text-text-primary border-b border-border pb-4 bg-transparent w-full focus:outline-none placeholder:text-text-muted"
           />
 
-          {category === "Research" && (
-            <div>
-              <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Abstract</label>
-              <textarea placeholder="Paper abstract..." value={abstract} onChange={(e) => setAbstract(e.target.value)} className="w-full bg-bg-card border border-border rounded p-4 font-sans text-sm leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y min-h-[120px]" />
-            </div>
-          )}
-
-          {/* Toolbar + Write/Preview toggle */}
-          <div className="flex items-center gap-1 bg-bg-card rounded border border-border px-2 py-1.5">
-            {toolbarActions.map(({ icon: Icon, label, action }) => (
-              <button key={label} title={label} onClick={() => { setEditorMode("write"); action(); }} className="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors">
-                <Icon size={16} />
-              </button>
-            ))}
-            <div className="ml-auto flex items-center border-l border-border pl-2 gap-1">
-              <button
-                title="Write"
-                onClick={() => setEditorMode("write")}
-                className={`p-1.5 rounded transition-colors ${editorMode === "write" ? "text-accent bg-accent/10" : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"}`}
-              >
-                <PenLine size={16} />
-              </button>
-              <button
-                title="Preview"
-                onClick={() => setEditorMode("preview")}
-                className={`p-1.5 rounded transition-colors ${editorMode === "preview" ? "text-accent bg-accent/10" : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"}`}
-              >
-                <Eye size={16} />
-              </button>
-            </div>
-          </div>
-
-          {editorMode === "write" ? (
-            <textarea
-              id="editor-body"
-              placeholder={category === "Research" ? "Full paper body (optional)...\n\nUse ## for chapter headings" : "Begin writing...\n\nUse ## for chapter headings, **bold**, *italic*"}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full font-mono text-sm leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y"
-            />
-          ) : (
-            <div className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full overflow-y-auto prose-editor">
-              {body ? (
-                <Markdown
-                  components={{
-                    h1: ({ children }) => <h1 className="font-serif text-3xl font-semibold text-text-primary mt-8 mb-4">{children}</h1>,
-                    h2: ({ children }) => <h2 className="font-serif text-2xl font-semibold text-text-primary mt-8 mb-3">{children}</h2>,
-                    h3: ({ children }) => <h3 className="font-serif text-xl font-semibold text-text-primary mt-6 mb-2">{children}</h3>,
-                    p: ({ children }) => <p className="font-sans text-base text-text-secondary leading-[1.8] mb-4">{children}</p>,
-                    strong: ({ children }) => <strong className="font-semibold text-text-primary">{children}</strong>,
-                    em: ({ children }) => <em className="italic text-text-secondary">{children}</em>,
-                    blockquote: ({ children }) => <blockquote className="border-l-2 border-accent pl-4 my-4 italic text-text-muted">{children}</blockquote>,
-                    ul: ({ children }) => <ul className="list-disc list-inside mb-4 text-text-secondary space-y-1">{children}</ul>,
-                    ol: ({ children }) => <ol className="list-decimal list-inside mb-4 text-text-secondary space-y-1">{children}</ol>,
-                    code: ({ children, className }) => {
-                      const isBlock = className?.includes("language-");
-                      return isBlock
-                        ? <pre className="bg-bg-elevated rounded p-4 my-4 overflow-x-auto"><code className="font-mono text-sm text-text-secondary">{children}</code></pre>
-                        : <code className="font-mono text-sm bg-bg-elevated rounded px-1.5 py-0.5 text-accent">{children}</code>;
-                    },
-                    a: ({ children, href }) => <a href={href} className="text-accent underline hover:text-text-primary transition-colors">{children}</a>,
-                    hr: () => <hr className="border-border my-8" />,
-                    img: ({ src, alt }) => <img src={src} alt={alt ?? ""} className="rounded max-w-full my-4" />,
-                  }}
-                >
-                  {body}
-                </Markdown>
+          {category === "Photography" ? (
+            /* Photo-centric editor */
+            <>
+              <input ref={photoInputRef} type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, setImageUrl, setUploadingPhoto, (data) => {
+                const exif = data.exif as Record<string, string> | undefined;
+                if (exif?.camera && !camera) setCamera(exif.camera);
+              }); }} className="hidden" />
+              {imageUrl ? (
+                <div className="relative flex-1 min-h-[400px] bg-bg-card border border-border rounded overflow-hidden flex items-center justify-center">
+                  <Image src={imageUrl} alt={title || "Photo"} fill className="object-contain" />
+                  <button
+                    type="button"
+                    onClick={() => { setImageUrl(""); if (photoInputRef.current) photoInputRef.current.value = ""; }}
+                    className="absolute top-3 right-3 bg-black/60 rounded-full p-1.5 opacity-0 hover:opacity-100 transition-opacity z-10"
+                  >
+                    <X size={14} className="text-white" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => photoInputRef.current?.click()}
+                    className="absolute bottom-3 right-3 bg-black/60 rounded-full px-3 py-1.5 opacity-0 hover:opacity-100 transition-opacity z-10 flex items-center gap-1.5"
+                  >
+                    <Upload size={12} className="text-white" />
+                    <span className="font-sans text-xs text-white">Replace</span>
+                  </button>
+                </div>
               ) : (
-                <p className="font-sans text-base text-text-muted">Nothing to preview yet...</p>
+                <button
+                  type="button"
+                  onClick={() => photoInputRef.current?.click()}
+                  disabled={uploadingPhoto}
+                  className="flex-1 min-h-[400px] bg-bg-card border-2 border-dashed border-border rounded flex flex-col items-center justify-center cursor-pointer hover:border-accent-dim transition-colors gap-3"
+                >
+                  {uploadingPhoto ? (
+                    <span className="font-sans text-sm text-text-muted">Uploading...</span>
+                  ) : (
+                    <>
+                      <Upload size={32} className="text-text-muted" />
+                      <span className="font-sans text-sm text-text-muted">Click to upload your photo</span>
+                      <span className="font-sans text-xs text-text-muted/60">or drag and drop</span>
+                    </>
+                  )}
+                </button>
               )}
-            </div>
+
+              {/* Caption */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">Caption</label>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const captionInput = title.trim() || "untitled photograph";
+                      setGeneratingCaption(true);
+                      setErrorMsg("");
+                      try {
+                        const res = await fetch("/api/summarize", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ content: captionInput, contentType: "photograph", style: "photo-caption", imageUrl: imageUrl || undefined }),
+                        });
+                        if (!res.ok) {
+                          const err = await res.json().catch(() => ({}));
+                          throw new Error(err.error || "Caption generation failed");
+                        }
+                        const data = await res.json();
+                        setBody(data.summary || "");
+                      } catch (err) { setErrorMsg(err instanceof Error ? err.message : "Caption generation failed."); setStatus("error"); }
+                      finally { setGeneratingCaption(false); }
+                    }}
+                    disabled={generatingCaption}
+                    className="flex items-center gap-1 font-sans text-[10px] text-accent hover:text-text-primary transition-colors disabled:opacity-50"
+                  >
+                    <Sparkles size={10} />
+                    {generatingCaption ? "Generating..." : "AI Generate"}
+                  </button>
+                </div>
+                <textarea
+                  placeholder="A powerful quote about this moment..."
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  rows={3}
+                  className="w-full bg-bg-card border border-border rounded p-4 font-serif text-base leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y"
+                />
+              </div>
+            </>
+          ) : (
+            /* Standard editor for all other categories */
+            <>
+              {category === "Research" && (
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Abstract</label>
+                  <textarea placeholder="Paper abstract..." value={abstract} onChange={(e) => setAbstract(e.target.value)} className="w-full bg-bg-card border border-border rounded p-4 font-sans text-sm leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y min-h-[120px]" />
+                </div>
+              )}
+
+              {/* Toolbar + Write/Preview toggle */}
+              <div className="flex items-center gap-1 bg-bg-card rounded border border-border px-2 py-1.5">
+                {toolbarActions.map(({ icon: Icon, label, action }) => (
+                  <button key={label} title={label} onClick={() => { setEditorMode("write"); action(); }} className="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors">
+                    <Icon size={16} />
+                  </button>
+                ))}
+                <div className="ml-auto flex items-center border-l border-border pl-2 gap-1">
+                  <button
+                    title="Write"
+                    onClick={() => setEditorMode("write")}
+                    className={`p-1.5 rounded transition-colors ${editorMode === "write" ? "text-accent bg-accent/10" : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"}`}
+                  >
+                    <PenLine size={16} />
+                  </button>
+                  <button
+                    title="Preview"
+                    onClick={() => setEditorMode("preview")}
+                    className={`p-1.5 rounded transition-colors ${editorMode === "preview" ? "text-accent bg-accent/10" : "text-text-muted hover:text-text-primary hover:bg-bg-elevated"}`}
+                  >
+                    <Eye size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {editorMode === "write" ? (
+                <textarea
+                  id="editor-body"
+                  placeholder={category === "Research" ? "Full paper body (optional)...\n\nUse ## for chapter headings" : "Begin writing...\n\nUse ## for chapter headings, **bold**, *italic*"}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full font-mono text-sm leading-relaxed text-text-secondary focus:outline-none placeholder:text-text-muted resize-y"
+                />
+              ) : (
+                <div className="min-h-[400px] flex-1 bg-bg-card border border-border rounded p-6 w-full overflow-y-auto prose-editor">
+                  {body ? (
+                    <Markdown
+                      components={{
+                        h1: ({ children }) => <h1 className="font-serif text-3xl font-semibold text-text-primary mt-8 mb-4">{children}</h1>,
+                        h2: ({ children }) => <h2 className="font-serif text-2xl font-semibold text-text-primary mt-8 mb-3">{children}</h2>,
+                        h3: ({ children }) => <h3 className="font-serif text-xl font-semibold text-text-primary mt-6 mb-2">{children}</h3>,
+                        p: ({ children }) => <p className="font-sans text-base text-text-secondary leading-[1.8] mb-4">{children}</p>,
+                        strong: ({ children }) => <strong className="font-semibold text-text-primary">{children}</strong>,
+                        em: ({ children }) => <em className="italic text-text-secondary">{children}</em>,
+                        blockquote: ({ children }) => <blockquote className="border-l-2 border-accent pl-4 my-4 italic text-text-muted">{children}</blockquote>,
+                        ul: ({ children }) => <ul className="list-disc list-inside mb-4 text-text-secondary space-y-1">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal list-inside mb-4 text-text-secondary space-y-1">{children}</ol>,
+                        code: ({ children, className }) => {
+                          const isBlock = className?.includes("language-");
+                          return isBlock
+                            ? <pre className="bg-bg-elevated rounded p-4 my-4 overflow-x-auto"><code className="font-mono text-sm text-text-secondary">{children}</code></pre>
+                            : <code className="font-mono text-sm bg-bg-elevated rounded px-1.5 py-0.5 text-accent">{children}</code>;
+                        },
+                        a: ({ children, href }) => <a href={href} className="text-accent underline hover:text-text-primary transition-colors">{children}</a>,
+                        hr: () => <hr className="border-border my-8" />,
+                        img: ({ src, alt }) => <img src={src} alt={alt ?? ""} className="rounded max-w-full my-4" />,
+                      }}
+                    >
+                      {body}
+                    </Markdown>
+                  ) : (
+                    <p className="font-sans text-base text-text-muted">Nothing to preview yet...</p>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -491,7 +601,7 @@ export default function AdminEditorNewPage() {
           </div>
 
           {/* Language & Translation (Poetry & Essay) */}
-          {(category === "Poetry" || category === "Essay") && (
+          {(category === "Poetry" || category === "Essay" || category === "Photography") && (
             <>
               <div>
                 <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Original Language</label>
@@ -597,6 +707,38 @@ export default function AdminEditorNewPage() {
                   </button>
                 )}
               </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">Abstract</label>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!body.trim()) return;
+                      setGeneratingAbstract(true);
+                      try {
+                        const res = await fetch("/api/summarize", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ content: body, contentType: "research paper", style: "abstract" }),
+                        });
+                        if (!res.ok) throw new Error();
+                        const data = await res.json();
+                        setAbstract(data.summary || "");
+                      } catch { setErrorMsg("Abstract generation failed."); setStatus("error"); }
+                      finally { setGeneratingAbstract(false); }
+                    }}
+                    disabled={generatingAbstract || !body.trim()}
+                    className="flex items-center gap-1 font-sans text-[10px] text-accent hover:text-text-primary transition-colors disabled:opacity-50"
+                  >
+                    <Sparkles size={10} />
+                    {generatingAbstract ? "Generating..." : "AI Generate"}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">References</label>
+                <textarea placeholder="Add references (markdown supported)..." value={references} onChange={(e) => setReferences(e.target.value)} rows={4} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-mono text-xs leading-relaxed focus:outline-none focus:border-accent-dim placeholder:text-text-muted resize-y" />
+              </div>
             </>
           )}
 
@@ -604,14 +746,10 @@ export default function AdminEditorNewPage() {
           {category === "Photography" && (
             <>
               <div>
-                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Photo URL</label>
-                <input type="url" placeholder="https://res.cloudinary.com/..." value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
-              </div>
-              <div>
                 <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Series</label>
                 <input type="text" placeholder="e.g. Fog Studies" value={seriesName} onChange={(e) => setSeriesName(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Camera</label>
                   <input type="text" placeholder="e.g. Sony A7III" value={camera} onChange={(e) => setCamera(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
@@ -620,22 +758,61 @@ export default function AdminEditorNewPage() {
                   <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Location</label>
                   <input type="text" placeholder="e.g. Bucharest" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
                 </div>
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Year</label>
+                  <input type="number" placeholder="e.g. 2026" value={year} onChange={(e) => setYear(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+                </div>
               </div>
             </>
           )}
 
           {/* Essay-specific */}
           {category === "Essay" && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Read Time (min)</label>
-                <input type="number" placeholder="e.g. 12" value={readTime} onChange={(e) => setReadTime(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Read Time (min)</label>
+                  <input type="number" placeholder="e.g. 12" value={readTime} onChange={(e) => setReadTime(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+                </div>
+                <div>
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Category</label>
+                  <input type="text" placeholder="e.g. AI & Philosophy" value={essayCategory} onChange={(e) => setEssayCategory(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+                </div>
               </div>
               <div>
-                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Category</label>
-                <input type="text" placeholder="e.g. AI & Philosophy" value={essayCategory} onChange={(e) => setEssayCategory(e.target.value)} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted" />
+                <div className="flex items-center justify-between mb-2">
+                  <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted">Excerpt / Summary</label>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!body.trim()) return;
+                      setGeneratingExcerpt(true);
+                      try {
+                        const res = await fetch("/api/summarize", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ content: body, contentType: "essay", style: "excerpt" }),
+                        });
+                        if (!res.ok) throw new Error();
+                        const data = await res.json();
+                        setExcerpt(data.summary || "");
+                      } catch { setErrorMsg("Excerpt generation failed."); setStatus("error"); }
+                      finally { setGeneratingExcerpt(false); }
+                    }}
+                    disabled={generatingExcerpt || !body.trim()}
+                    className="flex items-center gap-1 font-sans text-[10px] text-accent hover:text-text-primary transition-colors disabled:opacity-50"
+                  >
+                    <Sparkles size={10} />
+                    {generatingExcerpt ? "Generating..." : "AI Generate"}
+                  </button>
+                </div>
+                <textarea placeholder="A compelling summary for listing pages..." value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={3} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-sans text-sm focus:outline-none focus:border-accent-dim placeholder:text-text-muted resize-y" />
               </div>
-            </div>
+              <div>
+                <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">References</label>
+                <textarea placeholder="Add references (markdown supported)..." value={references} onChange={(e) => setReferences(e.target.value)} rows={4} className="w-full border border-border bg-transparent rounded py-2.5 px-3 text-text-primary font-mono text-xs leading-relaxed focus:outline-none focus:border-accent-dim placeholder:text-text-muted resize-y" />
+              </div>
+            </>
           )}
 
           {/* Music-specific */}
@@ -658,8 +835,8 @@ export default function AdminEditorNewPage() {
             </>
           )}
 
-          {/* Featured Image Upload */}
-          <div>
+          {/* Featured Image Upload (hidden for Photography — main area handles it) */}
+          {category !== "Photography" && <div>
             <label className="font-mono text-[10px] uppercase tracking-[2px] text-text-muted mb-2 block">Featured Image</label>
             <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, setFeaturedImage, setUploading); }} className="hidden" />
             {featuredImage ? (
@@ -691,7 +868,7 @@ export default function AdminEditorNewPage() {
                 )}
               </button>
             )}
-          </div>
+          </div>}
 
           {/* Schedule */}
           <div>

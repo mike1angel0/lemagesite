@@ -22,6 +22,9 @@ import {
   Palette,
   MessageSquare,
   PenLine,
+  Sparkles,
+  Podcast,
+  Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +36,8 @@ const sidebarItems = [
   { key: "members", href: "/admin/members", icon: Users, label: "Members" },
   { key: "analytics", href: "/admin/analytics", icon: TrendingUp, label: "Analytics" },
   { key: "newsletter", href: "/admin/newsletter", icon: Mail, label: "Newsletter" },
+  { key: "podcast", href: "/admin/podcast", icon: Podcast, label: "Podcast" },
+  { key: "social", href: "/admin/social", icon: Share2, label: "Social" },
   { key: "scriptorium", href: "/admin/scriptorium", icon: BookOpen, label: "Scriptorium" },
   { key: "partnerships", href: "/admin/partnerships", icon: Handshake, label: "Partnerships" },
   { key: "quotes", href: "/admin/quotes", icon: Quote, label: "Quotes" },
@@ -110,6 +115,18 @@ export function AdminSidebar() {
           <Globe size={16} className="text-text-muted" />
           <span>View Site →</span>
         </Link>
+
+        {/* AI Assistant shortcut */}
+        <button
+          onClick={() => {
+            // Dispatch custom event to toggle the assistant panel
+            window.dispatchEvent(new CustomEvent("toggle-admin-assistant"));
+          }}
+          className="flex items-center gap-2.5 px-5 py-2.5 text-[13px] font-sans text-accent hover:bg-bg-elevated/50 transition-colors mt-auto"
+        >
+          <Sparkles size={16} />
+          <span>AI Assistant</span>
+        </button>
       </nav>
     </aside>
   );

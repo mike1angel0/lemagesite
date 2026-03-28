@@ -48,6 +48,7 @@
     "learnMore": "Află mai mult",
     "rsvp": "Confirmă participarea",
     "buyPrint": "Cumpără print",
+    "buyBook": "Cumpără cartea",
     "readExcerpt": "Citește un fragment",
     "addToCart": "Adaugă în coș",
     "placeOrder": "Plasează comanda",
@@ -88,6 +89,7 @@
     "cite": "Citează",
     "abstract": "Rezumat",
     "citeThisPaper": "Citează această lucrare",
+    "references": "Referințe",
     "relatedPapers": "Lucrări similare",
     "programme": "Program",
     "dateAndTime": "Data și ora",
@@ -105,6 +107,7 @@
     "unsave": "Elimină",
     "listen": "Ascultă",
     "stopListening": "Oprește",
+    "regenerateAudio": "Regenerează audio",
     "continueReading": "Continuă de unde ai rămas"
   },
   "home": {
@@ -634,6 +637,32 @@
     "title": "Listă de lectură",
     "empty": "Lista ta de lectură este goală. Salvează articole, poeme și lucrări pentru mai târziu.",
     "progress": "{percent}% citit"
+  },
+  "social": {
+    "title": "Social Repost",
+    "sources": "Surse",
+    "queue": "Coadă",
+    "posted": "Postate",
+    "settings": "Setări",
+    "captureNew": "Captură nouă",
+    "captureUrl": "Captură URL",
+    "generateBatch": "Generează lot",
+    "approveAll": "Aprobă toate",
+    "postApproved": "Postează aprobate",
+    "noSources": "Nicio sursă capturată.",
+    "noReposts": "Nicio repostare în coadă.",
+    "noPosts": "Nicio postare încă.",
+    "connectedAccounts": "Conturi conectate",
+    "connect": "Conectează",
+    "disconnect": "Deconectează",
+    "bookmarklet": "Bookmarklet",
+    "iosShortcut": "Shortcut iOS",
+    "recentBatches": "Loturi recente",
+    "contentType": "Tip conținut",
+    "batchSize": "Dimensiune lot",
+    "approve": "Aprobă",
+    "skip": "Omite",
+    "edit": "Editează"
   },
   "editor": {
     "scheduledFor": "Programat pentru"

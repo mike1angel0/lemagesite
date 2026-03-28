@@ -82,19 +82,35 @@ export default async function BookDetailPage({
 
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
-            {book.buyUrl && (
-              <Button variant="filled" size="lg" asChild>
+            <Button variant="filled" size="lg" asChild>
+              {book.buyUrl ? (
                 <a href={book.buyUrl} target="_blank" rel="noopener noreferrer">
-                  {tc("buyPrint")}
+                  {tc("buyBook")}
                 </a>
+              ) : (
+                <Link href={`/shop/${book.slug}`}>
+                  {tc("buyBook")}
+                </Link>
+              )}
+            </Button>
+            {book.excerpt && (
+              <Button variant="ghost" size="lg" asChild>
+                <Link href="#excerpt">{tc("readExcerpt")}</Link>
               </Button>
             )}
-            <Button variant="ghost" size="lg" asChild>
-              <Link href="#excerpt">{tc("readExcerpt")}</Link>
-            </Button>
           </div>
         </div>
       </div>
+
+      {/* -- Excerpt -- */}
+      {book.excerpt && (
+        <div id="excerpt" className="mt-16 pt-12 border-t border-border max-w-2xl">
+          <SectionLabel label={tc("readExcerpt").toUpperCase()} />
+          <div className="font-serif text-base text-text-secondary leading-[1.9] mt-6 whitespace-pre-line">
+            {book.excerpt}
+          </div>
+        </div>
+      )}
 
       {/* -- Specs -- */}
       <div className="flex flex-col md:flex-row gap-16 mt-16">

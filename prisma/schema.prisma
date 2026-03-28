@@ -167,6 +167,7 @@ model Poem {
   collection  String?
   language    String?
   audioUrl    String?
+  audioUrlRo  String?
   coverImage  String?
   accessTier  AccessTier @default(FREE)
   featured    Boolean    @default(false)
@@ -178,14 +179,16 @@ model Poem {
 }
 
 model Photo {
-  id          String     @id @default(cuid())
-  title       String
-  slug        String     @unique
-  imageUrl    String
-  seriesId    String?
-  exifData    Json?
-  description String?
-  accessTier  AccessTier @default(FREE)
+  id             String     @id @default(cuid())
+  title          String
+  titleRo        String?
+  slug           String     @unique
+  imageUrl       String
+  seriesId       String?
+  exifData       Json?
+  description    String?
+  descriptionRo  String?    @db.Text
+  accessTier     AccessTier @default(FREE)
   width       Int?
   height      Int?
   publishedAt DateTime?
@@ -219,10 +222,12 @@ model Essay {
   thumbnail    String?
   excerpt      String?
   excerptRo    String?
+  references   String?    @db.Text
   accessTier   AccessTier @default(FREE)
   mediumUrl    String?
   substackUrl  String?
   audioUrl     String?
+  audioUrlRo   String?
   publishedAt  DateTime?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -237,6 +242,7 @@ model Book {
   year        Int?
   type        String?
   price       Decimal?  @db.Decimal(10, 2)
+  excerpt     String?   @db.Text
   quotes      Json?
   buyUrl      String?
   publishedAt DateTime?
@@ -284,9 +290,11 @@ model ResearchPaper {
   doi         String?
   year        Int?
   coverImage  String?
+  references  String?    @db.Text
   accessTier  AccessTier @default(FREE)
   pdfUrl      String?
   audioUrl    String?
+  audioUrlRo  String?
   publishedAt DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -303,6 +311,25 @@ model Event {
   isUpcoming  Boolean  @default(true)
   rsvpUrl     String?
   image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ──────────────────────────────────────────────
+// Podcast
+// ──────────────────────────────────────────────
+
+model PodcastEpisode {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  audioUrl    String
+  duration    String?
+  coverImage  String?
+  contentType String?  // "POEM", "ESSAY", "RESEARCH" or null for standalone
+  contentId   String?  // linked content ID, null for standalone
+  publishedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -499,4 +526,101 @@ model Comment {
   replies Comment[] @relation("CommentReplies")
 
   @@index([contentType, contentId])
+}
+
+// ──────────────────────────────────────────────
+// Social Repost
+// ──────────────────────────────────────────────
+
+enum SocialPlatform {
+  TWITTER
+  FACEBOOK
+  LINKEDIN
+  INSTAGRAM
+  TIKTOK
+}
+
+enum SocialSourceStatus {
+  PENDING
+  READY
+  ARCHIVED
+}
+
+enum RepostStatus {
+  DRAFT
+  APPROVED
+  POSTED
+  SKIPPED
+  FAILED
+}
+
+enum RepostBatchStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model SocialAccount {
+  id           String         @id @default(cuid())
+  platform     SocialPlatform @unique
+  accountName  String
+  accessToken  String         @db.Text
+  refreshToken String?        @db.Text
+  expiresAt    DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  reposts SocialRepost[]
+}
+
+model SocialSource {
+  id          String             @id @default(cuid())
+  url         String             @unique
+  content     String?            @db.Text
+  contentType String?
+  platform    String?
+  metadata    Json?
+  status      SocialSourceStatus @default(PENDING)
+  capturedVia String?
+  batchId     String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  batch   RepostBatch?   @relation(fields: [batchId], references: [id])
+  reposts SocialRepost[]
+}
+
+model SocialRepost {
+  id            String       @id @default(cuid())
+  sourceId      String
+  platform      SocialPlatform
+  generatedText String       @db.Text
+  editedText    String?      @db.Text
+  status        RepostStatus @default(DRAFT)
+  platformPostId String?
+  errorMessage  String?
+  accountId     String?
+  batchId       String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  source  SocialSource   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  account SocialAccount? @relation(fields: [accountId], references: [id])
+  batch   RepostBatch?   @relation(fields: [batchId], references: [id])
+
+  @@index([sourceId])
+  @@index([status])
+}
+
+model RepostBatch {
+  id          String           @id @default(cuid())
+  batchSize   Int              @default(50)
+  contentType String?
+  status      RepostBatchStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  sources SocialSource[]
+  reposts SocialRepost[]
 }

@@ -20,6 +20,10 @@ export default async function AdminScriptoriumPage() {
     include: { user: { select: { name: true } } },
   });
 
+  const books = await prisma.book.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
   const serializedProducts = products.map((p) => ({
     id: p.id,
     title: p.title,
@@ -38,10 +42,26 @@ export default async function AdminScriptoriumPage() {
     status: o.status,
   }));
 
+  const serializedBooks = books.map((b) => ({
+    id: b.id,
+    title: b.title,
+    slug: b.slug,
+    description: b.description,
+    excerpt: b.excerpt,
+    coverImage: b.coverImage,
+    year: b.year,
+    type: b.type,
+    price: b.price ? Number(b.price) : null,
+    buyUrl: b.buyUrl,
+    quotes: b.quotes as string[] | null,
+    publishedAt: b.publishedAt?.toISOString() ?? null,
+  }));
+
   return (
     <AdminScriptoriumClient
       products={serializedProducts}
       recentOrders={serializedOrders}
+      books={serializedBooks}
     />
   );
 }

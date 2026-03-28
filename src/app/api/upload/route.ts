@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
-          { folder: "selenarium" },
+          { folder: "selenarium", image_metadata: true },
           (error, result) => {
             if (error) reject(error);
             else resolve(result as Record<string, unknown>);
@@ -48,7 +48,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ ...mediaFile, secure_url: mediaFile.url });
+    // Extract EXIF metadata if available
+    const exif: Record<string, string | undefined> = {};
+    const meta = result.image_metadata as Record<string, string> | undefined;
+    if (meta) {
+      if (meta.Make && meta.Model) exif.camera = `${meta.Make} ${meta.Model}`;
+      else if (meta.Model) exif.camera = meta.Model;
+      if (meta.GPSLatitude || meta.GPSPosition) exif.location = meta.GPSPosition || `${meta.GPSLatitude}, ${meta.GPSLongitude}`;
+    }
+
+    return NextResponse.json({ ...mediaFile, secure_url: mediaFile.url, exif, width: result.width, height: result.height });
   } catch (error: unknown) {
     const detail = error instanceof Error
       ? error.message

@@ -48,6 +48,7 @@
     "learnMore": "Learn more",
     "rsvp": "RSVP",
     "buyPrint": "Buy print",
+    "buyBook": "Buy book",
     "readExcerpt": "Read excerpt",
     "addToCart": "Add to Cart",
     "placeOrder": "Place order",
@@ -88,6 +89,7 @@
     "cite": "Cite",
     "abstract": "Abstract",
     "citeThisPaper": "Cite This Paper",
+    "references": "References",
     "relatedPapers": "Related Papers",
     "programme": "Programme",
     "dateAndTime": "Date & Time",
@@ -105,6 +107,7 @@
     "unsave": "Unsave",
     "listen": "Listen",
     "stopListening": "Stop",
+    "regenerateAudio": "Regenerate audio",
     "continueReading": "Continue where you left off"
   },
   "home": {
@@ -634,6 +637,32 @@
     "title": "Reading List",
     "empty": "Your reading list is empty. Save articles, poems, and papers to read later.",
     "progress": "{percent}% read"
+  },
+  "social": {
+    "title": "Social Repost",
+    "sources": "Sources",
+    "queue": "Queue",
+    "posted": "Posted",
+    "settings": "Settings",
+    "captureNew": "Capture New",
+    "captureUrl": "Capture URL",
+    "generateBatch": "Generate Batch",
+    "approveAll": "Approve All",
+    "postApproved": "Post Approved",
+    "noSources": "No captured sources yet.",
+    "noReposts": "No reposts in queue.",
+    "noPosts": "No posts yet.",
+    "connectedAccounts": "Connected Accounts",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "bookmarklet": "Bookmarklet",
+    "iosShortcut": "iOS Shortcut",
+    "recentBatches": "Recent Batches",
+    "contentType": "Content Type",
+    "batchSize": "Batch Size",
+    "approve": "Approve",
+    "skip": "Skip",
+    "edit": "Edit"
   },
   "editor": {
     "scheduledFor": "Scheduled for"

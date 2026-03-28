@@ -97,6 +97,7 @@ export default async function PoemDetailPage({
           collection: poem.collection,
           language: poem.language,
           audioUrl: poem.audioUrl,
+          audioUrlRo: poem.audioUrlRo,
           coverImage: poem.coverImage,
           accessTier: poem.accessTier,
           excerpt: poem.excerpt,

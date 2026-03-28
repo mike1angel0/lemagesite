@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { ResearchActionBar } from "@/components/ui/research-action-bar";
 import { getResearchBySlug, getPublishedResearch, getRelatedResearch } from "@/lib/data";
@@ -50,6 +50,7 @@ export default async function ResearchDetailPage({
   const t = await getTranslations("research");
   const tc = await getTranslations("common");
   const te = await getTranslations("essays");
+  const locale = await getLocale();
 
   const [paper, config] = await Promise.all([getResearchBySlug(slug), getSiteConfig()]);
   if (!paper) notFound();
@@ -147,7 +148,7 @@ export default async function ResearchDetailPage({
         </div>
 
         {/* Read Aloud */}
-        <ReadAloudButton contentType="RESEARCH" contentId={paper.id} audioUrl={paper.audioUrl} />
+        <ReadAloudButton contentType="RESEARCH" contentId={paper.id} audioUrl={paper.audioUrl} audioUrlRo={paper.audioUrlRo} locale={locale} />
       </div>
 
       {/* -- Two-column Body -- */}
@@ -168,6 +169,18 @@ export default async function ResearchDetailPage({
 
           {/* Body content */}
           {paper.body && <MarkdownBody content={paper.body} />}
+
+          {/* References */}
+          {paper.references && (
+            <div className="mt-8 pt-8 border-t border-border">
+              <h2 className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim mb-4">
+                {tc("references")}
+              </h2>
+              <div className="prose-sm">
+                <MarkdownBody content={paper.references} />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}

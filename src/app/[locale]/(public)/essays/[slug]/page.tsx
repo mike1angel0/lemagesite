@@ -131,7 +131,7 @@ export default async function EssayDetailPage({
 
         {/* Read Aloud */}
         <div className="mt-4">
-          <ReadAloudButton contentType="ESSAY" contentId={essay.id} audioUrl={essay.audioUrl} />
+          <ReadAloudButton contentType="ESSAY" contentId={essay.id} audioUrl={essay.audioUrl} audioUrlRo={essay.audioUrlRo} locale={locale} />
         </div>
 
         {/* -- Two-column Body -- */}
@@ -166,6 +166,18 @@ export default async function EssayDetailPage({
             <MarkdownBody content={displayBody} />
           </article>
         </div>
+
+        {/* -- References -- */}
+        {essay.references && (
+          <div className="mt-12 pt-8 border-t border-border max-w-2xl">
+            <h2 className="font-mono text-[10px] font-medium uppercase tracking-[3px] text-accent-dim mb-4">
+              {tc("references")}
+            </h2>
+            <div className="prose-sm">
+              <MarkdownBody content={essay.references} />
+            </div>
+          </div>
+        )}
 
         {/* -- Tags -- */}
         {essay.category && (

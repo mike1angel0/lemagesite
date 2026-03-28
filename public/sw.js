@@ -26,12 +26,46 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
+  const url = new URL(request.url);
+
+  // Handle share target POST — extract URL from share data and redirect to admin
+  if (request.method === "POST" && url.pathname === "/api/social/capture") {
+    event.respondWith(
+      (async () => {
+        const formData = await request.formData();
+        const shareUrl = formData.get("url") || "";
+        const shareText = formData.get("content") || formData.get("title") || "";
+
+        // Android/iOS often put the URL in the text field
+        // Extract URL from text if url field is empty
+        let captureUrl = shareUrl.toString().trim();
+        const textStr = shareText.toString().trim();
+
+        if (!captureUrl && textStr) {
+          const urlMatch = textStr.match(/https?:\/\/[^\s]+/);
+          if (urlMatch) captureUrl = urlMatch[0];
+        }
+        if (!captureUrl && textStr) {
+          captureUrl = textStr;
+        }
+
+        // Redirect to admin social page with URL as query param
+        // The page will handle the capture with proper auth
+        const encodedUrl = encodeURIComponent(captureUrl);
+        const encodedContent = encodeURIComponent(textStr);
+        return Response.redirect(
+          `/admin/social?share_url=${encodedUrl}&share_content=${encodedContent}`,
+          303
+        );
+      })()
+    );
+    return;
+  }
 
   // Only cache GET requests
   if (request.method !== "GET") return;
 
   // Skip API routes and auth
-  const url = new URL(request.url);
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/_next/")) return;
 
   // Network-first for HTML pages, cache-first for assets

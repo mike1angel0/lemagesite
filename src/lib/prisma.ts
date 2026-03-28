@@ -6,7 +6,7 @@ const globalForPrisma = globalThis as unknown as {
   prismaVersion: string | undefined;
 };
 
-const PRISMA_VERSION = "11"; // bump when schema changes
+const PRISMA_VERSION = "16"; // bump when schema changes
 
 function createPrismaClient() {
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });

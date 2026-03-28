@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Play, Pause } from "lucide-react";
-import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/section-label";
 import { PoemActionBar } from "@/components/ui/poem-action-bar";
+import { ReadAloudButton } from "@/components/ui/read-aloud-button";
 import { GatedOverlay } from "@/components/content/gated-overlay";
 import { PLACEHOLDER } from "@/lib/placeholders";
 import { useSession } from "next-auth/react";
@@ -21,6 +20,7 @@ type PoemData = {
   collection: string | null;
   language: string | null;
   audioUrl: string | null;
+  audioUrlRo: string | null;
   coverImage: string | null;
   accessTier: string;
   excerpt: string | null;
@@ -50,9 +50,6 @@ export function PoemDetailClient({
 }) {
   const t = useTranslations("poetry");
   const { data: session } = useSession();
-  const [audioPlaying, setAudioPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
   // Locale-aware title and body
   const displayTitle = locale === "ro" && poem.titleRo ? poem.titleRo : poem.title;
   const displayBody = locale === "ro" && poem.bodyRo ? poem.bodyRo : poem.body;
@@ -111,33 +108,15 @@ export function PoemDetailClient({
         )}
 
         {/* Audio row */}
-        {poem.audioUrl && (
-          <>
-            <audio
-              ref={audioRef}
-              src={poem.audioUrl}
-              onEnded={() => setAudioPlaying(false)}
-              preload="none"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                if (!audioRef.current) return;
-                if (audioPlaying) {
-                  audioRef.current.pause();
-                  setAudioPlaying(false);
-                } else {
-                  audioRef.current.play();
-                  setAudioPlaying(true);
-                }
-              }}
-              className="inline-flex items-center gap-3 border border-border rounded-full px-6 py-3 font-sans text-xs text-accent tracking-[0.5px] hover:border-accent transition-colors"
-            >
-              {audioPlaying ? <Pause className="size-4" /> : <Play className="size-4" />}
-              <span>{audioPlaying ? t("pauseAudio") : t("listenAudio")}</span>
-            </button>
-          </>
-        )}
+        <div className="flex items-center gap-2">
+          <ReadAloudButton
+            contentType="POEM"
+            contentId={poem.id}
+            audioUrl={poem.audioUrl}
+            audioUrlRo={poem.audioUrlRo}
+            locale={locale}
+          />
+        </div>
 
         {/* Divider */}
         <div className="w-10 h-px bg-accent-dim" />

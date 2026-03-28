@@ -47,29 +47,32 @@ function splitText(text: string): string[] {
 
 export async function POST(req: NextRequest) {
   try {
-    const { contentType, contentId } = await req.json();
+    const { contentType, contentId, locale = "en", regenerate = false } = await req.json();
 
     if (!contentType || !contentId) {
       return NextResponse.json({ error: "Missing params" }, { status: 400 });
     }
 
+    const isRo = locale === "ro";
+    const audioField = isRo ? "audioUrlRo" : "audioUrl";
+
     // Check for cached audio URL in DB
-    let record: { audioUrl: string | null; body?: string | null; abstract?: string | null } | null = null;
+    let record: { audioUrl: string | null; audioUrlRo: string | null; body?: string | null; bodyRo?: string | null; abstract?: string | null } | null = null;
 
     if (contentType === "ESSAY") {
       record = await prisma.essay.findUnique({
         where: { id: contentId },
-        select: { audioUrl: true, body: true },
+        select: { audioUrl: true, audioUrlRo: true, body: true, bodyRo: true },
       });
     } else if (contentType === "RESEARCH") {
       record = await prisma.researchPaper.findUnique({
         where: { id: contentId },
-        select: { audioUrl: true, abstract: true, body: true },
+        select: { audioUrl: true, audioUrlRo: true, abstract: true, body: true },
       });
     } else if (contentType === "POEM") {
       record = await prisma.poem.findUnique({
         where: { id: contentId },
-        select: { audioUrl: true, body: true },
+        select: { audioUrl: true, audioUrlRo: true, body: true, bodyRo: true },
       });
     }
 
@@ -77,15 +80,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Content not found" }, { status: 404 });
     }
 
-    // Cache hit — return existing URL
-    if (record.audioUrl) {
-      return NextResponse.json({ url: record.audioUrl });
+    // Cache hit — return existing URL for the requested locale (unless regenerating)
+    const cachedUrl = isRo ? record.audioUrlRo : record.audioUrl;
+    if (cachedUrl && !regenerate) {
+      return NextResponse.json({ url: cachedUrl });
     }
 
-    // Build the text to speak
+    // Build the text to speak based on locale
     let text = "";
     if (contentType === "RESEARCH") {
+      // Research doesn't have bodyRo, always use body
       text = [record.abstract ?? "", record.body ?? ""].filter(Boolean).join("\n\n");
+    } else if (isRo) {
+      // Use Romanian body if available, fall back to English
+      const bodyRo = (record as { bodyRo?: string | null }).bodyRo;
+      text = bodyRo || record.body || "";
     } else {
       text = record.body ?? "";
     }
@@ -100,11 +109,27 @@ export async function POST(req: NextRequest) {
     const chunks = splitText(text);
     const audioBuffers: Buffer[] = [];
 
+    // Voice & instructions vary by content type
+    const isPoem = contentType === "POEM";
+    const voice = isPoem ? (isRo ? "onyx" : "fable") : "ash";
+
+    let instructions: string;
+    if (isPoem && isRo) {
+      instructions = "Ești un actor român de teatru clasic, cu o voce profundă de bariton. Citește poezia în limba română cu accent nativ românesc autentic — fără nicio urmă de accent englez. Pronunță corect toate diacriticele (ă, â, î, ș, ț). Citește LENT — mult mai lent decât vorbirea obișnuită. Pune accent puternic și deliberat pe cuvintele încărcate emoțional, pe adjective și pe imaginile poetice. Fă o pauză vizibilă la sfârșitul FIECĂRUI vers, nu doar între strofe. Între strofe, lasă o tăcere lungă și dramatică. Tratează fiecare vers ca pe o respirație separată. Lasă cuvintele să se așeze înainte de a trece mai departe.";
+    } else if (isPoem) {
+      instructions = "You are a distinguished British stage actor performing poetry on a grand stage. Use a rich, resonant baritone with received pronunciation. Read SLOWLY — much slower than conversational speech. Place strong, deliberate emphasis on emotionally charged words, adjectives, and vivid imagery. Pause noticeably at the end of EVERY single line, not just stanzas. Between stanzas, leave a long, dramatic silence. Treat each line as its own breath. Savour each word — let it land and resonate before moving to the next. The audience is hanging on every syllable.";
+    } else if (isRo) {
+      instructions = "Speak in fluent, native Romanian with proper pronunciation of diacritics (ă, â, î, ș, ț). Use a warm, natural pace and clear articulation.";
+    } else {
+      instructions = "Speak in clear, warm English with a literary tone. Use a natural, engaging pace.";
+    }
+
     for (const chunk of chunks) {
       const response = await openai.audio.speech.create({
-        model: "tts-1",
-        voice: "onyx",
+        model: "gpt-4o-mini-tts",
+        voice,
         input: chunk,
+        instructions,
       });
 
       const arrayBuffer = await response.arrayBuffer();
@@ -158,17 +183,17 @@ export async function POST(req: NextRequest) {
     if (contentType === "ESSAY") {
       await prisma.essay.update({
         where: { id: contentId },
-        data: { audioUrl },
+        data: { [audioField]: audioUrl },
       });
     } else if (contentType === "RESEARCH") {
       await prisma.researchPaper.update({
         where: { id: contentId },
-        data: { audioUrl },
+        data: { [audioField]: audioUrl },
       });
     } else if (contentType === "POEM") {
       await prisma.poem.update({
         where: { id: contentId },
-        data: { audioUrl },
+        data: { [audioField]: audioUrl },
       });
     }
 
