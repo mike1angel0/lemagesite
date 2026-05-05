@@ -161,7 +161,7 @@ function renderPoemImage(
   const isStory = format === "story";
 
   // ── Title ──
-  const titleSize = isStory ? 52 : 46;
+  const titleSize = isStory ? 66 : 58;
   ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
   ctx.fillStyle = "#F5EED8";
   ctx.textAlign = "center";
@@ -183,7 +183,7 @@ function renderPoemImage(
   ctx.restore();
 
   // ── Stanzas ──
-  const fontSize = isStory ? 34 : 30;
+  const fontSize = isStory ? 42 : 38;
   const lineHeight = fontSize * 1.75;
   const stanzaGap = isStory ? 44 : 36;
   ctx.font = `300 ${fontSize}px "Cormorant Garamond", Georgia, serif`;

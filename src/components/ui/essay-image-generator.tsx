@@ -171,17 +171,17 @@ function renderEssayImage(
   const bottomBarHeight = isStory ? 220 : 180;
 
   // ── Measure all content to center vertically ──
-  const labelHeight = 13;
+  const labelHeight = 15;
   const labelGap = isStory ? 40 : 32;
 
-  const titleSize = isStory ? 44 : 40;
+  const titleSize = isStory ? 62 : 56;
   ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
   const titleLines = wrapText(ctx, title.replace(/\n/g, " "), contentWidth);
   const titleLineHeight = titleSize * 1.3;
   const titleBlockHeight = titleLines.length * titleLineHeight;
 
   const authorGap = isStory ? 24 : 20;
-  const authorHeight = 16;
+  const authorHeight = 18;
 
   const metaGap = 8;
   const metaHeight = (category || readTime) ? 13 : 0;
@@ -190,7 +190,7 @@ function renderEssayImage(
   const dividerHeight = 1;
 
   const excerptGap = isStory ? 28 : 24;
-  const excerptFontSize = isStory ? 22 : 20;
+  const excerptFontSize = isStory ? 30 : 28;
   const excerptLineHeight = excerptFontSize * 1.7;
   ctx.font = `300 ${excerptFontSize}px "Cormorant Garamond", Georgia, serif`;
   const excerptLines = wrapText(ctx, excerpt, contentWidth - 20);
@@ -214,7 +214,7 @@ function renderEssayImage(
   let y = availableTop + (availableHeight - totalHeight) / 2;
 
   // ── "ESSAY" label ──
-  ctx.font = '400 13px Inter, system-ui, sans-serif';
+  ctx.font = '400 15px Inter, system-ui, sans-serif';
   ctx.fillStyle = "#C9A96E";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -236,7 +236,7 @@ function renderEssayImage(
 
   // ── Author name ──
   y += authorGap;
-  ctx.font = '400 16px Inter, system-ui, sans-serif';
+  ctx.font = '400 18px Inter, system-ui, sans-serif';
   ctx.fillStyle = "rgba(245, 238, 216, 0.6)";
   ctx.textAlign = "center";
   ctx.letterSpacing = "1px";
@@ -353,7 +353,7 @@ function renderSummarySlide(
   const labelHeight = 13;
   const labelToTitle = isStory ? 44 : 36;
 
-  const titleSize = isStory ? 32 : 28;
+  const titleSize = isStory ? 38 : 34;
   const titleLineHeight = titleSize * 1.3;
   ctx.font = `300 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
   const titleLines = wrapText(ctx, title, contentWidth).slice(0, 2);
@@ -363,7 +363,7 @@ function renderSummarySlide(
   const dividerHeight = 1;
   const dividerToSummary = isStory ? 44 : 36;
 
-  const summaryFontSize = isStory ? 26 : 24;
+  const summaryFontSize = isStory ? 30 : 28;
   const summaryLineHeight = summaryFontSize * 1.8;
   ctx.font = `300 ${summaryFontSize}px "Cormorant Garamond", Georgia, serif`;
   const allSummaryLines = wrapText(ctx, summary, contentWidth - 40);
