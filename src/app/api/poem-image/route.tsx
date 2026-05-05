@@ -78,8 +78,8 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const fontSize = format === "square" ? 24 : 26;
-  const titleSize = format === "square" ? 36 : 42;
+  const fontSize = format === "square" ? 32 : 36;
+  const titleSize = format === "square" ? 52 : 58;
 
   return new ImageResponse(
     (
